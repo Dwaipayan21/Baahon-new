@@ -1,27 +1,58 @@
 /**
  * Food Discovery Service (Backend)
  * 
- * Modular service for discovering nearby food establishments (restaurants, cafes, fast food, food courts)
- * around Durga Puja pandals using the Geoapify Places API (v2).
+ * Modular service for discovering nearby food establishments (restaurants, cafes, fast food, food courts,
+ * bakeries, sweet shops/confectioneries) around Durga Puja pandals using the Geoapify Places API (v2).
  * 
  * ARCHITECTURE & SECURITY:
  * - Server-side only (CommonJS module).
  * - Reads API key strictly from process.env.GEOAPIFY_API_KEY.
  * - Never exposes API keys to client-side bundles or frontend code.
- * - Produces a normalized, database-ready food place schema.
+ * - Produces a normalized, database-ready food place schema with deterministic distance bands.
  */
 
 const FOOD_SEARCH_RADIUS_METERS = 500;
 const GEOAPIFY_PLACES_API_URL = 'https://api.geoapify.com/v2/places';
 
 /**
- * Supported Geoapify catering categories.
+ * Supported Geoapify catering & food categories.
+ * Excludes bars, pubs, nightclubs, liquor stores, and alcohol-centric places.
  */
 const DEFAULT_FOOD_CATEGORIES = Object.freeze([
   'catering.restaurant',
   'catering.fast_food',
   'catering.cafe',
-  'catering.food_court'
+  'catering.food_court',
+  'catering.ice_cream',
+  'commercial.food_and_drink.bakery',
+  'commercial.food_and_drink.confectionery'
+]);
+
+/**
+ * Provider-to-Application Category Mapping
+ */
+const CATEGORY_MAP = Object.freeze({
+  'catering.restaurant': 'restaurant',
+  'catering.cafe': 'cafe',
+  'catering.fast_food': 'fast_food',
+  'catering.ice_cream': 'ice_cream',
+  'catering.food_court': 'food_court',
+  'catering.bakery': 'bakery',
+  'commercial.food_and_drink.bakery': 'bakery',
+  'catering.confectionery': 'confectionery',
+  'commercial.food_and_drink.confectionery': 'confectionery'
+});
+
+/**
+ * Strictly excluded alcohol-oriented categories.
+ */
+const EXCLUDED_ALCOHOL_CATEGORIES = Object.freeze([
+  'catering.bar',
+  'catering.pub',
+  'catering.biergarten',
+  'catering.taproom',
+  'commercial.food_and_drink.alcohol',
+  'commercial.food_and_drink.beverages'
 ]);
 
 /**
@@ -62,17 +93,51 @@ function haversineDistanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 /**
- * Assigns a distance band string based on distance in meters.
+ * Assigns deterministic distance bands based on distance in meters:
+ * - 0–300m:       'very_nearby'
+ * - >300–750m:    'nearby'
+ * - >750–1000m:   'further'
+ * - >1000m:       'beyond_1000m'
  * 
  * @param {number|null} distanceMeters
  * @returns {string}
  */
 function assignDistanceBand(distanceMeters) {
-  if (typeof distanceMeters !== 'number' || isNaN(distanceMeters)) return 'unknown';
-  if (distanceMeters <= 500) return '<=500m';
-  if (distanceMeters <= 750) return '501m-750m';
-  if (distanceMeters <= 1000) return '751m-1000m';
-  return '>1000m';
+  if (typeof distanceMeters !== 'number' || isNaN(distanceMeters) || distanceMeters < 0) {
+    return 'unknown';
+  }
+  if (distanceMeters <= 300) return 'very_nearby';
+  if (distanceMeters <= 750) return 'nearby';
+  if (distanceMeters <= 1000) return 'further';
+  return 'beyond_1000m';
+}
+
+/**
+ * Maps raw provider categories to a clean application category.
+ * Filters out alcohol/bar-oriented establishments.
+ * 
+ * @param {string[]} categories
+ * @returns {string|null} Application category or null if excluded/unmapped
+ */
+function mapToApplicationCategory(categories) {
+  if (!Array.isArray(categories) || categories.length === 0) return null;
+
+  // Check if place is exclusively an alcohol-oriented place without food categories
+  const hasFoodCategory = categories.some((c) => CATEGORY_MAP[c]);
+  const isAlcoholOriented = categories.some((c) => EXCLUDED_ALCOHOL_CATEGORIES.includes(c));
+
+  if (isAlcoholOriented && !hasFoodCategory) {
+    return null;
+  }
+
+  // Find the first matching food category in priority order
+  for (const cat of categories) {
+    if (CATEGORY_MAP[cat]) {
+      return CATEGORY_MAP[cat];
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -131,7 +196,6 @@ function extractCoordinates(pandal) {
  *   distanceFromPandal,
  *   distanceBand,
  *   category,
- *   categories,
  *   address,
  *   source,
  *   sourceId
@@ -140,7 +204,7 @@ function extractCoordinates(pandal) {
  * @param {object} feature GeoJSON Feature object returned by Geoapify Places API
  * @param {{ lat: number, lng: number }} originCoords Pandal coordinates
  * @param {string|null} [pandalId=null] ID of associated pandal
- * @returns {object|null} Normalized food place object or null if invalid
+ * @returns {object|null} Normalized food place object or null if invalid or excluded
  */
 function normalizeGeoapifyPlace(feature, originCoords, pandalId = null) {
   if (!feature || typeof feature !== 'object') return null;
@@ -155,17 +219,21 @@ function normalizeGeoapifyPlace(feature, originCoords, pandalId = null) {
     return null;
   }
 
+  const categories = Array.isArray(props.categories) ? props.categories : [];
+  const appCategory = mapToApplicationCategory(categories);
+
+  // Exclude places that are not valid food categories (e.g. bars, pubs, non-food amenities)
+  if (!appCategory) {
+    return null;
+  }
+
   const name = props.name || props.address_line1 || props.formatted?.split(',')[0] || 'Unnamed Food Place';
 
-  // Distance from pandal (API provides it when proximity bias is used; fallback to Haversine)
+  // Distance from pandal (use API distance if provided, otherwise compute Haversine distance)
   let distanceMeters = typeof props.distance === 'number' ? Math.round(props.distance) : null;
   if (distanceMeters === null && originCoords) {
     distanceMeters = haversineDistanceMeters(originCoords.lat, originCoords.lng, lat, lon);
   }
-
-  const categories = Array.isArray(props.categories) ? props.categories : [];
-  const primaryFull = categories.find((c) => c.startsWith('catering.')) || categories[0] || 'catering.restaurant';
-  const shortCategory = primaryFull.replace(/^catering\./, '');
 
   const sourceId = props.place_id || `${lat.toFixed(6)}_${lon.toFixed(6)}`;
   const id = `geoapify_${sourceId}`;
@@ -178,12 +246,49 @@ function normalizeGeoapifyPlace(feature, originCoords, pandalId = null) {
     longitude: lon,
     distanceFromPandal: distanceMeters,
     distanceBand: assignDistanceBand(distanceMeters),
-    category: shortCategory,
-    categories,
+    category: appCategory,
     address: props.formatted || props.address_line2 || props.street || '',
     source: 'geoapify',
     sourceId
   };
+}
+
+/**
+ * Checks if a candidate place is a duplicate of an already processed place.
+ * Rules:
+ * 1. Same source + same source ID => Duplicate.
+ * 2. Conservative cross-source / multi-node deduplication:
+ *    Distance <= 30m AND normalized names have high substring similarity.
+ *    If uncertain, returns false (keeps both).
+ * 
+ * @param {object} place Candidate place
+ * @param {object[]} existingPlaces Array of already accepted places
+ * @returns {boolean}
+ */
+function isDuplicatePlace(place, existingPlaces) {
+  if (!place || !Array.isArray(existingPlaces)) return false;
+
+  for (const existing of existingPlaces) {
+    // Exact provider source ID match
+    if (place.source === existing.source && place.sourceId === existing.sourceId) {
+      return true;
+    }
+
+    // Conservative proximity + name similarity
+    const dist = haversineDistanceMeters(place.latitude, place.longitude, existing.latitude, existing.longitude);
+    if (dist !== null && dist <= 30) {
+      const clean1 = place.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const clean2 = existing.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      if (clean1.length > 0 && clean2.length > 0) {
+        if (clean1 === clean2 || clean1.includes(clean2) || clean2.includes(clean1)) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -193,7 +298,7 @@ function normalizeGeoapifyPlace(feature, originCoords, pandalId = null) {
  * @param {object} [options]
  * @param {number} [options.radiusMeters=500] Search radius in meters
  * @param {string[]} [options.categories] Array of Geoapify category identifiers
- * @param {number} [options.limit=20] Max results
+ * @param {number} [options.limit=25] Max results
  * @param {string} [options.apiKey] API key override (defaults to process.env.GEOAPIFY_API_KEY)
  * @param {string} [options.pandalId] Associated pandal ID
  * @returns {Promise<{ places: object[], rawCount: number, error: string|null }>}
@@ -201,7 +306,7 @@ function normalizeGeoapifyPlace(feature, originCoords, pandalId = null) {
 async function fetchFoodPlacesNearCoordinates(coords, options = {}) {
   const radius = options.radiusMeters ?? FOOD_SEARCH_RADIUS_METERS;
   const categories = options.categories ?? DEFAULT_FOOD_CATEGORIES;
-  const limit = options.limit ?? 20;
+  const limit = options.limit ?? 25;
   const pandalId = options.pandalId ?? null;
 
   const apiKey = options.apiKey || process.env.GEOAPIFY_API_KEY;
@@ -218,7 +323,7 @@ async function fetchFoodPlacesNearCoordinates(coords, options = {}) {
     return {
       places: [],
       rawCount: 0,
-      error: 'GEOAPIFY_API_KEY is not set in the server environment.'
+      error: 'GEOAPIFY_API_KEY is not configured in the server environment.'
     };
   }
 
@@ -299,17 +404,16 @@ async function fetchFoodPlacesNearCoordinates(coords, options = {}) {
     };
   }
 
-  // Normalize, deduplicate by sourceId / unique fingerprint
-  const seenPlaceIds = new Set();
+  // Normalize, deduplicate conservatively
   const normalizedPlaces = [];
 
   for (const feature of data.features) {
     const place = normalizeGeoapifyPlace(feature, coords, pandalId);
     if (!place) continue;
 
-    const dedupeKey = place.sourceId || `${place.name.toLowerCase().trim()}_${place.latitude.toFixed(4)}_${place.longitude.toFixed(4)}`;
-    if (seenPlaceIds.has(dedupeKey)) continue;
-    seenPlaceIds.add(dedupeKey);
+    if (isDuplicatePlace(place, normalizedPlaces)) {
+      continue;
+    }
 
     normalizedPlaces.push(place);
   }
@@ -408,10 +512,14 @@ module.exports = {
   FOOD_SEARCH_RADIUS_METERS,
   GEOAPIFY_PLACES_API_URL,
   DEFAULT_FOOD_CATEGORIES,
+  CATEGORY_MAP,
+  EXCLUDED_ALCOHOL_CATEGORIES,
   haversineDistanceMeters,
   assignDistanceBand,
+  mapToApplicationCategory,
   extractCoordinates,
   normalizeGeoapifyPlace,
+  isDuplicatePlace,
   fetchFoodPlacesNearCoordinates,
   discoverFoodNearPandal,
   discoverFoodForPandals

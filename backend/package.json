@@ -14,6 +14,7 @@
     "test": "node tests/unitTestFoodDiscovery.js",
     "test:unit": "node tests/unitTestFoodDiscovery.js",
     "test:food": "node scripts/testFoodDiscovery.js",
+    "test:live": "node scripts/liveGeoapifyTest.js",
     "test:osm-food": "node scripts/testOsmFoodDiscovery.js",
     "dev": "nodemon server.js"
   },
