@@ -15,6 +15,7 @@
     "test:unit": "node tests/unitTestFoodDiscovery.js",
     "test:api": "node tests/unitTestFoodApi.js",
     "test:model": "node tests/unitTestFoodPlaceModel.js",
+    "test:persistence": "node tests/unitTestFoodPersistence.js",
     "test:food": "node scripts/testFoodDiscovery.js",
     "test:live": "node scripts/liveGeoapifyTest.js",
     "test:osm-food": "node scripts/testOsmFoodDiscovery.js",
