@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const Pandal = require("./models/pandal.model.js");
 const errorHandler = require("./middleware/errorHandler.js");
+const foodRoutes = require("./routes/food.routes.js");
 
 const app = express();
 
@@ -23,6 +24,9 @@ mongoose
   .catch((error) => {
     console.error("MongoDB connection error:", error.message);
   });
+
+// Food routes (mounted before generic /:id route)
+app.use("/api/pandals", foodRoutes);
 
 // GET all pandals
 app.get("/api/pandals", async (req, res, next) => {
@@ -74,6 +78,10 @@ app.use(errorHandler);
 // Start server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
