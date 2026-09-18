@@ -16,7 +16,9 @@
     "test:api": "node tests/unitTestFoodApi.js",
     "test:model": "node tests/unitTestFoodPlaceModel.js",
     "test:persistence": "node tests/unitTestFoodPersistence.js",
+    "test:workflow-unit": "node tests/unitTestFoodDiscoveryPersistence.js",
     "test:food": "node scripts/testFoodDiscovery.js",
+    "test:food:persistence": "node scripts/testFoodDiscoveryPersistence.js",
     "test:live": "node scripts/liveGeoapifyTest.js",
     "test:osm-food": "node scripts/testOsmFoodDiscovery.js",
     "dev": "nodemon server.js"
