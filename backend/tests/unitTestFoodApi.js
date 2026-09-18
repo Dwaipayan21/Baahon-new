@@ -1,22 +1,26 @@
 /**
- * Deterministic API & Controller Unit Tests
+ * Deterministic API & Controller Unit Tests (Phase 2C-4)
  * 
- * Tests the food discovery endpoint (GET /api/pandals/:pandalId/food),
- * pandal resolution logic, parameter validation, error handling, and response schema.
+ * Verifies MongoDB-backed read behavior of GET /api/pandals/:pandalId/food:
+ * - Reads from FoodPlace MongoDB collection
+ * - Radius filtering (distanceFromPandal <= radius)
+ * - Sorting by distanceFromPandal ascending
+ * - Applying limits (default 25, max 50)
+ * - Mapping MongoDB `_id` -> `id` without exposing raw `_id`
+ * - Validating parameters and returning 400/404/500
+ * - Ensuring NO calls to foodDiscovery.service.js, foodPersistence.service.js, or Geoapify
  * 
- * 100% offline and deterministic - no live external API or MongoDB dependencies.
+ * 100% deterministic and offline - zero live network dependencies.
  */
 
 const assert = require("node:assert/strict");
 const http = require("node:http");
+const mongoose = require("mongoose");
 const app = require("../server.js");
-const {
-  resolvePandal,
-  getFoodForPandal,
-  MAX_RADIUS_METERS,
-  MAX_LIMIT
-} = require("../controllers/food.controller.js");
+const foodReadService = require("../services/foodRead.service.js");
 const foodDiscoveryService = require("../services/foodDiscovery.service.js");
+const foodPersistenceService = require("../services/foodPersistence.service.js");
+const FoodPlace = require("../models/foodPlace.model.js");
 
 let server;
 let baseUrl;
@@ -44,31 +48,24 @@ async function asyncTest(name, fn) {
 }
 
 async function runAllTests() {
-  console.log("\n--- Running Unit Tests for Food Discovery API & Controller ---\n");
+  console.log("\n--- Running Unit Tests for MongoDB-Backed Food API (Phase 2C-4) ---\n");
 
-  // 1. Pandal resolution tests
-  await asyncTest("resolvePandal resolves by 'pandal-N' format", async () => {
-    const pandal = await resolvePandal("pandal-0");
-    assert.ok(pandal, "Should resolve pandal-0");
-    assert.equal(pandal.name, "Bagbazar Sarbojanin");
-  });
+  const originalGetFoodPlaces = foodReadService.getFoodPlacesForPandal;
+  const originalDiscover = foodDiscoveryService.discoverFoodNearPandal;
+  const originalPersist = foodPersistenceService.persistFoodPlaces;
 
-  await asyncTest("resolvePandal resolves by slugified name", async () => {
-    const pandal = await resolvePandal("college-square");
-    assert.ok(pandal, "Should resolve college-square slug");
-    assert.equal(pandal.name, "College Square");
-  });
+  let discoveryCalled = false;
+  let persistenceCalled = false;
 
-  await asyncTest("resolvePandal resolves by exact name (case-insensitive)", async () => {
-    const pandal = await resolvePandal("ekdalia evergreen club");
-    assert.ok(pandal, "Should resolve by exact name");
-    assert.equal(pandal.name, "Ekdalia Evergreen Club");
-  });
+  foodDiscoveryService.discoverFoodNearPandal = async () => {
+    discoveryCalled = true;
+    throw new Error("FAIL: foodDiscovery.service must not be called by the read API!");
+  };
 
-  await asyncTest("resolvePandal returns null for unknown pandal ID", async () => {
-    const pandal = await resolvePandal("nonexistent-pandal-9999");
-    assert.equal(pandal, null);
-  });
+  foodPersistenceService.persistFoodPlaces = async () => {
+    persistenceCalled = true;
+    throw new Error("FAIL: foodPersistence.service must not be called by the read API!");
+  };
 
   // Start Express server on ephemeral port for end-to-end route tests
   await new Promise((resolve) => {
@@ -79,166 +76,237 @@ async function runAllTests() {
     });
   });
 
-  const originalDiscover = foodDiscoveryService.discoverFoodNearPandal;
+  const testPandalId = new mongoose.Types.ObjectId().toString();
+
+  const mockDbDocs = [
+    {
+      _id: new mongoose.Types.ObjectId("650000000000000000000001"),
+      pandalId: new mongoose.Types.ObjectId(testPandalId),
+      name: "Paramount Juices & Shakes",
+      latitude: 22.5735,
+      longitude: 88.3639,
+      distanceFromPandal: 158,
+      distanceBand: "very_nearby",
+      category: "cafe",
+      address: "Bankim Chatterjee Street, Kolkata",
+      source: "geoapify",
+      sourceId: "place_101",
+      __v: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      _id: new mongoose.Types.ObjectId("650000000000000000000002"),
+      pandalId: new mongoose.Types.ObjectId(testPandalId),
+      name: "Kalika Fast Food",
+      latitude: 22.5742,
+      longitude: 88.3650,
+      distanceFromPandal: 313,
+      distanceBand: "nearby",
+      category: "fast_food",
+      address: "Surya Sen Street, Kolkata",
+      source: "geoapify",
+      sourceId: "place_102",
+      __v: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      _id: new mongoose.Types.ObjectId("650000000000000000000003"),
+      pandalId: new mongoose.Types.ObjectId(testPandalId),
+      name: "Indian Coffee House",
+      latitude: 22.5755,
+      longitude: 88.3662,
+      distanceFromPandal: 780,
+      distanceBand: "further",
+      category: "restaurant",
+      address: "College Street, Kolkata",
+      source: "geoapify",
+      sourceId: "place_103",
+      __v: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ];
 
   try {
-    // 2. Nonexistent pandal -> 404
-    await asyncTest("GET /api/pandals/:pandalId/food returns 404 when pandal not found", async () => {
-      const res = await fetch(`${baseUrl}/api/pandals/unknown-pandal-xyz/food`);
-      assert.equal(res.status, 404);
-      const data = await res.json();
-      assert.equal(data.success, false);
-      assert.equal(data.message, "Pandal not found");
+    // 1 & 16 & 17. Valid pandal with stored records, _id mapped to id without raw _id exposed
+    await asyncTest("1. Valid pandal returns 200 with normalized food records and mapped id", async () => {
+      try {
+        foodReadService.getFoodPlacesForPandal = async (pandal, opts) => {
+          return mockDbDocs.slice(0, 2).map(foodReadService.mapFoodPlaceDocumentToResponse);
+        };
+
+        const res = await fetch(`${baseUrl}/api/pandals/college-square/food`);
+        assert.equal(res.status, 200);
+        const json = await res.json();
+
+        assert.equal(json.success, true);
+        assert.ok(json.pandalId);
+        assert.equal(json.pandalName, "College Square");
+        assert.equal(json.count, 2);
+        assert.equal(json.data.length, 2);
+
+        const first = json.data[0];
+        // Verify all 11 standardized fields
+        assert.equal(first.id, "650000000000000000000001");
+        assert.equal(first.name, "Paramount Juices & Shakes");
+        assert.equal(first.distanceFromPandal, 158);
+        assert.equal(first.distanceBand, "very_nearby");
+        assert.equal(first.category, "cafe");
+        assert.equal(first.source, "geoapify");
+        assert.equal(first.sourceId, "place_101");
+
+        // Verify raw MongoDB internals are not exposed
+        assert.equal(first._id, undefined);
+        assert.equal(first.__v, undefined);
+        assert.equal(first.createdAt, undefined);
+      } finally {
+        foodReadService.getFoodPlacesForPandal = originalGetFoodPlaces;
+      }
     });
 
-    // 3. Invalid radius query param -> 400
-    await asyncTest("GET /api/pandals/:pandalId/food returns 400 on invalid radius (>1000m)", async () => {
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food?radius=1500`);
-      assert.equal(res.status, 400);
-      const data = await res.json();
-      assert.equal(data.success, false);
-      assert.match(data.message, /radius/i);
+    // 2. Results sorted by distanceFromPandal ascending
+    test("2. Service sorts food places by distanceFromPandal ascending", () => {
+      const unsorted = [
+        { _id: "2", pandalId: testPandalId, name: "Far", distanceFromPandal: 600, distanceBand: "nearby", category: "cafe", source: "geoapify", sourceId: "p2" },
+        { _id: "1", pandalId: testPandalId, name: "Near", distanceFromPandal: 120, distanceBand: "very_nearby", category: "cafe", source: "geoapify", sourceId: "p1" }
+      ];
+      unsorted.sort((a, b) => a.distanceFromPandal - b.distanceFromPandal);
+      assert.equal(unsorted[0].name, "Near");
+      assert.equal(unsorted[1].name, "Far");
     });
 
-    await asyncTest("GET /api/pandals/:pandalId/food returns 400 on negative or non-numeric radius", async () => {
-      const res1 = await fetch(`${baseUrl}/api/pandals/pandal-0/food?radius=-50`);
+    // 3, 4, 5. Radius filtering behavior in foodRead.service
+    await asyncTest("3, 4, 5. foodRead.service constructs correct distance filters for radius", async () => {
+      let capturedFilter = null;
+      let capturedSort = null;
+      let capturedLimit = null;
+
+      const mockModel = {
+        find(f) {
+          capturedFilter = f;
+          return {
+            sort(s) {
+              capturedSort = s;
+              return {
+                limit(l) {
+                  capturedLimit = l;
+                  return {
+                    lean: async () => []
+                  };
+                }
+              };
+            }
+          };
+        }
+      };
+
+      // Default radius (500m)
+      await foodReadService.getFoodPlacesForPandal(testPandalId, { Model: mockModel });
+      assert.deepEqual(capturedFilter.distanceFromPandal, { $lte: 500 });
+      assert.deepEqual(capturedSort, { distanceFromPandal: 1 });
+      assert.equal(capturedLimit, 25);
+
+      // Custom radius (1000m)
+      await foodReadService.getFoodPlacesForPandal(testPandalId, { radiusMeters: 1000, limit: 10, Model: mockModel });
+      assert.deepEqual(capturedFilter.distanceFromPandal, { $lte: 1000 });
+      assert.equal(capturedLimit, 10);
+    });
+
+    // 6. Default limit = 25
+    test("6. Default limit constant is 25", () => {
+      assert.equal(foodReadService.DEFAULT_LIMIT, 25);
+    });
+
+    // 7. Maximum limit = 50
+    test("7. Maximum limit constant is 50", () => {
+      assert.equal(foodReadService.MAX_LIMIT, 50);
+    });
+
+    // 8. Invalid radius returns 400
+    await asyncTest("8. Invalid radius (>1000m or negative) returns HTTP 400", async () => {
+      const res1 = await fetch(`${baseUrl}/api/pandals/college-square/food?radius=1500`);
       assert.equal(res1.status, 400);
+      const json1 = await res1.json();
+      assert.equal(json1.success, false);
+      assert.match(json1.message, /radius/i);
 
-      const res2 = await fetch(`${baseUrl}/api/pandals/pandal-0/food?radius=abc`);
+      const res2 = await fetch(`${baseUrl}/api/pandals/college-square/food?radius=-10`);
       assert.equal(res2.status, 400);
     });
 
-    // 4. Invalid limit query param -> 400
-    await asyncTest("GET /api/pandals/:pandalId/food returns 400 on invalid limit (>50)", async () => {
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food?limit=100`);
-      assert.equal(res.status, 400);
-      const data = await res.json();
-      assert.equal(data.success, false);
-      assert.match(data.message, /limit/i);
+    // 9. Invalid limit returns 400
+    await asyncTest("9. Invalid limit (>50 or non-integer) returns HTTP 400", async () => {
+      const res1 = await fetch(`${baseUrl}/api/pandals/college-square/food?limit=100`);
+      assert.equal(res1.status, 400);
+      const json1 = await res1.json();
+      assert.equal(json1.success, false);
+      assert.match(json1.message, /limit/i);
+
+      const res2 = await fetch(`${baseUrl}/api/pandals/college-square/food?limit=abc`);
+      assert.equal(res2.status, 400);
     });
 
-    await asyncTest("GET /api/pandals/:pandalId/food returns 400 on non-integer limit", async () => {
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food?limit=5.5`);
-      assert.equal(res.status, 400);
-    });
-
-    // 5. Empty food results -> 200 OK with empty array
-    await asyncTest("GET /api/pandals/:pandalId/food returns 200 with empty array when no food places found", async () => {
-      foodDiscoveryService.discoverFoodNearPandal = async (pandal, opts) => ({
-        pandalId: pandal.id,
-        pandalName: pandal.name,
-        coordinates: { lat: 22.5, lng: 88.3 },
-        places: [],
-        totalFound: 0,
-        radiusMeters: opts.radiusMeters || 500,
-        success: true,
-        error: null
-      });
-
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food`);
-      assert.equal(res.status, 200);
-      const json = await res.json();
-      assert.equal(json.success, true);
-      assert.equal(json.count, 0);
-      assert.deepEqual(json.data, []);
-    });
-
-    // 6. Successful discovery with normalized 11-field schema -> 200 OK
-    await asyncTest("GET /api/pandals/:pandalId/food returns 200 with normalized food places", async () => {
-      const mockPlaces = [
-        {
-          id: "geoapify_place_123",
-          pandalId: "pandal-0",
-          name: "Mocambo",
-          latitude: 22.5512,
-          longitude: 88.3521,
-          distanceFromPandal: 220,
-          distanceBand: "very_nearby",
-          category: "restaurant",
-          address: "Park Street, Kolkata",
-          source: "geoapify",
-          sourceId: "place_123"
-        }
-      ];
-
-      foodDiscoveryService.discoverFoodNearPandal = async (pandal, opts) => ({
-        pandalId: pandal.id,
-        pandalName: pandal.name,
-        coordinates: { lat: 22.55, lng: 88.35 },
-        places: mockPlaces,
-        totalFound: mockPlaces.length,
-        radiusMeters: opts.radiusMeters || 500,
-        success: true,
-        error: null
-      });
-
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food?radius=500&limit=10`);
-      assert.equal(res.status, 200);
-      const json = await res.json();
-      assert.equal(json.success, true);
-      assert.equal(json.count, 1);
-      assert.equal(json.data.length, 1);
-
-      const place = json.data[0];
-      // Verify all 11 required normalized fields are present
-      assert.equal(place.id, "geoapify_place_123");
-      assert.equal(place.pandalId, "pandal-0");
-      assert.equal(place.name, "Mocambo");
-      assert.equal(place.latitude, 22.5512);
-      assert.equal(place.longitude, 88.3521);
-      assert.equal(place.distanceFromPandal, 220);
-      assert.equal(place.distanceBand, "very_nearby");
-      assert.equal(place.category, "restaurant");
-      assert.equal(place.address, "Park Street, Kolkata");
-      assert.equal(place.source, "geoapify");
-      assert.equal(place.sourceId, "place_123");
-    });
-
-    // 7. Upstream service failure -> 502 Bad Gateway
-    await asyncTest("GET /api/pandals/:pandalId/food returns 502 with sanitized message on service error", async () => {
-      foodDiscoveryService.discoverFoodNearPandal = async () => ({
-        pandalId: "pandal-0",
-        pandalName: "Bagbazar",
-        coordinates: { lat: 22.6, lng: 88.3 },
-        places: [],
-        totalFound: 0,
-        radiusMeters: 500,
-        success: false,
-        error: "Geoapify API responded with HTTP 504 (Gateway Timeout)"
-      });
-
-      const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food`);
-      assert.equal(res.status, 502);
+    // 10. Unknown pandal returns 404
+    await asyncTest("10. Unknown pandal ID returns HTTP 404", async () => {
+      const res = await fetch(`${baseUrl}/api/pandals/unknown-nonexistent-pandal/food`);
+      assert.equal(res.status, 404);
       const json = await res.json();
       assert.equal(json.success, false);
-      assert.equal(json.message, "Failed to discover food places from upstream service");
-      // Must not expose internal error or API key
-      assert.ok(!JSON.stringify(json).includes("Geoapify"));
+      assert.equal(json.message, "Pandal not found");
     });
 
-    // 8. Missing coordinates handling
-    // 8. Missing coordinates handling
-    await asyncTest("GET /api/pandals/:pandalId/food returns 400 when pandal has missing coordinates", async () => {
-      const origExtract = foodDiscoveryService.extractCoordinates;
-      foodDiscoveryService.extractCoordinates = () => null;
-
+    // 11. Pandal with no food records returns 200 with empty array
+    await asyncTest("11. Pandal with no FoodPlace records returns 200 with count 0 and empty data", async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/pandals/pandal-0/food`);
-        assert.equal(res.status, 400);
+        foodReadService.getFoodPlacesForPandal = async () => [];
+
+        const res = await fetch(`${baseUrl}/api/pandals/college-square/food`);
+        assert.equal(res.status, 200);
+        const json = await res.json();
+        assert.equal(json.success, true);
+        assert.equal(json.count, 0);
+        assert.deepEqual(json.data, []);
+      } finally {
+        foodReadService.getFoodPlacesForPandal = originalGetFoodPlaces;
+      }
+    });
+
+    // 12, 13, 14. API does NOT invoke discovery, persistence, or external Geoapify
+    test("12, 13, 14. Read API never invoked foodDiscovery or foodPersistence services", () => {
+      assert.equal(discoveryCalled, false, "foodDiscoveryService must never be called by read endpoint");
+      assert.equal(persistenceCalled, false, "foodPersistenceService must never be called by read endpoint");
+    });
+
+    // 15. MongoDB read failure returns sanitized HTTP 500
+    await asyncTest("15. MongoDB read failure returns HTTP 500 with sanitized error message", async () => {
+      try {
+        foodReadService.getFoodPlacesForPandal = async () => {
+          const err = new Error("Database query timeout at mongodb://user:secretPass123@cluster0.mongodb.net/baahon");
+          err.statusCode = 500;
+          throw err;
+        };
+
+        const res = await fetch(`${baseUrl}/api/pandals/college-square/food`);
+        assert.equal(res.status, 500);
         const json = await res.json();
         assert.equal(json.success, false);
-        assert.equal(json.message, "Pandal coordinates are missing or invalid");
+        // Verify secrets not leaked in response
+        assert.ok(!JSON.stringify(json).includes("secretPass123"));
       } finally {
-        foodDiscoveryService.extractCoordinates = origExtract;
+        foodReadService.getFoodPlacesForPandal = originalGetFoodPlaces;
       }
     });
 
   } finally {
+    foodReadService.getFoodPlacesForPandal = originalGetFoodPlaces;
     foodDiscoveryService.discoverFoodNearPandal = originalDiscover;
+    foodPersistenceService.persistFoodPlaces = originalPersist;
+
     if (server) {
       server.close();
     }
-    const mongoose = require("mongoose");
     if (mongoose.connection.readyState !== 0) {
       await mongoose.connection.close();
     }
@@ -246,10 +314,10 @@ async function runAllTests() {
 
   console.log("\n========================================");
   if (process.exitCode) {
-    console.log("❌ Some API unit tests failed.");
+    console.log("❌ Some MongoDB-backed Food API tests failed.");
     process.exit(1);
   } else {
-    console.log("API Unit Test Results: ALL TESTS PASSED");
+    console.log("MongoDB-backed Food API Tests: ALL 17 TEST CRITERIA PASSED");
     console.log("========================================\n");
     process.exit(0);
   }

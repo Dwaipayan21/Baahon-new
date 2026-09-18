@@ -1,15 +1,18 @@
 /**
  * Food Controller (Backend)
  * 
- * Handles discovery of nearby food places around Durga Puja pandals.
- * Validates pandal resolution, coordinates, and query parameters before invoking
- * the foodDiscoveryService.
+ * Handles reading nearby food places around Durga Puja pandals from MongoDB.
+ * Validates pandal resolution and query parameters before delegating to foodRead.service.js.
+ * 
+ * READ-ONLY:
+ * Does NOT call Geoapify or Overpass.
+ * Does NOT invoke food discovery or persistence workflows.
  */
 
 const mongoose = require("mongoose");
 const Pandal = require("../models/pandal.model.js");
 const rawPandals = require("../data/pandals.json");
-const foodDiscoveryService = require("../services/foodDiscovery.service.js");
+const foodReadService = require("../services/foodRead.service.js");
 
 const MAX_RADIUS_METERS = 1000;
 const MAX_LIMIT = 50;
@@ -45,35 +48,57 @@ async function resolvePandal(pandalId) {
   }
 
   // 2. Search fallback in rawPandals
+  let matchedPandal = null;
+
   // Check index pattern: 'pandal-0', 'pandal-1', etc. or pure integer
   const indexMatch = trimmedId.match(/^pandal-(\d+)$/i) || trimmedId.match(/^(\d+)$/);
   if (indexMatch) {
     const idx = parseInt(indexMatch[1], 10);
     if (idx >= 0 && idx < rawPandals.length) {
-      return { ...rawPandals[idx], id: `pandal-${idx}` };
+      matchedPandal = { ...rawPandals[idx], id: `pandal-${idx}` };
     }
   }
 
   // Match by exact name or slug
-  const normalizedSearch = trimmedId.toLowerCase().replace(/[^a-z0-9]/g, "");
-  for (let i = 0; i < rawPandals.length; i++) {
-    const p = rawPandals[i];
-    const pName = p.name ? p.name.trim() : "";
-    if (pName.toLowerCase() === trimmedId.toLowerCase()) {
-      return { ...p, id: `pandal-${i}` };
-    }
-    const pSlug = pName.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (pSlug && pSlug === normalizedSearch) {
-      return { ...p, id: `pandal-${i}` };
+  if (!matchedPandal) {
+    const normalizedSearch = trimmedId.toLowerCase().replace(/[^a-z0-9]/g, "");
+    for (let i = 0; i < rawPandals.length; i++) {
+      const p = rawPandals[i];
+      const pName = p.name ? p.name.trim() : "";
+      if (pName.toLowerCase() === trimmedId.toLowerCase()) {
+        matchedPandal = { ...p, id: `pandal-${i}` };
+        break;
+      }
+      const pSlug = pName.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (pSlug && pSlug === normalizedSearch) {
+        matchedPandal = { ...p, id: `pandal-${i}` };
+        break;
+      }
     }
   }
 
-  return null;
+  if (!matchedPandal) {
+    return null;
+  }
+
+  // If matched from static data and MongoDB is connected, associate with the MongoDB document _id
+  if (!matchedPandal._id && mongoose.connection.readyState === 1) {
+    try {
+      const dbPandal = await Pandal.findOne({ name: matchedPandal.name }).lean();
+      if (dbPandal) {
+        matchedPandal._id = dbPandal._id;
+      }
+    } catch {
+      // Ignore DB lookup error and proceed with static pandal
+    }
+  }
+
+  return matchedPandal;
 }
 
 /**
  * GET /api/pandals/:pandalId/food
- * Discovers food places near the specified pandal.
+ * Reads stored food places for the specified pandal from MongoDB.
  */
 async function getFoodForPandal(req, res, next) {
   try {
@@ -88,7 +113,7 @@ async function getFoodForPandal(req, res, next) {
     }
 
     // Validate query parameter: radius
-    let radiusMeters = foodDiscoveryService.FOOD_SEARCH_RADIUS_METERS;
+    let radiusMeters = foodReadService.DEFAULT_SEARCH_RADIUS_METERS;
     if (req.query.radius !== undefined) {
       const parsedRadius = Number(req.query.radius);
       if (!Number.isFinite(parsedRadius) || parsedRadius <= 0 || parsedRadius > MAX_RADIUS_METERS) {
@@ -122,28 +147,11 @@ async function getFoodForPandal(req, res, next) {
       });
     }
 
-    // Validate coordinates before invoking food discovery service
-    const coords = foodDiscoveryService.extractCoordinates(pandal);
-    if (!coords) {
-      return res.status(400).json({
-        success: false,
-        message: "Pandal coordinates are missing or invalid"
-      });
-    }
-
-    // Invoke food discovery service
-    const result = await foodDiscoveryService.discoverFoodNearPandal(pandal, {
+    // Read stored food places from MongoDB (read-only query)
+    const places = await foodReadService.getFoodPlacesForPandal(pandal, {
       radiusMeters,
       limit
     });
-
-    // Handle service / upstream errors
-    if (!result.success) {
-      return res.status(502).json({
-        success: false,
-        message: "Failed to discover food places from upstream service"
-      });
-    }
 
     const resolvedId = pandal._id ? String(pandal._id) : (pandal.id || pandalId);
 
@@ -151,10 +159,15 @@ async function getFoodForPandal(req, res, next) {
       success: true,
       pandalId: resolvedId,
       pandalName: pandal.name || "Durga Puja Pandal",
-      count: result.places.length,
-      data: result.places
+      count: places.length,
+      data: places
     });
   } catch (error) {
+    if (error && error.message) {
+      error.message = error.message.replace(/mongodb(\+srv)?:\/\/[^@\s]+@/gi, "mongodb://$1<redacted>@");
+      error.message = error.message.replace(/apiKey=[a-zA-Z0-9_-]+/gi, "apiKey=<redacted>");
+      error.message = error.message.replace(/key=[a-zA-Z0-9_-]+/gi, "key=<redacted>");
+    }
     next(error);
   }
 }
