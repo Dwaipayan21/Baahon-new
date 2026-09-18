@@ -1,79 +1,40 @@
+import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
 
-require("dotenv").config();
+import {
+  getAllPandals,
+  getPandalById,
+} from "./controllers/pandal.controller.js";
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-
-const Pandal = require("./models/pandal.model.js");
-const errorHandler = require("./middleware/errorHandler.js");
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected successfully");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error.message);
-  });
-
-// GET all pandals
-app.get("/api/pandals", async (req, res, next) => {
-  try {
-    const pandals = await Pandal.find();
-
-    res.status(200).json({
-      success: true,
-      count: pandals.length,
-      data: pandals,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// GET one pandal by ID
-app.get("/api/pandals/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    // Check if ID is valid
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      const error = new Error("Invalid pandal ID");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const pandal = await Pandal.findById(id);
-
-    if (!pandal) {
-      const error = new Error("Pandal not found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({
-      success: true,
-      data: pandal,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+// Routes
+app.get("/api/pandals", getAllPandals);
+app.get("/api/pandals/:id", getPandalById);
 
 // Centralized error handler
 app.use(errorHandler);
 
-// Start server
-const PORT = process.env.PORT || 5000;
+// MongoDB connection and server start
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected successfully");
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
+  });

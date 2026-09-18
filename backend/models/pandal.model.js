@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const pandalSchema = new mongoose.Schema(
   {
@@ -71,4 +71,6 @@ pandalSchema.index({
   location: "2dsphere",
 });
 
-module.exports = mongoose.model("Pandal", pandalSchema);
+const Pandal = mongoose.model("Pandal", pandalSchema);
+
+export default Pandal;

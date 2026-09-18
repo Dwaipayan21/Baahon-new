@@ -3,7 +3,31 @@ import Pandal from "../models/pandal.model.js";
 // GET /api/pandals
 export const getAllPandals = async (req, res, next) => {
   try {
-    const pandals = await Pandal.find();
+    const {search, area, category} = req.query;
+    const filter = {};
+
+    //search by pandal name , area or address
+    if(search?.trim()){
+      const regex = new RegExp(search.trim(), "i");
+
+      filter.$or = [
+        {name : regex},
+        {area: regex},
+        {address: regex},
+      ];
+    }
+
+    //filter by area 
+    if(area?.trim()){
+      filter.area = new RegExp(`^${area.trim()}$`, "i");
+    }
+
+    //filter by category 
+    if(category?.trim()){
+      filter.category = new RegExp(`^${category.trim()}$`, "i");
+    }
+
+    const pandals = await Pandal.find(filter);
 
     res.status(200).json({
       success: true,
