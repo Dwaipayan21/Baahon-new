@@ -1,5 +1,7 @@
 import Pandal from "../models/pandal.model.js";
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // GET /api/pandals
 export const getAllPandals = async (req, res, next) => {
   try {
@@ -8,7 +10,7 @@ export const getAllPandals = async (req, res, next) => {
 
     //search by pandal name , area or address
     if(search?.trim()){
-      const regex = new RegExp(search.trim(), "i");
+      const regex = new RegExp(escapeRegex(search.trim()), "i");
 
       filter.$or = [
         {name : regex},
@@ -19,12 +21,12 @@ export const getAllPandals = async (req, res, next) => {
 
     //filter by area 
     if(area?.trim()){
-      filter.area = new RegExp(`^${area.trim()}$`, "i");
+      filter.area = new RegExp(`^${escapeRegex(area.trim())}$`, "i");
     }
 
     //filter by category 
     if(category?.trim()){
-      filter.category = new RegExp(`^${category.trim()}$`, "i");
+      filter.category = new RegExp(`^${escapeRegex(category.trim())}$`, "i");
     }
 
     const pandals = await Pandal.find(filter);
