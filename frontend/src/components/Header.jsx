@@ -1,9 +1,40 @@
-const Header = ({ metroActive, onToggleMetro }) => {
+import { useState } from 'react';
+
+const Header = ({ metroActive, onToggleMetro, onNavigate }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className="fixed top-0 inset-x-0 z-40 bg-[#faf8ff]/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-slate-200/50">
       <div className="h-16 px-4 sm:px-6 max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo & Brand Title */}
+        {/* Left Side: Hamburger & Logo */}
         <div className="flex items-center gap-3">
+          {/* Hamburger Menu */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-slate-200/50 transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[24px]">menu</span>
+            </button>
+            {menuOpen && (
+              <div className="absolute top-12 left-0 mt-2 w-48 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-100 py-2 z-50 flex flex-col">
+                <button
+                  onClick={() => { setMenuOpen(false); onNavigate?.("profile"); }}
+                  className="px-4 py-2.5 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#005bb3] transition-colors"
+                >
+                  PROFILE
+                </button>
+                <button
+                  onClick={() => { setMenuOpen(false); onNavigate?.("scoreboard"); }}
+                  className="px-4 py-2.5 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#005bb3] transition-colors"
+                >
+                  SCOREBOARD
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#005bb3] to-[#257ce6] flex items-center justify-center text-white shadow-[0_2px_8px_rgba(0,91,179,0.25)]">
             <span className="material-symbols-outlined text-[20px]">
               temple_hindu
@@ -25,22 +56,8 @@ const Header = ({ metroActive, onToggleMetro }) => {
           </div>
         </div>
 
-        {/* Right Actions: Desktop Metro Quick Toggle & User Avatar */}
+        {/* Right Actions: User Avatar */}
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={onToggleMetro}
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
-              metroActive
-                ? "bg-blue-50 border-blue-200 text-[#005bb3] shadow-xs"
-                : "bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[16px]">
-              directions_subway
-            </span>
-            <span>{metroActive ? "Metro: Active" : "Metro Lines"}</span>
-          </button>
 
           <button
             type="button"

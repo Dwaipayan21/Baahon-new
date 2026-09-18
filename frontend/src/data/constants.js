@@ -56,6 +56,28 @@ export const METRO_DATA = {
       { lat: 22.58, lng: 88.431, name: "Salt Lake Sector V" },
     ],
   },
+  orangeLine: {
+    name: "Orange Line (Kavi Subhash - Airport)",
+    color: "#f97316",
+    path: [
+      { lat: 22.47, lng: 88.397, name: "Kavi Subhash" },
+      { lat: 22.483, lng: 88.395, name: "Satyajit Ray" },
+      { lat: 22.514, lng: 88.402, name: "Hemanta Mukhopadhyay" },
+      { lat: 22.58, lng: 88.431, name: "Salt Lake Sector V" },
+      { lat: 22.62, lng: 88.45, name: "City Centre 2" },
+      { lat: 22.643, lng: 88.437, name: "Biman Bandar" },
+    ],
+  },
+  yellowLine: {
+    name: "Yellow Line (Noapara - Barasat)",
+    color: "#eab308",
+    path: [
+      { lat: 22.639, lng: 88.393, name: "Noapara" },
+      { lat: 22.645, lng: 88.423, name: "Jessore Road" },
+      { lat: 22.643, lng: 88.437, name: "Biman Bandar" },
+      { lat: 22.72, lng: 88.48, name: "Barasat" },
+    ],
+  },
 };
 
 export const PANDAL_FALLBACK_IMAGES = [

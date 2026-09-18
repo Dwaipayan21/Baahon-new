@@ -164,6 +164,12 @@ const App = () => {
       <Header
         metroActive={metroActive}
         onToggleMetro={() => setMetroActive((prev) => !prev)}
+        onNavigate={(tab) => {
+          setActiveNavTab(tab);
+          if (tab !== "explore") {
+            showToast(`${tab.toUpperCase()} coming soon!`);
+          }
+        }}
       />
 
       {/* 2. Main Map Canvas Viewport */}

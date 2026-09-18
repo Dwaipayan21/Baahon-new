@@ -204,6 +204,40 @@ const KolkataSvgMap = ({
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+            {/* Orange Line (Kavi Subhash - Airport) */}
+            <path
+              d="M 160 770 L 180 700 L 200 600 L 220 500 L 260 400 L 290 300 L 350 150"
+              fill="none"
+              stroke="#f97316"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 160 770 L 180 700 L 200 600 L 220 500 L 260 400 L 290 300 L 350 150"
+              fill="none"
+              stroke="#fdba74"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            {/* Yellow Line (Noapara - Barasat) */}
+            <path
+              d="M 182 100 L 250 100 L 350 150 L 400 50"
+              fill="none"
+              stroke="#eab308"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 182 100 L 250 100 L 350 150 L 400 50"
+              fill="none"
+              stroke="#fde047"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
             {/* Tunnel across Hooghly */}
             <path d="M 70 220 L 105 223" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeDasharray="3 3" />
 
