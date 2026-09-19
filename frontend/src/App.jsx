@@ -10,6 +10,7 @@ import GoogleMapCanvas from "./components/GoogleMapCanvas";
 import PandalBottomSheet from "./components/PandalBottomSheet";
 import PandalDetailsModal from "./components/PandalDetailsModal";
 import BottomNavigation from "./components/BottomNavigation";
+import LoadingScreen from "./components/LoadingScreen";
 
 const App = () => {
   const [pandals, setPandals] = useState([]);
@@ -159,7 +160,11 @@ const App = () => {
   };
 
   return (
-    <div className="relative w-full h-screen h-[100dvh] flex flex-col bg-[#faf8ff] text-[#131b2e] overflow-hidden">
+    <>
+      <LoadingScreen ready={!loading} />
+
+      <div className="relative w-full h-screen h-[100dvh] flex flex-col bg-[#faf8ff] text-[#131b2e] overflow-hidden">
+
       {/* 1. Header Bar */}
       <Header
         metroActive={metroActive}
@@ -260,19 +265,6 @@ const App = () => {
           </div>
         )}
 
-        {/* 7. Loading Spinner if Initial Load */}
-        {loading && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-xs">
-            <div className="flex flex-col items-center gap-2 text-[#005bb3]">
-              <span className="material-symbols-outlined text-[36px] animate-spin">
-                progress_activity
-              </span>
-              <span className="text-xs font-bold tracking-wide">
-                Loading Kolkata Pandals...
-              </span>
-            </div>
-          </div>
-        )}
       </main>
 
       {/* 8. Pandal Extended Details Modal */}
@@ -295,7 +287,8 @@ const App = () => {
           }}
         />
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

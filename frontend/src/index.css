@@ -75,3 +75,237 @@
     opacity: 1;
   }
 }
+/* =========================================================
+   PujoPath Loader
+   Converted from the supplied pujopath-loader.html
+   ========================================================= */
+
+.pujo-loader {
+  --pp-duration: 4s;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 99999;
+
+  overflow: hidden;
+  touch-action: none;
+
+  background: radial-gradient(
+    #fbf8f2,
+    #f3ede2
+  );
+
+  opacity: 1;
+
+  transition: opacity 0.6s ease;
+
+  pointer-events: auto;
+}
+
+.pujo-loader.is-fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Main animated layer */
+.pujo-loader .pp-st {
+  position: absolute;
+  inset: 0;
+
+  transform-origin: 50% 48%;
+
+  will-change: transform;
+
+  animation:
+    pp-zoom var(--pp-duration)
+    ease-in both;
+}
+
+/* Corner alpana motifs */
+.pujo-loader .pp-m {
+  position: absolute;
+
+  width: 44vw;
+  max-width: 220px;
+
+  transform:
+    translate(-50%, -50%);
+
+  opacity: 0.75;
+
+  pointer-events: none;
+}
+
+/* Main PujoPath artwork */
+.pujo-loader .pp-lg {
+  position: absolute;
+
+  left: 50%;
+  top: 48%;
+
+  width: 66vw;
+  max-width: 340px;
+
+  transform:
+    translate(-50%, -50%);
+
+  pointer-events: none;
+}
+
+/* Golden highlight/shadow layer */
+.pujo-loader .pp-sh {
+  opacity: 0;
+
+  animation:
+    pp-glow var(--pp-duration)
+    ease-in-out both;
+}
+
+/* Moving light sweep */
+.pujo-loader .pp-sw {
+  position: absolute;
+
+  left: -50%;
+  top: -50%;
+
+  width: 200%;
+  height: 200%;
+
+  opacity: 0;
+
+  transform:
+    rotate(35deg)
+    translateY(5%);
+
+  animation:
+    pp-sweep var(--pp-duration)
+    linear both;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      rgba(112, 78, 34, 0) 40%,
+      rgba(112, 78, 34, 0.12) 44%,
+      rgba(112, 78, 34, 0) 48%,
+
+      rgba(112, 78, 34, 0) 52%,
+      rgba(112, 78, 34, 0.09) 55.5%,
+      rgba(112, 78, 34, 0) 59%
+    );
+}
+
+
+/* =========================================================
+   Original animation: z
+   Main artwork slowly zooms in
+   ========================================================= */
+
+@keyframes pp-zoom {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.11);
+  }
+}
+
+
+/* =========================================================
+   Original animation: g
+   Golden highlight appears and disappears
+   ========================================================= */
+
+@keyframes pp-glow {
+  0%,
+  27% {
+    opacity: 0;
+  }
+
+  62% {
+    opacity: 1;
+  }
+
+  78%,
+  100% {
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   Original animation: s
+   Moving light sweep
+   ========================================================= */
+
+@keyframes pp-sweep {
+  0% {
+    opacity: 0;
+    transform:
+      rotate(35deg)
+      translateY(5%);
+  }
+
+  25% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  55% {
+    transform:
+      rotate(35deg)
+      translateY(-1.6%);
+  }
+
+  75% {
+    transform:
+      rotate(35deg)
+      translateY(-9.7%);
+  }
+
+  85% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      rotate(35deg)
+      translateY(-23.6%);
+  }
+}
+
+
+/* =========================================================
+   Landscape layout
+   ========================================================= */
+
+@media (orientation: landscape) {
+  .pujo-loader .pp-lg {
+    width: auto;
+
+    height: 70vh;
+    max-height: 340px;
+  }
+}
+
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .pujo-loader * {
+    animation: none !important;
+  }
+
+  .pujo-loader {
+    transition: opacity 0.3s ease;
+  }
+}
