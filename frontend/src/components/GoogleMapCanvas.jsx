@@ -95,6 +95,8 @@ const GoogleMapCanvas = ({
   onMapReady,
   zoom = 1,
 }) => {
+
+ 
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -165,6 +167,8 @@ const GoogleMapCanvas = ({
     const lines = [
       METRO_DATA.blueLine,
       METRO_DATA.greenLine,
+      METRO_DATA.orangeLine,
+      METRO_DATA.yellowLine,
     ];
 
     const objects = [];

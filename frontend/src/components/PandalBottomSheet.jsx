@@ -17,7 +17,7 @@ const PandalBottomSheet = ({
 
   return (
     <div
-      className={`bg-white rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)] border border-slate-100 p-4 relative z-30 flex flex-col gap-3 transition-all duration-300 select-none ${
+      className={`animate-[slideUp_0.4s_ease-out] bg-white rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)] border border-slate-100 p-4 relative z-30 flex flex-col gap-3 transition-all duration-300 select-none ${
         isDesktop ? "rounded-2xl max-w-sm shadow-[0_12px_36px_rgba(15,23,42,0.12)]" : "w-full"
       }`}
     >
@@ -127,11 +127,10 @@ const PandalBottomSheet = ({
 
         <button
           type="button"
-          onClick={() => onStartWalking(pandal)}
-          className="h-11 rounded-full bg-[#005bb3] hover:bg-[#1173dd] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_14px_rgba(0,91,179,0.25)] transition-all cursor-pointer active:scale-95"
+          className="h-11 rounded-full bg-[#005bb3] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_14px_rgba(0,91,179,0.25)] cursor-default"
         >
-          <span className="material-symbols-outlined text-[18px]">directions</span>
-          <span>Directions</span>
+          <span className="material-symbols-outlined text-[18px]">add_location</span>
+          <span>ADD STOP</span>
         </button>
       </div>
     </div>
