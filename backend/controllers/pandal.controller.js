@@ -41,6 +41,40 @@ export const getAllPandals = async (req, res, next) => {
   }
 };
 
+// GET /api/pandals/nearby
+export const getNearbyPandals = async( req, res, next )=> {
+  try {
+    const lng = Number(req.query.longitude);
+    const lat = Number(req.query.latitude);
+    const maxDistance = Number(req.query.maxDistance) || 5000; //5km radius by default 
+
+    if(!Number.isFinite(lng) || !Number.isFinite(lat) ||
+    lng< -180 || lng > 180 || lat < -90 || lat > 90){
+      return res.status(400).json({
+        success: false,
+        message: "Invalid coordinates",
+      });
+    }
+
+    const pandals = await Pandal.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lng,lat] },
+          $maxDistance: maxDistance,
+        },
+      },
+    });
+
+    res.json({
+      success:true,
+      count: pandals.length,
+      data: pandals,
+    });
+  } catch (error) {
+    next (error);
+  }
+}
+
 // GET /api/pandals/:id
 export const getPandalById = async (req, res, next) => {
   try {
