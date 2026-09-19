@@ -1,8 +1,7 @@
-require("dotenv").config();
-
-const mongoose = require("mongoose");
-const Pandal = require("./models/pandal.model.js");
-const rawPandals = require("./data/pandals.json");
+import "dotenv/config";
+import mongoose from "mongoose";
+import Pandal from "./models/pandal.model.js";
+import rawPandals from "./data/pandals.json" with { type: "json" };
 
 const formatPandal = ({
   ["location/type"]: type,
@@ -10,14 +9,41 @@ const formatPandal = ({
   ["location/coordinates/1"]: latitude,
   verified,
   ...pandal
-}) => ({
-  ...pandal,
-  verified: String(verified).trim().toLowerCase() === "true",
-  location: {
-    type,
-    coordinates: [Number(longitude), Number(latitude)],
-  },
-});
+}) => {
+  if (
+    type !== "Point" ||
+    longitude == null ||
+    latitude == null ||
+    String(longitude).trim() === "" ||
+    String(latitude).trim() === ""
+  ) {
+    throw new Error(`Invalid coordinates for "${pandal.name}"`);
+  }
+
+  const coordinates = [Number(longitude), Number(latitude)];
+
+  if (
+    !Number.isFinite(coordinates[0]) ||
+    !Number.isFinite(coordinates[1]) ||
+    coordinates[0] < -180 ||
+    coordinates[0] > 180 ||
+    coordinates[1] < -90 ||
+    coordinates[1] > 90
+  ) {
+    throw new Error(
+      `Invalid GeoJSON coordinates for "${pandal.name}": [${coordinates.join(", ")}]`
+    );
+  }
+
+  return {
+    ...pandal,
+    verified: String(verified).trim().toLowerCase() === "true",
+    location: {
+      type: "Point",
+      coordinates,
+    },
+  };
+};
 
 const seedDatabase = async () => {
   try {
