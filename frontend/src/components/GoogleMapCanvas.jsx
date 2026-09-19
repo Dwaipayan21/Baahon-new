@@ -4,8 +4,47 @@ import {
   KOLKATA_CENTER,
   DEFAULT_ZOOM,
   METRO_DATA,
+  METRO_GEOJSON,
 } from "../data/constants";
 import KolkataSvgMap from "./KolkataSvgMap";
+
+const geoJsonToGooglePath = (geojson) => {
+  const paths = [];
+
+  const processFeature = (feature) => {
+    if (!feature?.geometry) return;
+
+    const { type, coordinates } = feature.geometry;
+
+    if (type === "LineString") {
+      paths.push(
+        coordinates.map(([lng, lat]) => ({
+          lat,
+          lng,
+        }))
+      );
+    }
+
+    if (type === "MultiLineString") {
+      coordinates.forEach((line) => {
+        paths.push(
+          line.map(([lng, lat]) => ({
+            lat,
+            lng,
+          }))
+        );
+      });
+    }
+  };
+
+  if (geojson.type === "FeatureCollection") {
+    geojson.features.forEach(processFeature);
+  } else if (geojson.type === "Feature") {
+    processFeature(geojson);
+  }
+
+  return paths;
+};
 
 const MAP_STYLES = [
   {
@@ -100,7 +139,7 @@ const GoogleMapCanvas = ({
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
-  const metroRef = useRef([]);
+  const metroLinesRef = useRef([]);
   const onSelectRef = useRef(onSelectPandal);
 
   const [loaded, setLoaded] = useState(
@@ -164,61 +203,71 @@ const GoogleMapCanvas = ({
     mapRef.current = map;
     onMapReady?.(map);
 
+    metroLinesRef.current.forEach((line) => {
+      line.setMap(null);
+    });
+    metroLinesRef.current = [];
+
     const lines = [
-      METRO_DATA.blueLine,
-      METRO_DATA.greenLine,
-      METRO_DATA.orangeLine,
-      METRO_DATA.yellowLine,
+      ["blueLine", METRO_DATA.blueLine],
+      ["greenLine", METRO_DATA.greenLine],
+      ["yellowLine", METRO_DATA.yellowLine],
+      ["orangeLine", METRO_DATA.orangeLine],
+      ["purpleLine", METRO_DATA.purpleLine],
     ];
 
-    const objects = [];
+    let cancelled = false;
 
-    lines.forEach((line) => {
-      objects.push(
-        new window.google.maps.Polyline({
-          path: line.path,
-          geodesic: true,
-          strokeColor: line.color,
-          strokeOpacity: 0.9,
-          strokeWeight: 5,
-          map: metroActive ? map : null,
-        })
-      );
+    const loadMetroLines = async () => {
+      for (const [lineKey, line] of lines) {
+        if (!line) continue;
 
-      line.path.forEach((station) => {
-        objects.push(
-          new window.google.maps.Marker({
-            position: {
-              lat: station.lat,
-              lng: station.lng,
-            },
-            title: `Metro: ${station.name}`,
-            icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 4,
-              fillColor: "#fff",
-              fillOpacity: 1,
+        try {
+          const response = await fetch(METRO_GEOJSON[lineKey]);
+
+          if (!response.ok) {
+            throw new Error(`Failed to load ${METRO_GEOJSON[lineKey]}`);
+          }
+
+          const geojson = await response.json();
+          const paths = geoJsonToGooglePath(geojson);
+
+          if (cancelled) return;
+
+          paths.forEach((path) => {
+            if (path.length < 2) return;
+
+            const polyline = new window.google.maps.Polyline({
+              path,
+              geodesic: false,
               strokeColor: line.color,
-              strokeWeight: 2,
-            },
-            map: metroActive ? map : null,
-          })
-        );
-      });
-    });
+              strokeOpacity: 0.95,
+              strokeWeight: 5,
+              map: metroActive ? map : null,
+            });
 
-    metroRef.current = objects;
+            metroLinesRef.current.push(polyline);
+          });
+        } catch (error) {
+          console.error(`Error loading ${line.name}:`, error);
+        }
+      }
+    };
+
+    loadMetroLines();
 
     return () => {
-      objects.forEach((object) => object.setMap(null));
+      cancelled = true;
+      metroLinesRef.current.forEach((line) => line.setMap(null));
+      metroLinesRef.current = [];
       mapRef.current = null;
     };
   }, [loaded]);
 
   // Metro visibility
   useEffect(() => {
-    metroRef.current.forEach((object) => {
-      object.setMap(metroActive ? mapRef.current : null);
+    metroLinesRef.current.forEach((line) => {
+      line.setMap(metroActive ? mapRef.current : null);
     });
   }, [metroActive]);
 
