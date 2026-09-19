@@ -10,10 +10,19 @@ const formatPandal = ({
   verified,
   ...pandal
 }) => {
+  if (
+    type !== "Point" ||
+    longitude == null ||
+    latitude == null ||
+    String(longitude).trim() === "" ||
+    String(latitude).trim() === ""
+  ) {
+    throw new Error(`Invalid coordinates for "${pandal.name}"`);
+  }
+
   const coordinates = [Number(longitude), Number(latitude)];
 
   if (
-    type !== "Point" ||
     !Number.isFinite(coordinates[0]) ||
     !Number.isFinite(coordinates[1]) ||
     coordinates[0] < -180 ||
