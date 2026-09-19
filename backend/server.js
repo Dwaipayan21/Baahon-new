@@ -3,28 +3,19 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import {
-  getAllPandals,
-  getPandalById,
-} from "./controllers/pandal.controller.js";
-
+import pandalRoutes from "./routes/pandal.route.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.get("/api/pandals", getAllPandals);
-app.get("/api/pandals/:id", getPandalById);
+app.use("/api/pandals", pandalRoutes);
 
-// Centralized error handler
 app.use(errorHandler);
 
-// MongoDB connection and server start
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -61,3 +62,54 @@ export const getPandalById = async (req, res, next) => {
     next(error);
   }
 };
+
+//POST /api/pandals
+export const createPandal = async (req, res, next) => {
+  try {
+    const pandal = await Pandal.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Pandla created successfully",
+      data: pandal,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//POST /api.pandals/:id
+export const updatePandal = async(req, res, next) => {
+  try {
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success:false,
+        message: "Invalid pandal ID",
+      });
+    }
+
+    const pandal = await Pandal.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new:true,
+        runValidators: true,
+      }
+    );
+
+    if(!pandal){
+      return res.status(404).json({
+        success:false,
+        message: "Pandal not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Pandal Updated Successfully",
+      data: pandal,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
