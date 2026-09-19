@@ -39,6 +39,14 @@ const pandalSchema = new mongoose.Schema(
       coordinates: {
         type: [Number],
         required: true,
+        validate: {
+          validator: (value) =>
+            value.length === 2 &&
+            Number.isFinite(value[0]) && Number.isFinite(value[1]) &&
+            value[0] >= -180 && value[0] <= 180 && //longitude range
+            value[1] >= -90 && value[1] <= 90,  //latitue range
+          message: "Coordinates must be [longitude, latitude]",
+        },
       },
     },
 
