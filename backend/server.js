@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import pandalRoutes from "./routes/pandal.route.js";
+import pathRoutes from "./routes/path.route.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/pandals", pandalRoutes);
+app.use("/api/routes",pathRoutes);
 
 app.use(errorHandler);
 

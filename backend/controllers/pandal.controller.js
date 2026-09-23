@@ -39,7 +39,8 @@ export const getNearbyPandals = async (req, res, next) => {
   try {
     const lng = Number(req.query.longitude);
     const lat = Number(req.query.latitude);
-    const maxDistance = Number(req.query.maxDistance) || 5000;
+    const maxDistance = req.query.maxDistance === undefined ? 5000
+    : Number(req.query.maxDistance);
 
     if (
       !Number.isFinite(lng) ||
