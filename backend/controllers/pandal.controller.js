@@ -147,4 +147,6 @@ export const updatePandal = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+
 };
+
