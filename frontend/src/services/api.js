@@ -64,3 +64,73 @@ export const getPandalById = async (id) => {
     throw err;
   }
 };
+export const getNearbyPandals = async ({
+  latitude,
+  longitude,
+  maxDistance = 5000,
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      maxDistance: String(maxDistance),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/pandals/nearby?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Nearby pandal request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    const rawList = Array.isArray(json)
+      ? json
+      : json.data || json.pandals || [];
+
+    return rawList.map(normalizePandal);
+  } catch (error) {
+    console.error("Failed to fetch nearby pandals:", error);
+    throw error;
+  }
+};
+export const getWalkingRoute = async ({
+  latitude,
+  longitude,
+  pandalId,
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      pandalId: String(pandalId),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/path?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Route request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error("Failed to fetch walking route:", error);
+    throw error;
+  }
+};

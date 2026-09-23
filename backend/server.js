@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/pandals", pandalRoutes);
-app.use("/api/routes",pathRoutes);
+app.use("/api/path", pathRoutes);
 
 app.use(errorHandler);
 

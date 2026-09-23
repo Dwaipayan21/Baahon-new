@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import {
   KOLKATA_CENTER,
@@ -7,6 +6,7 @@ import {
   METRO_GEOJSON,
 } from "../data/constants";
 import KolkataSvgMap from "./KolkataSvgMap";
+import UserLocationMarker from "./UserLocationMarker";
 
 const geoJsonToGooglePath = (geojson) => {
   const paths = [];
@@ -127,6 +127,8 @@ const createPandalIcon = (selected = false) => {
 const GoogleMapCanvas = ({
   pandals = [],
   selectedPandal,
+  selectedPandals = [],
+  routeSegments = [],
   onSelectPandal,
   metroActive = true,
   activeLayer = "roadmap",
@@ -134,24 +136,28 @@ const GoogleMapCanvas = ({
   onMapReady,
   zoom = 1,
 }) => {
-
- 
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
+  const routeLinesRef = useRef([]);
   const metroLinesRef = useRef([]);
   const onSelectRef = useRef(onSelectPandal);
 
   const [loaded, setLoaded] = useState(
     () => typeof window !== "undefined" && !!window.google?.maps
   );
-  const [error, setError] = useState(false);
 
+  const [error, setError] = useState(false);
+  const [mapInstance, setMapInstance] = useState(null);
+
+  // Keep callbacks up to date
   useEffect(() => {
     onSelectRef.current = onSelectPandal;
   }, [onSelectPandal]);
 
+  // ---------------------------------------------------------
   // Load Google Maps
+  // ---------------------------------------------------------
   useEffect(() => {
     if (loaded || typeof window === "undefined") return;
 
@@ -176,6 +182,7 @@ const GoogleMapCanvas = ({
       script.defer = true;
       script.onload = handleLoad;
       script.onerror = handleError;
+
       document.head.appendChild(script);
     } else {
       script.addEventListener("load", handleLoad);
@@ -188,7 +195,9 @@ const GoogleMapCanvas = ({
     }
   }, [loaded]);
 
-  // Initialize map and metro
+  // ---------------------------------------------------------
+  // Initialize Google Map + Metro
+  // ---------------------------------------------------------
   useEffect(() => {
     if (!loaded || !containerRef.current || mapRef.current) return;
 
@@ -201,11 +210,14 @@ const GoogleMapCanvas = ({
     });
 
     mapRef.current = map;
+    setMapInstance(map);
+
     onMapReady?.(map);
 
     metroLinesRef.current.forEach((line) => {
       line.setMap(null);
     });
+
     metroLinesRef.current = [];
 
     const lines = [
@@ -226,7 +238,9 @@ const GoogleMapCanvas = ({
           const response = await fetch(METRO_GEOJSON[lineKey]);
 
           if (!response.ok) {
-            throw new Error(`Failed to load ${METRO_GEOJSON[lineKey]}`);
+            throw new Error(
+              `Failed to load ${METRO_GEOJSON[lineKey]}`
+            );
           }
 
           const geojson = await response.json();
@@ -258,32 +272,92 @@ const GoogleMapCanvas = ({
 
     return () => {
       cancelled = true;
-      metroLinesRef.current.forEach((line) => line.setMap(null));
+
+      metroLinesRef.current.forEach((line) => {
+        line.setMap(null);
+      });
+
       metroLinesRef.current = [];
       mapRef.current = null;
+      setMapInstance(null);
     };
   }, [loaded]);
 
-  // Metro visibility
+  // ---------------------------------------------------------
+  // Walking route visibility
+  // ---------------------------------------------------------
   useEffect(() => {
-    metroLinesRef.current.forEach((line) => {
-      line.setMap(metroActive ? mapRef.current : null);
-    });
-  }, [metroActive]);
+    if (!mapRef.current || !loaded) return;
 
+    // Remove previous route lines
+    routeLinesRef.current.forEach((line) => {
+      line.setMap(null);
+    });
+
+    routeLinesRef.current = [];
+
+    if (!routeSegments.length) return;
+
+    routeSegments.forEach((segment) => {
+      const geometry = segment?.geometry;
+
+      if (!geometry) return;
+
+      const paths = geoJsonToGooglePath({
+        type: "Feature",
+        geometry,
+      });
+
+      paths.forEach((path) => {
+        if (path.length < 2) return;
+
+        const routeLine = new window.google.maps.Polyline({
+          path,
+          geodesic: false,
+          strokeColor: "#2563eb",
+          strokeOpacity: 0.95,
+          strokeWeight: 6,
+          zIndex: 10,
+          map: mapRef.current,
+        });
+
+        routeLinesRef.current.push(routeLine);
+      });
+    });
+
+    return () => {
+      routeLinesRef.current.forEach((line) => {
+        line.setMap(null);
+      });
+
+      routeLinesRef.current = [];
+    };
+  }, [routeSegments, loaded]);
+
+  // ---------------------------------------------------------
   // Map type
+  // ---------------------------------------------------------
   useEffect(() => {
     mapRef.current?.setMapTypeId(activeLayer);
   }, [activeLayer]);
 
+  // ---------------------------------------------------------
   // Pandal markers
+  // ---------------------------------------------------------
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !loaded) return;
 
-    markersRef.current.forEach((marker) => marker.setMap(null));
+    // Remove existing markers
+    markersRef.current.forEach((marker) => {
+      marker.setMap(null);
+    });
 
     markersRef.current = pandals.map((pandal) => {
-      const selected = selectedPandal?.id === pandal.id;
+      const isRouteSelected = selectedPandals.some(
+        (selected) => selected.id === pandal.id
+      );
+
+      const isOpened = selectedPandal?.id === pandal.id;
 
       const marker = new window.google.maps.Marker({
         position: {
@@ -292,8 +366,17 @@ const GoogleMapCanvas = ({
         },
         map: mapRef.current,
         title: pandal.name,
-        icon: createPandalIcon(selected),
-        zIndex: selected ? 999 : 1,
+
+        // Blue ONLY when added as a route stop.
+        // Otherwise red.
+        icon: createPandalIcon(isRouteSelected),
+
+        // Keep the currently opened pandal above the others.
+        zIndex: isOpened
+          ? 1000
+          : isRouteSelected
+            ? 500
+            : 1,
       });
 
       marker.addListener("click", () => {
@@ -304,12 +387,17 @@ const GoogleMapCanvas = ({
     });
 
     return () => {
-      markersRef.current.forEach((marker) => marker.setMap(null));
+      markersRef.current.forEach((marker) => {
+        marker.setMap(null);
+      });
+
       markersRef.current = [];
     };
-  }, [pandals, selectedPandal, loaded]);
+  }, [pandals, selectedPandal, selectedPandals, loaded]);
 
+  // ---------------------------------------------------------
   // Pan to selected pandal
+  // ---------------------------------------------------------
   useEffect(() => {
     if (selectedPandal && mapRef.current) {
       mapRef.current.panTo({
@@ -319,7 +407,9 @@ const GoogleMapCanvas = ({
     }
   }, [selectedPandal]);
 
+  // ---------------------------------------------------------
   // Pan to user location
+  // ---------------------------------------------------------
   useEffect(() => {
     if (userLocation && mapRef.current) {
       mapRef.current.panTo(userLocation);
@@ -327,6 +417,9 @@ const GoogleMapCanvas = ({
     }
   }, [userLocation]);
 
+  // ---------------------------------------------------------
+  // Google Maps fallback
+  // ---------------------------------------------------------
   if (!loaded || error) {
     return (
       <KolkataSvgMap
@@ -339,7 +432,22 @@ const GoogleMapCanvas = ({
     );
   }
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  // ---------------------------------------------------------
+  // Google Map
+  // ---------------------------------------------------------
+  return (
+    <>
+      <div
+        ref={containerRef}
+        className="w-full h-full"
+      />
+
+      <UserLocationMarker
+        map={mapInstance}
+        position={userLocation}
+      />
+    </>
+  );
 };
 
 export default GoogleMapCanvas;
