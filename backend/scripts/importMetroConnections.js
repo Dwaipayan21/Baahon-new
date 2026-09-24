@@ -6,7 +6,7 @@ const parser = new XMLParser({
   ignoreAttributes: false,
 });
 
-const files = ["green.xml", "green1.xml"];
+const files = ["blue.xml", "blue1.xml"];
 
 const getArray = (value) => {
   if (!value) return [];
@@ -19,7 +19,6 @@ const normalizeName = (name) =>
     .trim();
 
 const stationMap = new Map();
-
 const connections = new Map();
 
 for (const file of files) {
@@ -81,8 +80,11 @@ for (const file of files) {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-|-$/g, ""),
+
         name,
-        line: "Green",
+
+        line: "Blue",
+
         location: {
           type: "Point",
           coordinates: [
@@ -110,7 +112,7 @@ for (const file of files) {
     connections.set(key, {
       from,
       to,
-      line: "Green",
+      line: "Blue",
     });
   }
 }
@@ -118,7 +120,7 @@ for (const file of files) {
 const output = [...connections.values()];
 
 const outputPath = path.resolve(
-  "data/metro/green-connections.json"
+  "data/metro/blue-connections.json"
 );
 
 fs.writeFileSync(
