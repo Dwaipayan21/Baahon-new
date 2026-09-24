@@ -6,26 +6,49 @@ const parser = new XMLParser({
   ignoreAttributes: false,
 });
 
-const files = ["green.xml", "green1.xml"];
+const files = ["blue.xml", "blue1.xml"];
 
-const stations = new Map();
+const outputPath = path.resolve(
+  "data/metro",
+  "blue-line.json"
+);
 
 const getArray = (value) => {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
 };
 
+const normalizeName = (name) =>
+  name
+    .replace(/\s*\(Line 2\)\s*/i, "")
+    .trim();
+
+const stations = new Map();
+
 for (const file of files) {
-  const filePath = path.resolve("data/metro", file);
+  const inputPath = path.resolve("data/metro", file);
 
   console.log(`Reading ${file}...`);
 
-  const xml = fs.readFileSync(filePath, "utf8");
+  if (!fs.existsSync(inputPath)) {
+    console.error(`File not found: ${inputPath}`);
+    continue;
+  }
+
+  const xml = fs.readFileSync(inputPath, "utf8");
   const osm = parser.parse(xml).osm;
 
   const nodes = getArray(osm.node);
   const relations = getArray(osm.relation);
 
+  const nodeMap = new Map(
+    nodes.map((node) => [
+      String(node["@_id"]),
+      node,
+    ])
+  );
+
+  // Find the relation containing Blue Line stop nodes
   const relation = relations.find((item) =>
     getArray(item.member).some(
       (member) =>
@@ -35,7 +58,9 @@ for (const file of files) {
   );
 
   if (!relation) {
-    console.log(`No stop relation found in ${file}`);
+    console.log(
+      `No Blue Line stop relation found in ${file}`
+    );
     continue;
   }
 
@@ -49,9 +74,8 @@ for (const file of files) {
       continue;
     }
 
-    const node = nodes.find(
-      (item) =>
-        String(item["@_id"]) === String(member["@_ref"])
+    const node = nodeMap.get(
+      String(member["@_ref"])
     );
 
     if (!node) continue;
@@ -65,12 +89,9 @@ for (const file of files) {
 
     if (!tags.name) continue;
 
-    // Normalize station name
-    const stationName = tags.name
-      .replace(/\s*\(Line 2\)\s*/i, "")
-      .trim();
+    const stationName = normalizeName(tags.name);
 
-    // Use station name as the unique key
+    // Avoid duplicate stations from blue.xml and blue1.xml
     if (!stations.has(stationName)) {
       stations.set(stationName, {
         id: stationName
@@ -80,7 +101,7 @@ for (const file of files) {
 
         name: stationName,
 
-        line: "Green",
+        line: "Blue",
 
         location: {
           type: "Point",
@@ -96,14 +117,13 @@ for (const file of files) {
 
 const output = [...stations.values()];
 
-const outputPath = path.resolve(
-  "data/metro/green-line.json"
-);
-
 fs.writeFileSync(
   outputPath,
   JSON.stringify(output, null, 2)
 );
 
-console.log(`\nCreated ${output.length} unique stations.`);
+console.log(
+  `\nCreated ${output.length} unique Blue Line stations.`
+);
+
 console.log(`Saved to: ${outputPath}`);

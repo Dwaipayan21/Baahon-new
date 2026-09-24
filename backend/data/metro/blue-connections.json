@@ -1,0 +1,127 @@
+[
+  {
+    "from": "Shahid Khudiram",
+    "to": "Kavi Subhash (Blue Line)",
+    "line": "Blue"
+  },
+  {
+    "from": "Kavi Nazrul",
+    "to": "Shahid Khudiram",
+    "line": "Blue"
+  },
+  {
+    "from": "Gitanjali",
+    "to": "Kavi Nazrul",
+    "line": "Blue"
+  },
+  {
+    "from": "Masterda Surya Sen",
+    "to": "Gitanjali",
+    "line": "Blue"
+  },
+  {
+    "from": "Netaji",
+    "to": "Masterda Surya Sen",
+    "line": "Blue"
+  },
+  {
+    "from": "Mahanayak Uttam Kumar",
+    "to": "Netaji",
+    "line": "Blue"
+  },
+  {
+    "from": "Rabindra Sarobar",
+    "to": "Mahanayak Uttam Kumar",
+    "line": "Blue"
+  },
+  {
+    "from": "Kalighat",
+    "to": "Rabindra Sarobar",
+    "line": "Blue"
+  },
+  {
+    "from": "Jatin Das Park",
+    "to": "Kalighat",
+    "line": "Blue"
+  },
+  {
+    "from": "Netaji Bhavan",
+    "to": "Jatin Das Park",
+    "line": "Blue"
+  },
+  {
+    "from": "Rabindra Sadan",
+    "to": "Netaji Bhavan",
+    "line": "Blue"
+  },
+  {
+    "from": "Maidan",
+    "to": "Rabindra Sadan",
+    "line": "Blue"
+  },
+  {
+    "from": "Park Street",
+    "to": "Maidan",
+    "line": "Blue"
+  },
+  {
+    "from": "Esplanade (Line 1)",
+    "to": "Park Street",
+    "line": "Blue"
+  },
+  {
+    "from": "Chandni Chowk",
+    "to": "Esplanade (Line 1)",
+    "line": "Blue"
+  },
+  {
+    "from": "Central",
+    "to": "Chandni Chowk",
+    "line": "Blue"
+  },
+  {
+    "from": "Mahatma Gandhi Road",
+    "to": "Central",
+    "line": "Blue"
+  },
+  {
+    "from": "Girish Park",
+    "to": "Mahatma Gandhi Road",
+    "line": "Blue"
+  },
+  {
+    "from": "Shobhabazar Sutanuti",
+    "to": "Girish Park",
+    "line": "Blue"
+  },
+  {
+    "from": "Shyambazar",
+    "to": "Shobhabazar Sutanuti",
+    "line": "Blue"
+  },
+  {
+    "from": "Belgachia",
+    "to": "Shyambazar",
+    "line": "Blue"
+  },
+  {
+    "from": "Dum Dum",
+    "to": "Belgachia",
+    "line": "Blue"
+  },
+  {
+    "from": "Noapara (Blue Line)",
+    "to": "Dum Dum",
+    "line": "Blue"
+  },
+  {
+    "from": "Baranagar",
+    "to": "Noapara (Blue Line)",
+    "line": "Blue"
+  },
+  {
+    "from": "Dakshineshwar",
+    "to": "Baranagar",
+    "line": "Blue"
+  }
+]

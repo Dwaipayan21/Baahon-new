@@ -1,15 +1,46 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
 import { getRoute } from "../services/routing.service.js";
+import { getMetroRoute } from "../services/metro.service.js";
+
+// Format walking distance
+const formatDistance = (distance) => {
+  if (distance < 1000) {
+    return {
+      value: Math.round(distance),
+      unit: "m",
+    };
+  }
+
+  return {
+    value: Number((distance / 1000).toFixed(2)),
+    unit: "km",
+  };
+};
+
+// Format walking time
+const formatTime = (duration) => {
+  const minutes = Math.round(duration / 60);
+
+  return {
+    value: Math.max(minutes, 1),
+    unit: minutes === 1 ? "minute" : "minutes",
+  };
+};
 
 export const getRoutePath = async (req, res, next) => {
   try {
-    const { latitude, longitude, pandalId, mode = "walking" } = req.query;
+    const {
+      latitude,
+      longitude,
+      pandalId,
+      mode = "walking",
+    } = req.query;
 
     const lat = Number(latitude);
     const lng = Number(longitude);
 
-    // Validate user coordinates
+    // Validate coordinates
     if (
       !Number.isFinite(lat) ||
       !Number.isFinite(lng) ||
@@ -24,28 +55,31 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    // Validate Pandal ID
-    if (!mongoose.Types.ObjectId.isValid(pandalId)) {
+    // Validate pandal ID
+    if (
+      !pandalId ||
+      !mongoose.Types.ObjectId.isValid(pandalId)
+    ) {
       return res.status(400).json({
         success: false,
         message: "Invalid pandal ID",
       });
     }
 
-    // Validate route mode
+    // Validate mode
     const profiles = {
       walking: "foot-walking",
       car: "driving-car",
     };
 
-    if (!profiles[mode]) {
+    if (!["walking", "car", "metro"].includes(mode)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid mode. Use walking or car",
+        message: "Invalid mode. Use walking, car or metro",
       });
     }
 
-    // Find selected Pandal
+    // Find pandal
     const pandal = await Pandal.findById(pandalId);
 
     if (!pandal) {
@@ -58,7 +92,118 @@ export const getRoutePath = async (req, res, next) => {
     const [destinationLng, destinationLat] =
       pandal.location.coordinates;
 
-    // Get dynamic route
+    // ==========================================
+    // METRO ROUTE
+    // ==========================================
+
+    if (mode === "metro") {
+      const metroRoute = getMetroRoute({
+        fromLatitude: lat,
+        fromLongitude: lng,
+        toLatitude: destinationLat,
+        toLongitude: destinationLng,
+      });
+
+      if (!metroRoute) {
+        return res.status(404).json({
+          success: false,
+          message: "No metro route available for this journey",
+        });
+      }
+
+      const [fromMetroLng, fromMetroLat] =
+        metroRoute.fromStation.location.coordinates;
+
+      const [toMetroLng, toMetroLat] =
+        metroRoute.toStation.location.coordinates;
+
+      // User → Metro station
+      const walkingToMetro = await getRoute(
+        {
+          longitude: lng,
+          latitude: lat,
+        },
+        {
+          longitude: fromMetroLng,
+          latitude: fromMetroLat,
+        },
+        "foot-walking"
+      );
+
+      // Metro station → Pandal
+      const walkingFromMetro = await getRoute(
+        {
+          longitude: toMetroLng,
+          latitude: toMetroLat,
+        },
+        {
+          longitude: destinationLng,
+          latitude: destinationLat,
+        },
+        "foot-walking"
+      );
+
+      const firstLeg = walkingToMetro.features?.[0];
+      const lastLeg = walkingFromMetro.features?.[0];
+
+      if (!firstLeg || !lastLeg) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Walking route to or from metro station not found",
+        });
+      }
+
+      const firstSummary = firstLeg.properties.summary;
+      const lastSummary = lastLeg.properties.summary;
+
+      return res.json({
+        success: true,
+
+        data: {
+          mode: "metro",
+
+          start: {
+            latitude: lat,
+            longitude: lng,
+          },
+
+          destination: {
+            pandalId: pandal._id,
+            name: pandal.name,
+            latitude: destinationLat,
+            longitude: destinationLng,
+          },
+
+          walking: {
+            toMetro: {
+              distance: formatDistance(firstSummary.distance),
+              estimatedTime: formatTime(firstSummary.duration),
+              geometry: firstLeg.geometry,
+            },
+
+            fromMetro: {
+              distance: formatDistance(lastSummary.distance),
+              estimatedTime: formatTime(lastSummary.duration),
+              geometry: lastLeg.geometry,
+            },
+          },
+
+          metro: {
+            fromStation: metroRoute.fromStation,
+            toStation: metroRoute.toStation,
+            stations: metroRoute.stations,
+            lines: metroRoute.lines,
+            transfers: metroRoute.transfers,
+          },
+        },
+      });
+    }
+
+    // ==========================================
+    // WALKING / CAR ROUTE
+    // ==========================================
+
     const route = await getRoute(
       {
         longitude: lng,
@@ -80,10 +225,12 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    const { distance, duration } = feature.properties.summary;
+    const { distance, duration } =
+      feature.properties.summary;
 
-    res.json({
+    return res.json({
       success: true,
+
       data: {
         mode,
 
@@ -99,16 +246,8 @@ export const getRoutePath = async (req, res, next) => {
           longitude: destinationLng,
         },
 
-        distance: {
-          value: Number((distance / 1000).toFixed(2)),
-          unit: "km",
-        },
-
-        estimatedTime: {
-          value: Math.round(duration / 60),
-          unit: "minutes",
-        },
-
+        distance: formatDistance(distance),
+        estimatedTime: formatTime(duration),
         geometry: feature.geometry,
       },
     });
