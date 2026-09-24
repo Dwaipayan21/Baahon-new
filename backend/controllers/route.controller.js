@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
-import { getWalkingRoute } from "../services/routing.service.js";
+import { getRoute } from "../services/routing.service.js";
 
-export const getRoute = async (req, res, next) => {
+export const getRoutePath = async (req, res, next) => {
   try {
-    const { latitude, longitude, pandalId } = req.query;
+    const { latitude, longitude, pandalId, mode = "walking" } = req.query;
 
     const lat = Number(latitude);
     const lng = Number(longitude);
@@ -32,6 +32,19 @@ export const getRoute = async (req, res, next) => {
       });
     }
 
+    // Validate route mode
+    const profiles = {
+      walking: "foot-walking",
+      car: "driving-car",
+    };
+
+    if (!profiles[mode]) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mode. Use walking or car",
+      });
+    }
+
     // Find selected Pandal
     const pandal = await Pandal.findById(pandalId);
 
@@ -42,10 +55,11 @@ export const getRoute = async (req, res, next) => {
       });
     }
 
-    const [destinationLng, destinationLat] = pandal.location.coordinates;
+    const [destinationLng, destinationLat] =
+      pandal.location.coordinates;
 
-    // Get dynamic walking route
-    const route = await getWalkingRoute(
+    // Get dynamic route
+    const route = await getRoute(
       {
         longitude: lng,
         latitude: lat,
@@ -53,7 +67,8 @@ export const getRoute = async (req, res, next) => {
       {
         longitude: destinationLng,
         latitude: destinationLat,
-      }
+      },
+      profiles[mode]
     );
 
     const feature = route.features?.[0];
@@ -70,6 +85,8 @@ export const getRoute = async (req, res, next) => {
     res.json({
       success: true,
       data: {
+        mode,
+
         start: {
           latitude: lat,
           longitude: lng,

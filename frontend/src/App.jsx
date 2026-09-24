@@ -5,6 +5,8 @@ import {
   getWalkingRoute,
 } from "./services/api";
 
+import { findNearestPandal } from "./utils/routeUtils";
+
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import MetroLegend from "./components/MetroLegend";
@@ -235,26 +237,53 @@ const App = () => {
     setRouteLoading(true);
 
     try {
+      const remainingPandals = [...selectedPandals];
+      console.table(
+        remainingPandals.map((pandal) => ({
+          name: pandal.name,
+          lat: pandal.lat,
+          lng: pandal.lng,
+        }))
+      );
+
       const segments = [];
 
-      let start = {
-        latitude: userLocation.lat,
-        longitude: userLocation.lng,
-      };
+      let currentLocation = userLocation;
 
-      for (const pandal of selectedPandals) {
+      while (remainingPandals.length > 0) {
+        const nearest = findNearestPandal(
+          currentLocation,
+          remainingPandals
+        );
+
+        console.log("Current location:", currentLocation);
+        console.log("Nearest pandal:", nearest);
+        console.log("Route order:", segments.map(
+          (segment) => segment.destination?.name
+        ));
+
+        if (!nearest) break;
+
+        const { pandal } = nearest;
+
         const route = await getWalkingRoute({
-          latitude: start.latitude,
-          longitude: start.longitude,
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
           pandalId: pandal.id,
         });
 
         segments.push(route);
 
-        start = {
-          latitude: route.destination.latitude,
-          longitude: route.destination.longitude,
+        currentLocation = {
+          lat: route.destination.latitude,
+          lng: route.destination.longitude,
         };
+
+        const index = remainingPandals.findIndex(
+          (item) => item.id === pandal.id
+        );
+
+        remainingPandals.splice(index, 1);
       }
 
       setRouteSegments(segments);
