@@ -1,8 +1,8 @@
 import express from "express";
-import { getRoute } from "../controllers/route.controller.js";
+import { getRoutePath } from "../controllers/route.controller.js";
 
 const router = express.Router();
 
-router.get("/", getRoute);
+router.get("/", getRoutePath);
 
 export default router;

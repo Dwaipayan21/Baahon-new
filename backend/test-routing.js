@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { getWalkingRoute } from "./services/routing.service.js";
+import { getRoute } from "./services/routing.service.js";
 
 const start = {
   longitude: 88.3639,
@@ -12,7 +12,7 @@ const end = {
 };
 
 try {
-  const route = await getWalkingRoute(start, end);
+  const route = await getRoute(start, end);
 
   console.log("Route request successful!");
   console.log(JSON.stringify(route, null, 2));
