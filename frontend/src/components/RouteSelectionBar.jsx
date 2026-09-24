@@ -7,7 +7,7 @@ const RouteSelectionBar = ({
   if (selectedPandals.length === 0) return null;
 
   return (
-    <div className="absolute bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-24px)] max-w-md pointer-events-auto">
+    <div className="w-full max-w-md mx-auto pointer-events-auto">
       <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.16)] border border-slate-100 p-3">
         
         <div className="flex items-center justify-between gap-3">

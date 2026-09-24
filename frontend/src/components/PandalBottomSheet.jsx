@@ -5,6 +5,9 @@ const PandalBottomSheet = ({
   isDesktop = false,
   selectedPandals = [],
   onTogglePandalSelection,
+  routeDistance,
+  routeDuration,
+  routeLoading = false,
 }) => {
   if (!pandal) return null;
 
@@ -133,7 +136,13 @@ const PandalBottomSheet = ({
                 directions_walk
               </span>
 
-              <span>{pandal.distanceText}</span>
+              <span>
+                {routeLoading
+                  ? "Calculating..."
+                  : routeDistance && routeDuration
+                    ? `${routeDistance} • ${routeDuration}`
+                    : "Location unavailable"}
+              </span>
             </span>
 
             {pandal.metroStation && (
