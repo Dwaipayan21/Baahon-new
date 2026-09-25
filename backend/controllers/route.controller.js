@@ -8,13 +8,56 @@ const profiles = {
   car: "driving-car",
 };
 
+const validModes = ["walking", "car", "metro"];
+
+const validCoordinates = (lat, lng) =>
+  Number.isFinite(lat) &&
+  Number.isFinite(lng) &&
+  lat >= -90 &&
+  lat <= 90 &&
+  lng >= -180 &&
+  lng <= 180;
+
+const parseCoordinates = (latitude, longitude) => {
+  if (
+    latitude === undefined ||
+    latitude === null ||
+    latitude === "" ||
+    longitude === undefined ||
+    longitude === null ||
+    longitude === ""
+  ) {
+    return null;
+  }
+
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
+  return validCoordinates(lat, lng) ? { lat, lng } : null;
+};
+
+const getPandalCoordinates = (pandal) => {
+  const coordinates = pandal?.location?.coordinates;
+
+  if (!Array.isArray(coordinates) || coordinates.length !== 2) {
+    return null;
+  }
+
+  const [lng, lat] = coordinates;
+
+  return validCoordinates(lat, lng)
+    ? { latitude: lat, longitude: lng }
+    : null;
+};
+
 const formatDistance = (distance) =>
   distance < 1000
     ? { value: Math.round(distance), unit: "m" }
     : { value: Number((distance / 1000).toFixed(2)), unit: "km" };
 
 const formatTime = (duration) => {
-  const minutes = Math.max(Math.round(duration / 60), 1);
+  const minutes = Math.max(Math.ceil(duration / 60), 1);
+
   return {
     value: minutes,
     unit: minutes === 1 ? "minute" : "minutes",
@@ -28,24 +71,17 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
 
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.sin(dLng / 2) ** 2 *
-      Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180);
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
 
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-const validCoordinates = (lat, lng) =>
-  Number.isFinite(lat) &&
-  Number.isFinite(lng) &&
-  lat >= -90 &&
-  lat <= 90 &&
-  lng >= -180 &&
-  lng <= 180;
+const hasDuplicateIds = (ids) =>
+  new Set(ids.map(String)).size !== ids.length;
 
-const getPandalIds = (ids) =>
-  ids.filter((id) => mongoose.Types.ObjectId.isValid(id));
-
+// GET /api/path
 export const getRoutePath = async (req, res, next) => {
   try {
     const {
@@ -55,15 +91,17 @@ export const getRoutePath = async (req, res, next) => {
       mode = "walking",
     } = req.query;
 
-    const lat = Number(latitude);
-    const lng = Number(longitude);
+    const coordinates = parseCoordinates(latitude, longitude);
 
-    if (!validCoordinates(lat, lng)) {
+    if (!coordinates) {
       return res.status(400).json({
         success: false,
         message: "Invalid latitude or longitude",
       });
     }
+
+    // FIX: lat and lng are now available in the whole function
+    const { lat, lng } = coordinates;
 
     if (!pandalId || !mongoose.Types.ObjectId.isValid(pandalId)) {
       return res.status(400).json({
@@ -72,7 +110,7 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    if (!["walking", "car", "metro"].includes(mode)) {
+    if (!validModes.includes(mode)) {
       return res.status(400).json({
         success: false,
         message: "Invalid mode. Use walking, car or metro",
@@ -88,8 +126,21 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    const [destinationLng, destinationLat] =
-      pandal.location.coordinates;
+    const destination = getPandalCoordinates(pandal);
+
+    if (!destination) {
+      return res.status(500).json({
+        success: false,
+        message: "Pandal has invalid coordinates",
+      });
+    }
+
+    const {
+      latitude: destinationLat,
+      longitude: destinationLng,
+    } = destination;
+
+    // ---------------- METRO ----------------
 
     if (mode === "metro") {
       const metroRoute = getMetroRoute({
@@ -142,6 +193,7 @@ export const getRoutePath = async (req, res, next) => {
         success: true,
         data: {
           mode: "metro",
+          targetPandalId: pandal._id,
 
           start: {
             latitude: lat,
@@ -180,9 +232,14 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
+    // ---------------- WALKING / CAR ----------------
+
     const route = await getRoute(
       { longitude: lng, latitude: lat },
-      { longitude: destinationLng, latitude: destinationLat },
+      {
+        longitude: destinationLng,
+        latitude: destinationLat,
+      },
       profiles[mode]
     );
 
@@ -201,6 +258,7 @@ export const getRoutePath = async (req, res, next) => {
       success: true,
       data: {
         mode,
+        targetPandalId: pandal._id,
 
         start: {
           latitude: lat,
@@ -224,6 +282,7 @@ export const getRoutePath = async (req, res, next) => {
   }
 };
 
+// POST /api/path/next
 export const getNextPandalRoute = async (req, res, next) => {
   try {
     const {
@@ -234,15 +293,16 @@ export const getNextPandalRoute = async (req, res, next) => {
       mode = "walking",
     } = req.body;
 
-    const lat = Number(latitude);
-    const lng = Number(longitude);
+    const coordinates = parseCoordinates(latitude, longitude);
 
-    if (!validCoordinates(lat, lng)) {
+    if (!coordinates) {
       return res.status(400).json({
         success: false,
         message: "Invalid latitude or longitude",
       });
     }
+
+    const { lat, lng } = coordinates;
 
     if (!Array.isArray(selectedPandalIds) || !selectedPandalIds.length) {
       return res.status(400).json({
@@ -258,12 +318,45 @@ export const getNextPandalRoute = async (req, res, next) => {
       });
     }
 
-    const allIds = [...selectedPandalIds, ...visitedPandalIds];
+    const allIds = [
+      ...selectedPandalIds,
+      ...visitedPandalIds,
+    ];
 
-    if (getPandalIds(allIds).length !== allIds.length) {
+    if (
+      allIds.some(
+        (id) => !mongoose.Types.ObjectId.isValid(id)
+      )
+    ) {
       return res.status(400).json({
         success: false,
         message: "One or more pandal IDs are invalid",
+      });
+    }
+
+    if (
+      hasDuplicateIds(selectedPandalIds) ||
+      hasDuplicateIds(visitedPandalIds)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Duplicate pandal IDs are not allowed",
+      });
+    }
+
+    // Visited pandals must belong to the selected list
+    const selectedSet = new Set(
+      selectedPandalIds.map(String)
+    );
+
+    if (
+      visitedPandalIds.some(
+        (id) => !selectedSet.has(String(id))
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "visitedPandalIds must belong to selectedPandalIds",
       });
     }
 
@@ -290,15 +383,19 @@ export const getNextPandalRoute = async (req, res, next) => {
     );
 
     const remaining = pandals.filter(
-      (pandal) => !visited.has(pandal._id.toString())
+      (pandal) => !visited.has(String(pandal._id))
     );
 
+    // All selected pandals have been visited
     if (!remaining.length) {
       return res.json({
         success: true,
         data: {
           completed: true,
-          start: { latitude: lat, longitude: lng },
+          start: {
+            latitude: lat,
+            longitude: lng,
+          },
           visitedPandalIds,
           remainingPandalIds: [],
           nextPandal: null,
@@ -307,18 +404,20 @@ export const getNextPandalRoute = async (req, res, next) => {
       });
     }
 
-    let nearest = remaining[0];
+    // Find nearest remaining pandal
+    let nearest = null;
     let nearestDistance = Infinity;
 
     for (const pandal of remaining) {
-      const [pandalLng, pandalLat] =
-        pandal.location.coordinates;
+      const coordinates = getPandalCoordinates(pandal);
+
+      if (!coordinates) continue;
 
       const distance = calculateDistance(
         lat,
         lng,
-        pandalLat,
-        pandalLng
+        coordinates.latitude,
+        coordinates.longitude
       );
 
       if (distance < nearestDistance) {
@@ -327,12 +426,21 @@ export const getNextPandalRoute = async (req, res, next) => {
       }
     }
 
-    const [destinationLng, destinationLat] =
-      nearest.location.coordinates;
+    if (!nearest) {
+      return res.status(500).json({
+        success: false,
+        message: "No remaining pandal has valid coordinates",
+      });
+    }
+
+    const destination = getPandalCoordinates(nearest);
 
     const route = await getRoute(
       { longitude: lng, latitude: lat },
-      { longitude: destinationLng, latitude: destinationLat },
+      {
+        longitude: destination.longitude,
+        latitude: destination.latitude,
+      },
       profiles[mode]
     );
 
@@ -345,12 +453,14 @@ export const getNextPandalRoute = async (req, res, next) => {
       });
     }
 
-    const { distance, duration } = feature.properties.summary;
+    const { distance, duration } =
+      feature.properties.summary;
 
     return res.json({
       success: true,
       data: {
         completed: false,
+        targetPandalId: nearest._id,
 
         start: {
           latitude: lat,
@@ -366,8 +476,8 @@ export const getNextPandalRoute = async (req, res, next) => {
         nextPandal: {
           pandalId: nearest._id,
           name: nearest.name,
-          latitude: destinationLat,
-          longitude: destinationLng,
+          latitude: destination.latitude,
+          longitude: destination.longitude,
         },
 
         distanceFromUser: formatDistance(
