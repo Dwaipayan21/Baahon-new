@@ -2,21 +2,21 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import {
   getPandals,
   getNearbyPandals,
+  getRoute,
   getWalkingRoute,
 } from "./services/api";
 
 import { findNearestPandal } from "./utils/routeUtils";
 
 import Header from "./components/Header";
-import SearchBar from "./components/SearchBar";
-import MetroLegend from "./components/MetroLegend";
 import MapControls from "./components/MapControls";
 import GoogleMapCanvas from "./components/GoogleMapCanvas";
-import PandalBottomSheet from "./components/PandalBottomSheet";
 import PandalDetailsModal from "./components/PandalDetailsModal";
 import BottomNavigation from "./components/BottomNavigation";
 import LoadingScreen from "./components/LoadingScreen";
-import RouteSelectionBar from "./components/RouteSelectionBar";
+import SearchFilterOverlay from "./components/SearchFilterOverlay";
+import PandalRouteOverlay from "./components/PandalRouteOverlay";
+import ToastNotification from "./components/ToastNotification";
 
 const App = () => {
   const [pandals, setPandals] = useState([]);
@@ -43,8 +43,14 @@ const App = () => {
   const [selectedPandals, setSelectedPandals] = useState([]);
   const [routeSegments, setRouteSegments] = useState([]);
   const [routeLoading, setRouteLoading] = useState(false);
+  const [routeData, setRouteData] = useState(null);
+  const [routeError, setRouteError] = useState("");
   const [selectedPandalRoute, setSelectedPandalRoute] = useState(null);
   const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("FINAL ROUTE DATA:", routeData);
+  }, [routeData]);
 
   // 1. Fetch Pandals from Backend API on Mount
   useEffect(() => {
@@ -201,49 +207,6 @@ const App = () => {
     );
   };
 
-  // Toggle Map Layer Type
-  useEffect(() => {
-    if (!userLocation || !selectedPandal) {
-      setSelectedPandalRoute(null);
-      setSelectedPandalRouteLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadSelectedPandalRoute = async () => {
-      setSelectedPandalRouteLoading(true);
-
-      try {
-        const route = await getWalkingRoute({
-          latitude: userLocation.lat,
-          longitude: userLocation.lng,
-          pandalId: selectedPandal.id,
-        });
-
-        if (!cancelled) {
-          setSelectedPandalRoute(route);
-        }
-      } catch (error) {
-        console.error("Selected pandal route lookup failed:", error);
-
-        if (!cancelled) {
-          setSelectedPandalRoute(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setSelectedPandalRouteLoading(false);
-        }
-      }
-    };
-
-    loadSelectedPandalRoute();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userLocation, selectedPandal]);
-
   const handleToggleLayer = () => {
     setActiveLayer((prev) => {
       const next = prev === "roadmap" ? "satellite" : prev === "satellite" ? "terrain" : "roadmap";
@@ -265,6 +228,127 @@ const App = () => {
 
       return [...prev, pandal];
     });
+  };
+
+  const handleMetroRoute = async () => {
+    console.log("handleMetroRoute called");
+    setRouteError("");
+
+    if (selectedPandals.length === 0) {
+      showToast("Select a pandal first");
+      return;
+    }
+
+    if (!userLocation) {
+      showToast("Please use My Location before starting the route");
+      return;
+    }
+
+    setRouteLoading(true);
+    setRouteData(null);
+    const selectedPandalSnapshot = [...selectedPandals];
+
+    try {
+      const routes = [];
+      let currentLocation = userLocation;
+
+      for (const pandal of selectedPandalSnapshot) {
+        console.log("Metro getRoute request:", {
+          mode: "metro",
+          userLocation: currentLocation,
+          pandalId: pandal.id,
+        });
+
+        const route = await getRoute({
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
+          pandalId: pandal.id,
+          mode: "metro",
+        });
+
+        console.log("Metro getRoute response:", {
+          mode: "metro",
+          userLocation: currentLocation,
+          pandalId: pandal.id,
+          route,
+        });
+
+        routes.push(route);
+        currentLocation = {
+          lat: pandal.lat,
+          lng: pandal.lng,
+        };
+      }
+
+      setRouteData(routes.length === 1 ? routes[0] : routes);
+    } catch (error) {
+      console.error("Metro route failed:", error);
+      setRouteError("Metro route is unavailable for this pandal.");
+      showToast("Metro route is unavailable");
+    } finally {
+      setRouteLoading(false);
+    }
+  };
+
+  const handleRoadRoute = async () => {
+    console.log("handleRoadRoute called");
+    setRouteError("");
+
+    if (selectedPandals.length === 0) {
+      showToast("Select a pandal first");
+      return;
+    }
+
+    if (!userLocation) {
+      showToast("Please use My Location before starting the route");
+      return;
+    }
+    setMetroActive(false);
+
+    setRouteLoading(true);
+    setRouteData(null);
+    const selectedPandalSnapshot = [...selectedPandals];
+
+    try {
+      const routes = [];
+      let currentLocation = userLocation;
+
+      for (const pandal of selectedPandalSnapshot) {
+        console.log("Road getRoute request:", {
+          mode: "car",
+          userLocation: currentLocation,
+          pandalId: pandal.id,
+        });
+
+        const route = await getRoute({
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
+          pandalId: pandal.id,
+          mode: "car",
+        });
+
+        console.log("Road getRoute response:", {
+          mode: "car",
+          userLocation: currentLocation,
+          pandalId: pandal.id,
+          route,
+        });
+
+        routes.push(route);
+        currentLocation = {
+          lat: pandal.lat,
+          lng: pandal.lng,
+        };
+      }
+
+      setRouteData(routes.length === 1 ? routes[0] : routes);
+    } catch (error) {
+      console.error("Road route failed:", error);
+      setRouteError("Road route is unavailable for this pandal.");
+      showToast("Could not create road route");
+    } finally {
+      setRouteLoading(false);
+    }
   };
 
   const handleStartRoute = async () => {
@@ -379,8 +463,12 @@ const App = () => {
             selectedPandal={selectedPandal}
             selectedPandals={selectedPandals}
             routeSegments={routeSegments}
+            routeData={routeData}
             onSelectPandal={(pandal) => {
               setSelectedPandal(pandal);
+              setRouteData(null);
+              setRouteError("");
+              setRouteSegments([]);
             }}
             onTogglePandalSelection={togglePandalSelection}
             metroActive={metroActive}
@@ -393,24 +481,17 @@ const App = () => {
           />
 
           {/* 3. Floating Search & Category Filter Section (Top) */}
-          <div className="absolute top-20 sm:top-4 inset-x-0 px-3 sm:px-6 pointer-events-none z-[60] flex flex-col items-center">
-            <div className="w-full max-w-md pointer-events-auto flex flex-col gap-2">
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                activeCategory={activeCategory}
-                onSelectCategory={setActiveCategory}
-                onClearSearch={() => setSearchQuery("")}
-              />
-
-              <MetroLegend
-                metroActive={metroActive}
-                onToggleMetro={() => setMetroActive((prev) => !prev)}
-                visibleCount={filteredPandals.length}
-                totalCount={pandals.length}
-              />
-            </div>
-          </div>
+          <SearchFilterOverlay
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            activeCategory={activeCategory}
+            onSelectCategory={setActiveCategory}
+            onClearSearch={() => setSearchQuery("")}
+            metroActive={metroActive}
+            onToggleMetro={() => setMetroActive((prev) => !prev)}
+            visibleCount={filteredPandals.length}
+            totalCount={pandals.length}
+          />
 
           {/* 4. Floating Map Utility Controls (Right Side) */}
           <div
@@ -437,84 +518,28 @@ const App = () => {
           </div>
 
           {/* 5 + 6. Mobile Pandal + Route Stack */}
-          {isDesktop ? (
-            <>
-              {selectedPandal && (
-                <div className="absolute bottom-8 left-6 z-30 pointer-events-auto">
-                  <PandalBottomSheet
-                    pandal={selectedPandal}
-                    onClose={() => setSelectedPandal(null)}
-                    onViewDetails={(p) => setModalPandal(p)}
-                    isDesktop={isDesktop}
-                    selectedPandals={selectedPandals}
-                    onTogglePandalSelection={togglePandalSelection}
-                    routeDistance={
-                      selectedPandalRoute?.distance?.value != null
-                        ? `${Number(selectedPandalRoute.distance.value).toFixed(1)} km`
-                        : null
-                    }
-                    routeDuration={
-                      selectedPandalRoute?.estimatedTime?.value != null
-                        ? `${Number(selectedPandalRoute.estimatedTime.value)} min`
-                        : null
-                    }
-                    routeLoading={selectedPandalRouteLoading}
-                  />
-                </div>
-              )}
-
-              <RouteSelectionBar
-                selectedPandals={selectedPandals}
-                routeLoading={routeLoading}
-                onClear={() => {
-                  setSelectedPandals([]);
-                  setRouteSegments([]);
-                }}
-                onStartRoute={handleStartRoute}
-              />
-            </>
-          ) : (
-            <div className="absolute bottom-14 inset-x-0 px-2 z-30 pointer-events-auto flex flex-col gap-2">
-              {selectedPandal && (
-                <PandalBottomSheet
-                  pandal={selectedPandal}
-                  onClose={() => setSelectedPandal(null)}
-                  onViewDetails={(p) => setModalPandal(p)}
-                  isDesktop={false}
-                  selectedPandals={selectedPandals}
-                  onTogglePandalSelection={togglePandalSelection}
-                  routeDistance={
-                    selectedPandalRoute?.distance?.value != null
-                      ? `${Number(selectedPandalRoute.distance.value).toFixed(1)} km`
-                      : null
-                  }
-                  routeDuration={
-                    selectedPandalRoute?.estimatedTime?.value != null
-                      ? `${Number(selectedPandalRoute.estimatedTime.value)} min`
-                      : null
-                  }
-                  routeLoading={selectedPandalRouteLoading}
-                />
-              )}
-
-              <RouteSelectionBar
-                selectedPandals={selectedPandals}
-                routeLoading={routeLoading}
-                onClear={() => {
-                  setSelectedPandals([]);
-                  setRouteSegments([]);
-                }}
-                onStartRoute={handleStartRoute}
-              />
-            </div>
-          )}
+          <PandalRouteOverlay
+            isDesktop={isDesktop}
+            selectedPandal={selectedPandal}
+            onClosePandal={() => setSelectedPandal(null)}
+            onViewDetails={(p) => setModalPandal(p)}
+            selectedPandals={selectedPandals}
+            onTogglePandalSelection={togglePandalSelection}
+            selectedPandalRoute={selectedPandalRoute}
+            selectedPandalRouteLoading={selectedPandalRouteLoading}
+            routeData={routeData}
+            routeError={routeError}
+            routeLoading={routeLoading}
+            onClearRoute={() => {
+              setSelectedPandals([]);
+              setRouteSegments([]);
+            }}
+            onMetroRoute={handleMetroRoute}
+            onRoadRoute={handleRoadRoute}
+          />
 
           {/* 7. Toast Notification */}
-          {toastMessage && (
-            <div className="absolute top-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none bg-slate-900/90 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg backdrop-blur-md transition-all animate-bounce">
-              {toastMessage}
-            </div>
-          )}
+          <ToastNotification message={toastMessage} />
         </main>
 
         {/* 8. Pandal Extended Details Modal */}

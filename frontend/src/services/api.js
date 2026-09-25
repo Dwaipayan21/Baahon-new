@@ -134,3 +134,39 @@ export const getWalkingRoute = async ({
     throw error;
   }
 };
+
+export const getRoute = async ({
+  latitude,
+  longitude,
+  pandalId,
+  mode = "walking",
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      pandalId: String(pandalId),
+      mode: String(mode),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/path?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Route request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error(`Failed to fetch ${mode} route:`, error);
+    throw error;
+  }
+};

@@ -51,8 +51,7 @@ const PandalDetailsModal = ({ pandal, onClose }) => {
               <h2 className="text-lg font-bold text-[#131b2e] leading-tight">{pandal.name}</h2>
               {pandal.verified && (
                 <span
-                  className="material-symbols-outlined text-amber-500 text-[18px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
+                  className="material-symbols-outlined material-symbols-filled text-amber-500 text-[18px]"
                   title="Verified Pandal"
                 >
                   verified
