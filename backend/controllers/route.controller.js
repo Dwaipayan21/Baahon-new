@@ -3,30 +3,48 @@ import Pandal from "../models/pandal.model.js";
 import { getRoute } from "../services/routing.service.js";
 import { getMetroRoute } from "../services/metro.service.js";
 
-// Format walking distance
-const formatDistance = (distance) => {
-  if (distance < 1000) {
-    return {
-      value: Math.round(distance),
-      unit: "m",
-    };
-  }
-
-  return {
-    value: Number((distance / 1000).toFixed(2)),
-    unit: "km",
-  };
+const profiles = {
+  walking: "foot-walking",
+  car: "driving-car",
 };
 
-// Format walking time
-const formatTime = (duration) => {
-  const minutes = Math.round(duration / 60);
+const formatDistance = (distance) =>
+  distance < 1000
+    ? { value: Math.round(distance), unit: "m" }
+    : { value: Number((distance / 1000).toFixed(2)), unit: "km" };
 
+const formatTime = (duration) => {
+  const minutes = Math.max(Math.round(duration / 60), 1);
   return {
-    value: Math.max(minutes, 1),
+    value: minutes,
     unit: minutes === 1 ? "minute" : "minutes",
   };
 };
+
+const calculateDistance = (lat1, lng1, lat2, lng2) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.sin(dLng / 2) ** 2 *
+      Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180);
+
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
+const validCoordinates = (lat, lng) =>
+  Number.isFinite(lat) &&
+  Number.isFinite(lng) &&
+  lat >= -90 &&
+  lat <= 90 &&
+  lng >= -180 &&
+  lng <= 180;
+
+const getPandalIds = (ids) =>
+  ids.filter((id) => mongoose.Types.ObjectId.isValid(id));
 
 export const getRoutePath = async (req, res, next) => {
   try {
@@ -40,37 +58,19 @@ export const getRoutePath = async (req, res, next) => {
     const lat = Number(latitude);
     const lng = Number(longitude);
 
-    // Validate coordinates
-    if (
-      !Number.isFinite(lat) ||
-      !Number.isFinite(lng) ||
-      lat < -90 ||
-      lat > 90 ||
-      lng < -180 ||
-      lng > 180
-    ) {
+    if (!validCoordinates(lat, lng)) {
       return res.status(400).json({
         success: false,
         message: "Invalid latitude or longitude",
       });
     }
 
-    // Validate pandal ID
-    if (
-      !pandalId ||
-      !mongoose.Types.ObjectId.isValid(pandalId)
-    ) {
+    if (!pandalId || !mongoose.Types.ObjectId.isValid(pandalId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid pandal ID",
       });
     }
-
-    // Validate mode
-    const profiles = {
-      walking: "foot-walking",
-      car: "driving-car",
-    };
 
     if (!["walking", "car", "metro"].includes(mode)) {
       return res.status(400).json({
@@ -79,7 +79,6 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    // Find pandal
     const pandal = await Pandal.findById(pandalId);
 
     if (!pandal) {
@@ -91,10 +90,6 @@ export const getRoutePath = async (req, res, next) => {
 
     const [destinationLng, destinationLat] =
       pandal.location.coordinates;
-
-    // ==========================================
-    // METRO ROUTE
-    // ==========================================
 
     if (mode === "metro") {
       const metroRoute = getMetroRoute({
@@ -111,55 +106,40 @@ export const getRoutePath = async (req, res, next) => {
         });
       }
 
-      const [fromMetroLng, fromMetroLat] =
+      const [fromLng, fromLat] =
         metroRoute.fromStation.location.coordinates;
 
-      const [toMetroLng, toMetroLat] =
+      const [toLng, toLat] =
         metroRoute.toStation.location.coordinates;
 
-      // User → Metro station
-      const walkingToMetro = await getRoute(
-        {
-          longitude: lng,
-          latitude: lat,
-        },
-        {
-          longitude: fromMetroLng,
-          latitude: fromMetroLat,
-        },
-        "foot-walking"
-      );
+      const [toMetro, fromMetro] = await Promise.all([
+        getRoute(
+          { longitude: lng, latitude: lat },
+          { longitude: fromLng, latitude: fromLat },
+          "foot-walking"
+        ),
+        getRoute(
+          { longitude: toLng, latitude: toLat },
+          { longitude: destinationLng, latitude: destinationLat },
+          "foot-walking"
+        ),
+      ]);
 
-      // Metro station → Pandal
-      const walkingFromMetro = await getRoute(
-        {
-          longitude: toMetroLng,
-          latitude: toMetroLat,
-        },
-        {
-          longitude: destinationLng,
-          latitude: destinationLat,
-        },
-        "foot-walking"
-      );
-
-      const firstLeg = walkingToMetro.features?.[0];
-      const lastLeg = walkingFromMetro.features?.[0];
+      const firstLeg = toMetro.features?.[0];
+      const lastLeg = fromMetro.features?.[0];
 
       if (!firstLeg || !lastLeg) {
         return res.status(404).json({
           success: false,
-          message:
-            "Walking route to or from metro station not found",
+          message: "Walking route to or from metro station not found",
         });
       }
 
-      const firstSummary = firstLeg.properties.summary;
-      const lastSummary = lastLeg.properties.summary;
+      const first = firstLeg.properties.summary;
+      const last = lastLeg.properties.summary;
 
       return res.json({
         success: true,
-
         data: {
           mode: "metro",
 
@@ -177,14 +157,14 @@ export const getRoutePath = async (req, res, next) => {
 
           walking: {
             toMetro: {
-              distance: formatDistance(firstSummary.distance),
-              estimatedTime: formatTime(firstSummary.duration),
+              distance: formatDistance(first.distance),
+              estimatedTime: formatTime(first.duration),
               geometry: firstLeg.geometry,
             },
 
             fromMetro: {
-              distance: formatDistance(lastSummary.distance),
-              estimatedTime: formatTime(lastSummary.duration),
+              distance: formatDistance(last.distance),
+              estimatedTime: formatTime(last.duration),
               geometry: lastLeg.geometry,
             },
           },
@@ -200,19 +180,9 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    // ==========================================
-    // WALKING / CAR ROUTE
-    // ==========================================
-
     const route = await getRoute(
-      {
-        longitude: lng,
-        latitude: lat,
-      },
-      {
-        longitude: destinationLng,
-        latitude: destinationLat,
-      },
+      { longitude: lng, latitude: lat },
+      { longitude: destinationLng, latitude: destinationLat },
       profiles[mode]
     );
 
@@ -225,12 +195,10 @@ export const getRoutePath = async (req, res, next) => {
       });
     }
 
-    const { distance, duration } =
-      feature.properties.summary;
+    const { distance, duration } = feature.properties.summary;
 
     return res.json({
       success: true,
-
       data: {
         mode,
 
@@ -249,6 +217,169 @@ export const getRoutePath = async (req, res, next) => {
         distance: formatDistance(distance),
         estimatedTime: formatTime(duration),
         geometry: feature.geometry,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getNextPandalRoute = async (req, res, next) => {
+  try {
+    const {
+      latitude,
+      longitude,
+      selectedPandalIds,
+      visitedPandalIds = [],
+      mode = "walking",
+    } = req.body;
+
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!validCoordinates(lat, lng)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid latitude or longitude",
+      });
+    }
+
+    if (!Array.isArray(selectedPandalIds) || !selectedPandalIds.length) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one selected pandal is required",
+      });
+    }
+
+    if (!Array.isArray(visitedPandalIds)) {
+      return res.status(400).json({
+        success: false,
+        message: "visitedPandalIds must be an array",
+      });
+    }
+
+    const allIds = [...selectedPandalIds, ...visitedPandalIds];
+
+    if (getPandalIds(allIds).length !== allIds.length) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more pandal IDs are invalid",
+      });
+    }
+
+    if (!["walking", "car"].includes(mode)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mode. Use walking or car",
+      });
+    }
+
+    const pandals = await Pandal.find({
+      _id: { $in: selectedPandalIds },
+    });
+
+    if (pandals.length !== selectedPandalIds.length) {
+      return res.status(404).json({
+        success: false,
+        message: "One or more selected pandals were not found",
+      });
+    }
+
+    const visited = new Set(
+      visitedPandalIds.map(String)
+    );
+
+    const remaining = pandals.filter(
+      (pandal) => !visited.has(pandal._id.toString())
+    );
+
+    if (!remaining.length) {
+      return res.json({
+        success: true,
+        data: {
+          completed: true,
+          start: { latitude: lat, longitude: lng },
+          visitedPandalIds,
+          remainingPandalIds: [],
+          nextPandal: null,
+          route: null,
+        },
+      });
+    }
+
+    let nearest = remaining[0];
+    let nearestDistance = Infinity;
+
+    for (const pandal of remaining) {
+      const [pandalLng, pandalLat] =
+        pandal.location.coordinates;
+
+      const distance = calculateDistance(
+        lat,
+        lng,
+        pandalLat,
+        pandalLng
+      );
+
+      if (distance < nearestDistance) {
+        nearest = pandal;
+        nearestDistance = distance;
+      }
+    }
+
+    const [destinationLng, destinationLat] =
+      nearest.location.coordinates;
+
+    const route = await getRoute(
+      { longitude: lng, latitude: lat },
+      { longitude: destinationLng, latitude: destinationLat },
+      profiles[mode]
+    );
+
+    const feature = route.features?.[0];
+
+    if (!feature) {
+      return res.status(404).json({
+        success: false,
+        message: "Route to next pandal not found",
+      });
+    }
+
+    const { distance, duration } = feature.properties.summary;
+
+    return res.json({
+      success: true,
+      data: {
+        completed: false,
+
+        start: {
+          latitude: lat,
+          longitude: lng,
+        },
+
+        visitedPandalIds,
+
+        remainingPandalIds: remaining.map(
+          (pandal) => pandal._id
+        ),
+
+        nextPandal: {
+          pandalId: nearest._id,
+          name: nearest.name,
+          latitude: destinationLat,
+          longitude: destinationLng,
+        },
+
+        distanceFromUser: formatDistance(
+          nearestDistance * 1000
+        ),
+
+        route: {
+          mode,
+          distance: formatDistance(distance),
+          estimatedTime: formatTime(duration),
+          geometry: feature.geometry,
+        },
       },
     });
   } catch (error) {
