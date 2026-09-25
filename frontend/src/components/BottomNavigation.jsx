@@ -23,8 +23,7 @@ const BottomNavigation = ({ activeTab = "explore", onSelectTab }) => {
               <span
                 className={`material-symbols-outlined text-[22px] transition-transform ${
                   isActive ? "scale-110" : ""
-                }`}
-                style={isActive && tab.id === "checkins" ? { fontVariationSettings: "'FILL' 1" } : {}}
+                } ${isActive && tab.id === "checkins" ? "material-symbols-filled" : ""}`}
               >
                 {tab.icon}
               </span>

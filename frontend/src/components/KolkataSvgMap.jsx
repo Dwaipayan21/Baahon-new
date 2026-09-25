@@ -1,3 +1,6 @@
+import SvgMetroTransitOverlay from "./SvgMetroTransitOverlay";
+import SvgPandalMarker from "./SvgPandalMarker";
+
 const KolkataSvgMap = ({
   pandals = [],
   selectedPandal,
@@ -167,105 +170,7 @@ const KolkataSvgMap = ({
         </text>
 
         {/* METRO TRANSIT OVERLAY */}
-        {metroActive && (
-          <g className="transition-opacity duration-300">
-            {/* Blue Line (North-South) */}
-            <path
-              d="M 188 15 L 182 100 L 175 195 L 168 310 L 158 395 L 152 485 L 150 580 L 154 690 L 160 770"
-              fill="none"
-              stroke="#005bb3"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M 188 15 L 182 100 L 175 195 L 168 310 L 158 395 L 152 485 L 150 580 L 154 690 L 160 770"
-              fill="none"
-              stroke="#60a5fa"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Green Line (East-West) */}
-            <path
-              d="M 40 220 L 75 220 L 120 226 L 168 230 L 225 230 L 275 240 L 350 240 L 395 240"
-              fill="none"
-              stroke="#16a34a"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M 40 220 L 75 220 L 120 226 L 168 230 L 225 230 L 275 240 L 350 240 L 395 240"
-              fill="none"
-              stroke="#86efac"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Orange Line (Kavi Subhash - Airport) */}
-            <path
-              d="M 160 770 L 180 700 L 200 600 L 220 500 L 260 400 L 290 300 L 350 150"
-              fill="none"
-              stroke="#f97316"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M 160 770 L 180 700 L 200 600 L 220 500 L 260 400 L 290 300 L 350 150"
-              fill="none"
-              stroke="#fdba74"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Yellow Line (Noapara - Barasat) */}
-            <path
-              d="M 182 100 L 250 100 L 350 150 L 400 50"
-              fill="none"
-              stroke="#eab308"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M 182 100 L 250 100 L 350 150 L 400 50"
-              fill="none"
-              stroke="#fde047"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Tunnel across Hooghly */}
-            <path d="M 70 220 L 105 223" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeDasharray="3 3" />
-
-            {/* Metro Stations */}
-            <circle cx="182" cy="100" r="4.5" fill="#ffffff" stroke="#005bb3" strokeWidth="2.5" />
-            <text x="190" y="103" fill="#003566" fontSize="7.5" fontWeight="700">Shyambazar</text>
-
-            <circle cx="168" cy="230" r="7" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-            <circle cx="168" cy="230" r="3.2" fill="#005bb3" />
-            <rect x="178" y="222" width="54" height="13" rx="3" fill="#ffffff" filter="url(#subtlePillShadow)" />
-            <text x="181" y="231" fill="#0f172a" fontSize="7" fontWeight="700">Esplanade ⇄</text>
-
-            <circle cx="163" cy="350" r="4.5" fill="#ffffff" stroke="#005bb3" strokeWidth="2.5" />
-            <text x="172" y="353" fill="#003566" fontSize="7" fontWeight="600">Park St</text>
-
-            <circle cx="150" cy="580" r="5" fill="#ffffff" stroke="#005bb3" strokeWidth="2.5" />
-            <text x="88" y="583" fill="#003566" fontSize="7.5" fontWeight="700">Kalighat Metro</text>
-
-            <circle cx="60" cy="220" r="4.5" fill="#ffffff" stroke="#16a34a" strokeWidth="2.5" />
-            <text x="25" y="212" fill="#14532d" fontSize="7" fontWeight="700">Howrah Stn</text>
-
-            <circle cx="225" cy="230" r="4.5" fill="#ffffff" stroke="#16a34a" strokeWidth="2.5" />
-            <text x="215" y="221" fill="#14532d" fontSize="7" fontWeight="700">Sealdah</text>
-
-            <circle cx="380" cy="240" r="4.5" fill="#ffffff" stroke="#16a34a" strokeWidth="2.5" />
-            <text x="325" y="253" fill="#14532d" fontSize="7" fontWeight="600">Salt Lake Sec V</text>
-          </g>
-        )}
+        {metroActive && <SvgMetroTransitOverlay />}
 
         {/* PANDAL MARKERS */}
         {pandals.map((pandal, index) => {
@@ -273,76 +178,14 @@ const KolkataSvgMap = ({
           const { x, y } = mapCoordsToSvg(pandal.lat, pandal.lng);
 
           return (
-            <g
+            <SvgPandalMarker
               key={pandal.id || index}
-              className="cursor-pointer group select-none transition-transform duration-200"
-              onClick={() => onSelectPandal(pandal)}
-            >
-              {/* Pulse animation ring if selected */}
-              {isSelected && (
-                <g>
-                  <circle cx={x} cy={y} r="22" fill="#005bb3" opacity="0.25" className="animate-ping" />
-                  <circle cx={x} cy={y} r="14" fill="#005bb3" opacity="0.3" />
-                </g>
-              )}
-
-              {/* Festive Durga Puja Pandal Pin Marker */}
-              <g filter="url(#markerShadow)" transform={`translate(${x - 16}, ${y - 38})`}>
-                {/* Pin Body */}
-                <path
-                  d="M 16 1.2 C 7.8 1.2 1.2 7.8 1.2 16 C 1.2 27 16 39 16 39 C 16 39 30.8 27 30.8 16 C 30.8 7.8 24.2 1.2 16 1.2 Z"
-                  fill={isSelected ? "url(#festiveBlueGrad)" : "url(#festiveRedGrad)"}
-                  stroke="url(#festiveGoldGrad)"
-                  strokeWidth="1.6"
-                />
-                {/* Inner White/Ivory Medallion */}
-                <circle cx="16" cy="15.2" r="9.8" fill="#ffffff" stroke="#fef08a" strokeWidth="0.5" />
-                
-                {/* 1. Sacred Kalash & Trishul Finial */}
-                <path d="M 16 6.2 L 16 9.4 M 14.4 7.3 C 14.4 8.4 16 9 16 9 C 16 9 17.6 8.4 17.6 7.3" fill="none" stroke="#d97706" strokeWidth="1" strokeLinecap="round" />
-                <circle cx="16" cy="9.7" r="0.9" fill="#d97706" />
-                
-                {/* 2. Tiered Bengali Chala / Mandap Canopy */}
-                <path d="M 16 9.4 C 14 11 11.6 12.1 9.8 13.1 C 11.2 13.4 13.6 13.6 16 13.6 C 18.4 13.6 20.8 13.4 22.2 13.1 C 20.4 12.1 18 11 16 9.4 Z" fill={isSelected ? "#005bb3" : "#b91c1c"} />
-                
-                {/* 3. Middle Cornice */}
-                <path d="M 9.2 13.8 L 22.8 13.8 C 22.8 15.1 20.8 15.7 16 15.7 C 11.2 15.7 9.2 15.1 9.2 13.8 Z" fill={isSelected ? "#003d7a" : "#8b0000"} />
-                <circle cx="16" cy="14.7" r="0.6" fill="#fbbf24" />
-                
-                {/* 4. Mandap Columns & Sanctum */}
-                <rect x="9.6" y="16.2" width="1.9" height="5.8" rx="0.4" fill={isSelected ? "#005bb3" : "#c1121f"} />
-                <rect x="20.5" y="16.2" width="1.9" height="5.8" rx="0.4" fill={isSelected ? "#005bb3" : "#c1121f"} />
-                <path d="M 12 22 L 12 18.1 C 12 16.5 20 16.5 20 18.1 L 20 22 Z" fill={isSelected ? "#002d62" : "#780000"} />
-                
-                {/* 5. Holy Diya / Sacred Flame */}
-                <path d="M 16 17.5 C 15 18.8 15 19.8 16 20.6 C 17 19.8 17 18.8 16 17.5 Z" fill="#fbbf24" />
-                
-                {/* 6. Base Plinth */}
-                <rect x="8.4" y="22" width="15.2" height="1.4" rx="0.5" fill={isSelected ? "#003d7a" : "#8b0000"} />
-              </g>
-
-              {/* Pandal Label Pill */}
-              <g filter="url(#subtlePillShadow)" transform={`translate(${x}, ${y + 6})`}>
-                <rect
-                  x="-45"
-                  y="0"
-                  width="90"
-                  height="16"
-                  rx="8"
-                  fill={isSelected ? "#005bb3" : "#ffffff"}
-                />
-                <text
-                  x="0"
-                  y="11"
-                  textAnchor="middle"
-                  fill={isSelected ? "#ffffff" : "#131b2e"}
-                  fontSize="7.5"
-                  fontWeight="700"
-                >
-                  {pandal.name.length > 14 ? `${pandal.name.slice(0, 13)}…` : pandal.name}
-                </text>
-              </g>
-            </g>
+              pandal={pandal}
+              isSelected={isSelected}
+              x={x}
+              y={y}
+              onSelect={onSelectPandal}
+            />
           );
         })}
       </svg>

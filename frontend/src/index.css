@@ -45,6 +45,11 @@
   scrollbar-width: none;
 }
 
+/* Material Symbols filled variant */
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1;
+}
+
 /* Custom pulse animations for map pins */
 @keyframes pulse-ring {
   0% {
@@ -74,6 +79,10 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
 }
 /* =========================================================
    PujoPath Loader
@@ -135,6 +144,26 @@
   opacity: 0.75;
 
   pointer-events: none;
+}
+
+.pujo-loader .pp-m-tl {
+  left: 0;
+  top: 5.5%;
+}
+
+.pujo-loader .pp-m-tr {
+  left: 100%;
+  top: 5.5%;
+}
+
+.pujo-loader .pp-m-bl {
+  left: 0;
+  top: 94.5%;
+}
+
+.pujo-loader .pp-m-br {
+  left: 100%;
+  top: 94.5%;
 }
 
 /* Main PujoPath artwork */
