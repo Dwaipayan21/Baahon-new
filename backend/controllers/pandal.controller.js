@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
+import { getPandalCrowdStatus } from "../services/crowd/crowdAggregation.service.js";
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -149,5 +150,41 @@ export const updatePandal = async (req, res, next) => {
     next(error);
   }
 
+};
+
+// GET /api/pandals/:id/crowd
+export const getPandalCrowd = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid pandal ID",
+      });
+    }
+
+    const pandal = await Pandal.findById(req.params.id).select(
+      "_id name crowdSamplePoints"
+    );
+
+    if (!pandal) {
+      return res.status(404).json({
+        success: false,
+        message: "Pandal not found",
+      });
+    }
+
+    const crowd = await getPandalCrowdStatus(pandal);
+
+    res.json({
+      success: true,
+      data: {
+        pandalId: pandal._id,
+        pandalName: pandal.name,
+        ...crowd,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 

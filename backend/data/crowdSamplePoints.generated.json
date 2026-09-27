@@ -1,0 +1,2161 @@
+{
+  "Bagbazar Sarbojanin": [
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3653965,
+          22.596705
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 520
+    },
+    {
+      "name": "Khirode Vidyavinode Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3687625,
+          22.6053787
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 506
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3648386,
+          22.5953392
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 682
+    },
+    {
+      "name": "State Highway 1",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3735563,
+          22.6018238
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 697
+    },
+    {
+      "name": "Chitpore Bridge",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3696771,
+          22.6073398
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 744
+    }
+  ],
+  "Ahiritola Jubak Brinda": [
+    {
+      "name": "BK Pal Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3583861,
+          22.5948661
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 580
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3594164,
+          22.5977054
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 421
+    },
+    {
+      "name": "Strand Bank Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3536303,
+          22.5934686
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 707
+    },
+    {
+      "name": "Sri Aurobindo Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3628299,
+          22.5965437
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 793
+    },
+    {
+      "name": "Ahiritola Street",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3554972,
+          22.5955467
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 441
+    }
+  ],
+  "Hatibagan Sarbojanin": [
+    {
+      "name": "Bidhan Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3736634,
+          22.6040804
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 559
+    },
+    {
+      "name": "Radha Gobinda Kar Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3751754,
+          22.6024294
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 536
+    },
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3657558,
+          22.5976662
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 570
+    },
+    {
+      "name": "Girish Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3678917,
+          22.6034126
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 500
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3661455,
+          22.5991406
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 483
+    }
+  ],
+  "Kasi Bose Lane": [
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3648125,
+          22.5946439
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 549
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3638605,
+          22.5911393
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 542
+    },
+    {
+      "name": "Acharya Prafulla Chandra Bose Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3750062,
+          22.5898191
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 641
+    },
+    {
+      "name": "Chittaranjan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3634907,
+          22.5891243
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 643
+    },
+    {
+      "name": "Vivekananda Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3696274,
+          22.5855696
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 684
+    }
+  ],
+  "Suruchi Sangha": [
+    {
+      "name": "James Long Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3224505,
+          22.5055914
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 550
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3329451,
+          22.5089977
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 643
+    },
+    {
+      "name": "Barickpara Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3244842,
+          22.5018278
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 549
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3239526,
+          22.5089363
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 535
+    },
+    {
+      "name": "Joykrishna Paul Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3253269,
+          22.5097577
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 518
+    }
+  ],
+  "66 Pally": [
+    {
+      "name": "Shyama Prasad Mukherjee Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3463598,
+          22.5197074
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 515
+    },
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3521511,
+          22.517262
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 591
+    },
+    {
+      "name": "Lansdowne Road (Sarat Bose Road)",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3527156,
+          22.5151307
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 597
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3408342,
+          22.5168276
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 652
+    },
+    {
+      "name": "Lake Gardens Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3531808,
+          22.5130301
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 685
+    }
+  ],
+  "Deshapriya Park": [
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3568782,
+          22.5182041
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 532
+    },
+    {
+      "name": "Shyama Prasad Mukherjee Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3459103,
+          22.5170104
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 680
+    },
+    {
+      "name": "Lake Gardens Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3536634,
+          22.511414
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 505
+    },
+    {
+      "name": "Lansdowne Road (Sarat Bose Road)",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3520463,
+          22.5201865
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 489
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3540774,
+          22.5095641
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 714
+    }
+  ],
+  "Sree Bhumi Sporting Club": [
+    {
+      "name": "Jessore Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3986441,
+          22.6090017
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 559
+    },
+    {
+      "name": "Radha Gobinda Kar Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4021193,
+          22.6096611
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 496
+    },
+    {
+      "name": "Kazi Nazrul Islam Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.406167,
+          22.5995804
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 746
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3956921,
+          22.608334
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 753
+    },
+    {
+      "name": "Dakshindari Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4046991,
+          22.6009296
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 540
+    }
+  ],
+  "Beleghata Sarbojanin": [
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4045997,
+          22.5693251
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary_link",
+      "distanceMeters": 781
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.392531,
+          22.5672984
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary_link",
+      "distanceMeters": 513
+    },
+    {
+      "name": "Beleghata Main Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3962603,
+          22.5628544
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 457
+    },
+    {
+      "name": "Canal East Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3986234,
+          22.5599708
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 768
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3947835,
+          22.5715196
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 594
+    }
+  ],
+  "Uddipani Park Circus Sarbojanin": [
+    {
+      "name": "Maa Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.368115,
+          22.5413649
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "trunk",
+      "distanceMeters": 399
+    },
+    {
+      "name": "Syed Amir Ali Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3656792,
+          22.5415425
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 543
+    },
+    {
+      "name": "JBS Haldane Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.370509,
+          22.5398452
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 534
+    },
+    {
+      "name": "Circus Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3644329,
+          22.5425315
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 597
+    },
+    {
+      "name": "Mother Teresa Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3653356,
+          22.5438703
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 466
+    }
+  ],
+  "Kumartuli Park": [
+    {
+      "name": "Bupendra Bose Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3667376,
+          22.5998962
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 550
+    },
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3649586,
+          22.5952573
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 547
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3652489,
+          22.5967473
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 461
+    },
+    {
+      "name": "Girish Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.367138,
+          22.601428
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 642
+    },
+    {
+      "name": "BK Pal Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3583861,
+          22.5948661
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 556
+    }
+  ],
+  "Sovabazar Rajbari": [
+    {
+      "name": "Bupendra Bose Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3700386,
+          22.6007793
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 572
+    },
+    {
+      "name": "Girish Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.367138,
+          22.601428
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 575
+    },
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3641972,
+          22.5919972
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 576
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3664337,
+          22.5999803
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 425
+    },
+    {
+      "name": "Acharya Prafulla Chandra Bose Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3744686,
+          22.5979818
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 752
+    }
+  ],
+  "Simla Byayam Samity": [
+    {
+      "name": "Vivekananda Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3699264,
+          22.5854547
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 553
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3635489,
+          22.5898518
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 534
+    },
+    {
+      "name": "Chittaranjan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3611466,
+          22.5800712
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 663
+    },
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3641129,
+          22.5916337
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 723
+    },
+    {
+      "name": "Vivekanada Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3597722,
+          22.5863727
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 509
+    }
+  ],
+  "Chaltabagan Lohapatty": [
+    {
+      "name": "Acharya Prafulla Chandra Bose Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3750759,
+          22.5895981
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 525
+    },
+    {
+      "name": "Vivekananda Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3741131,
+          22.5854226
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 580
+    },
+    {
+      "name": "Jatinda Mohan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3638447,
+          22.5904789
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 653
+    },
+    {
+      "name": "Chittaranjan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3634907,
+          22.5891243
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 668
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3640405,
+          22.5919321
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 693
+    }
+  ],
+  "Santosh Mitra Square": [],
+  "College Square": [
+    {
+      "name": "Mahatma Gandhi Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3624193,
+          22.5778322
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 549
+    },
+    {
+      "name": "Chittaranjan Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3602707,
+          22.5769209
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 548
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.358286,
+          22.5714245
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 563
+    },
+    {
+      "name": "Vidyapati Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3689631,
+          22.570837
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 610
+    },
+    {
+      "name": "Bepin Behari Ganguly Street",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3594394,
+          22.5700074
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 533
+    }
+  ],
+  "Ekdalia Evergreen Club": [
+    {
+      "name": "Rash Behari Avenue Connector",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3691015,
+          22.5211259
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 546
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3654098,
+          22.5230752
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 566
+    },
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3595063,
+          22.5185273
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 567
+    },
+    {
+      "name": "Dhakuria Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3671809,
+          22.5132509
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 574
+    },
+    {
+      "name": "Raja Subodh Chandra Mullick Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3668751,
+          22.5148353
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 401
+    }
+  ],
+  "Badamtala Ashar Sangha": [
+    {
+      "name": "Shyama Prasad Mukherjee Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3458356,
+          22.5126657
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 541
+    },
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3473794,
+          22.5169738
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 563
+    },
+    {
+      "name": "Chetla Central Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3382101,
+          22.5172304
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 413
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3455898,
+          22.5169251
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 383
+    },
+    {
+      "name": "Gopalnagar Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3380428,
+          22.5214433
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 729
+    }
+  ],
+  "Tridhara Sammilani": [
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3624512,
+          22.5190426
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 572
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3508768,
+          22.5171303
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary_link",
+      "distanceMeters": 636
+    },
+    {
+      "name": "Lansdowne Road (Sarat Bose Road)",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3527522,
+          22.5149115
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 555
+    },
+    {
+      "name": "Sarat Bose Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3521956,
+          22.5233256
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 771
+    },
+    {
+      "name": "Lake Gardens Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3535987,
+          22.511616
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 791
+    }
+  ],
+  "Naktala Udayan Sangha": [
+    {
+      "name": "Netaji Subhash Chandra Bose Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3691798,
+          22.4699837
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 317
+    }
+  ],
+  "Telengabagan Sarbojanin": [
+    {
+      "name": "Vivekananda Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3795766,
+          22.583538
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 623
+    },
+    {
+      "name": "CIT Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3916669,
+          22.5840679
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 670
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3910204,
+          22.5822844
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 682
+    },
+    {
+      "name": "Satin Sen Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3904354,
+          22.5802785
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 776
+    },
+    {
+      "name": "Satin Sen Sarani",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3866218,
+          22.5811111
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 496
+    }
+  ],
+  "Dum Dum Park Tarun Sangha": [
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4109579,
+          22.6124094
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary_link",
+      "distanceMeters": 650
+    },
+    {
+      "name": "Jessore Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4098271,
+          22.6112857
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 706
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4133114,
+          22.613433
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 546
+    },
+    {
+      "name": "Chawal Patty",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4213725,
+          22.6110197
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 539
+    },
+    {
+      "name": "Bangur Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4111051,
+          22.6059199
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 671
+    }
+  ],
+  "Lake Town Adhibasi Brinda": [
+    {
+      "name": "Kazi Nazrul Islam Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4068039,
+          22.5999583
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 578
+    },
+    {
+      "name": "Radha Gobinda Kar Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4021193,
+          22.6096611
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 610
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4093712,
+          22.6015747
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary_link",
+      "distanceMeters": 640
+    },
+    {
+      "name": "Jessore Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4056869,
+          22.61047
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 692
+    },
+    {
+      "name": "Kazi Nazrul Islam Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.4051458,
+          22.599162
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 600
+    }
+  ],
+  "Bosepukur Sitala Mandir": [
+    {
+      "name": "Rash Behari Avenue Connector",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3796188,
+          22.5193251
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 538
+    },
+    {
+      "name": "Banku Bihari Chatterjee Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3788324,
+          22.5162172
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 703
+    },
+    {
+      "name": "Rajdanga Main Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.385552,
+          22.5132134
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 672
+    },
+    {
+      "name": "Bose Pukur Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3828442,
+          22.5134537
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "tertiary",
+      "distanceMeters": 674
+    }
+  ],
+  "Singhi Park Sarbojanin": [
+    {
+      "name": "Gariahat Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3662164,
+          22.5167503
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 547
+    },
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3679502,
+          22.5206773
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 519
+    },
+    {
+      "name": "Bijon Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3695123,
+          22.5211416
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 682
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3654098,
+          22.5230752
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 377
+    },
+    {
+      "name": "Raja Subodh Chandra Mullick Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3668751,
+          22.5148353
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 760
+    }
+  ],
+  "Mudiali Club": [
+    {
+      "name": "Deshapran Sashmal Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3453979,
+          22.505833
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 494
+    },
+    {
+      "name": "Shyama Prasad Mukherjee Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3457856,
+          22.5160201
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 649
+    },
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3475497,
+          22.5168794
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 754
+    },
+    {
+      "name": "Chetla Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.340322,
+          22.509407
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 620
+    },
+    {
+      "name": "Lake Gardens Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3531195,
+          22.5078068
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 749
+    }
+  ],
+  "Ballygunge Cultural Association": [
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3599378,
+          22.5187271
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 539
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3508768,
+          22.5171303
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary_link",
+      "distanceMeters": 501
+    },
+    {
+      "name": "Lake Gardens Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3536634,
+          22.511414
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 547
+    },
+    {
+      "name": "Lansdowne Road (Sarat Bose Road)",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3519676,
+          22.5201214
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 591
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3540774,
+          22.5095641
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 733
+    }
+  ],
+  "Jodhpur Park Puja Pandal": [
+    {
+      "name": "Raja Subodh Chandra Mullick Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3674366,
+          22.5038676
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 551
+    },
+    {
+      "name": "Garia Main Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.367172,
+          22.5081165
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 545
+    },
+    {
+      "name": "Dhakuria Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3673337,
+          22.5108871
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 753
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3592537,
+          22.5020745
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary_link",
+      "distanceMeters": 532
+    },
+    {
+      "name": "Prince Anwar Shah Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3576637,
+          22.5019777
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 654
+    }
+  ],
+  "Hindustan Park": [
+    {
+      "name": "Rash Behari Avenue",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3564374,
+          22.517979
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 551
+    },
+    {
+      "name": "Gol Park",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3664996,
+          22.5162229
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 514
+    },
+    {
+      "name": "Raja Subodh Chandra Mullick Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3668751,
+          22.5148353
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 617
+    },
+    {
+      "name": "Gariahat Flyover",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3655972,
+          22.519922
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 456
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3654098,
+          22.5230752
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "primary",
+      "distanceMeters": 694
+    }
+  ],
+  "Chetla Agrani": [
+    {
+      "name": "Alipore Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3303856,
+          22.5221776
+        ]
+      },
+      "weight": 1.2,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "trunk",
+      "distanceMeters": 799
+    },
+    {
+      "name": "Alipore Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.332992,
+          22.5127783
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 581
+    },
+    {
+      "name": "Gopalnagar Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3380428,
+          22.5214433
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 516
+    },
+    {
+      "name": "Unnamed road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3408495,
+          22.5169049
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 499
+    },
+    {
+      "name": "Chetla Central Road",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          88.3315611,
+          22.518263
+        ]
+      },
+      "weight": 1,
+      "enabled": true,
+      "source": "OpenStreetMap/Overpass",
+      "highway": "secondary",
+      "distanceMeters": 471
+    }
+  ]
+}

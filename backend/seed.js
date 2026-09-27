@@ -2,6 +2,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import Pandal from "./models/pandal.model.js";
 import rawPandals from "./data/pandals.json" with { type: "json" };
+import crowdSamplePoints from "./data/crowdSamplePoints.json" with { type: "json" };
 
 const formatPandal = ({
   ["location/type"]: type,
@@ -37,11 +38,17 @@ const formatPandal = ({
 
   return {
     ...pandal,
-    verified: String(verified).trim().toLowerCase() === "true",
+
+    verified:
+      String(verified).trim().toLowerCase() === "true",
+
     location: {
       type: "Point",
       coordinates,
     },
+
+    crowdSamplePoints:
+      crowdSamplePoints[pandal.name] || [],
   };
 };
 

@@ -6,6 +6,7 @@ import cors from "cors";
 import pandalRoutes from "./routes/pandal.route.js";
 import pathRoutes from "./routes/path.route.js";
 import errorHandler from "./middleware/errorHandler.js";
+import { startCrowdScheduler } from "./services/crowd/crowdScheduler.service.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +23,8 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
+
+    startCrowdScheduler();
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
