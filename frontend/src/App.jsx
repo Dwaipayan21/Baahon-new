@@ -44,9 +44,58 @@ const App = () => {
   const [routeSegments, setRouteSegments] = useState([]);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeData, setRouteData] = useState(null);
+  const [activeRouteMode, setActiveRouteMode] = useState(null);
   const [routeError, setRouteError] = useState("");
   const [selectedPandalRoute, setSelectedPandalRoute] = useState(null);
-  const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] = useState(false);
+  const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] =
+    useState(false);
+
+  useEffect(() => {
+  if (!selectedPandal || !userLocation) {
+    setSelectedPandalRoute(null);
+    setSelectedPandalRouteLoading(false);
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadSelectedPandalWalkingRoute = async () => {
+    try {
+      setSelectedPandalRouteLoading(true);
+      setSelectedPandalRoute(null);
+
+      const route = await getRoute({
+        latitude: userLocation.lat,
+        longitude: userLocation.lng,
+        pandalId: selectedPandal.id,
+        mode: "walking",
+      });
+
+      if (!cancelled) {
+        setSelectedPandalRoute(route);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to fetch walking route for selected pandal:",
+        error
+      );
+
+      if (!cancelled) {
+        setSelectedPandalRoute(null);
+      }
+    } finally {
+      if (!cancelled) {
+        setSelectedPandalRouteLoading(false);
+      }
+    }
+  };
+
+  loadSelectedPandalWalkingRoute();
+
+  return () => {
+    cancelled = true;
+  };
+}, [selectedPandal, userLocation]);  
 
   useEffect(() => {
     console.log("FINAL ROUTE DATA:", routeData);
@@ -59,7 +108,9 @@ const App = () => {
     getPandals()
       .then((data) => {
         if (!isMounted) return;
+
         setPandals(data);
+
         if (data.length > 0) {
           setSelectedPandal(data[0]);
         }
@@ -79,7 +130,9 @@ const App = () => {
   // 2. Responsive Screen Listener
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -88,19 +141,35 @@ const App = () => {
     const query = searchQuery.toLowerCase().trim();
 
     return pandals.filter((pandal) => {
-      // Text search matching name, area, address, metro station
-      const searchableText = `${pandal.name} ${pandal.area} ${pandal.address} ${pandal.metroStation} ${pandal.category}`.toLowerCase();
+      const searchableText =
+        `${pandal.name} ${pandal.area} ${pandal.address} ${pandal.metroStation} ${pandal.category}`.toLowerCase();
 
       if (query && !searchableText.includes(query)) {
         return false;
       }
 
-      // Category chip filters
-      if (activeCategory === "metro") return Boolean(pandal.metroStation);
-      if (activeCategory === "low_rush") return pandal.crowdType === "low";
-      if (activeCategory === "bonedi") return pandal.category === "bonedi" || pandal.area?.toLowerCase().includes("north");
-      if (activeCategory === "theme") return pandal.category === "theme";
-      if (activeCategory === "traditional") return pandal.category === "traditional";
+      if (activeCategory === "metro") {
+        return Boolean(pandal.metroStation);
+      }
+
+      if (activeCategory === "low_rush") {
+        return pandal.crowdType === "low";
+      }
+
+      if (activeCategory === "bonedi") {
+        return (
+          pandal.category === "bonedi" ||
+          pandal.area?.toLowerCase().includes("north")
+        );
+      }
+
+      if (activeCategory === "theme") {
+        return pandal.category === "theme";
+      }
+
+      if (activeCategory === "traditional") {
+        return pandal.category === "traditional";
+      }
 
       return true;
     });
@@ -115,9 +184,15 @@ const App = () => {
   const handleZoom = (delta) => {
     if (googleMapRef.current && window.google?.maps) {
       const currentZoom = googleMapRef.current.getZoom() || 13;
+
       googleMapRef.current.setZoom(currentZoom + delta);
     } else {
-      setSvgZoom((prev) => Math.min(Math.max(Number((prev + delta * 0.15).toFixed(2)), 0.75), 2.2));
+      setSvgZoom((prev) =>
+        Math.min(
+          Math.max(Number((prev + delta * 0.15).toFixed(2)), 0.75),
+          2.2
+        )
+      );
     }
   };
 
@@ -137,6 +212,7 @@ const App = () => {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         };
+
         console.log("MY GPS LOCATION:", coords);
 
         if (
@@ -209,8 +285,15 @@ const App = () => {
 
   const handleToggleLayer = () => {
     setActiveLayer((prev) => {
-      const next = prev === "roadmap" ? "satellite" : prev === "satellite" ? "terrain" : "roadmap";
+      const next =
+        prev === "roadmap"
+          ? "satellite"
+          : prev === "satellite"
+          ? "terrain"
+          : "roadmap";
+
       showToast(`Switched map layer to ${next}`);
+
       return next;
     });
   };
@@ -230,8 +313,10 @@ const App = () => {
     });
   };
 
+  // Metro + Walk Route
   const handleMetroRoute = async () => {
     console.log("handleMetroRoute called");
+
     setRouteError("");
 
     if (selectedPandals.length === 0) {
@@ -244,8 +329,13 @@ const App = () => {
       return;
     }
 
+    // Metro route means Metro layer must be visible
+    setMetroActive(true);
+    setActiveRouteMode("metro");
+
     setRouteLoading(true);
     setRouteData(null);
+
     const selectedPandalSnapshot = [...selectedPandals];
 
     try {
@@ -274,6 +364,7 @@ const App = () => {
         });
 
         routes.push(route);
+
         currentLocation = {
           lat: pandal.lat,
           lng: pandal.lng,
@@ -283,15 +374,19 @@ const App = () => {
       setRouteData(routes.length === 1 ? routes[0] : routes);
     } catch (error) {
       console.error("Metro route failed:", error);
-      setRouteError("Metro route is unavailable for this pandal.");
+
+      setRouteError("Metro route is unavailable for this pandal");
+
       showToast("Metro route is unavailable");
     } finally {
       setRouteLoading(false);
     }
   };
 
+  // By Road Route
   const handleRoadRoute = async () => {
     console.log("handleRoadRoute called");
+
     setRouteError("");
 
     if (selectedPandals.length === 0) {
@@ -303,10 +398,14 @@ const App = () => {
       showToast("Please use My Location before starting the route");
       return;
     }
+
+    // Road route means Metro layer must be hidden
     setMetroActive(false);
+    setActiveRouteMode("road");
 
     setRouteLoading(true);
     setRouteData(null);
+
     const selectedPandalSnapshot = [...selectedPandals];
 
     try {
@@ -335,6 +434,7 @@ const App = () => {
         });
 
         routes.push(route);
+
         currentLocation = {
           lat: pandal.lat,
           lng: pandal.lng,
@@ -344,7 +444,9 @@ const App = () => {
       setRouteData(routes.length === 1 ? routes[0] : routes);
     } catch (error) {
       console.error("Road route failed:", error);
-      setRouteError("Road route is unavailable for this pandal.");
+
+      setRouteError("Road route is unavailable for this pandal");
+
       showToast("Could not create road route");
     } finally {
       setRouteLoading(false);
@@ -366,6 +468,7 @@ const App = () => {
 
     try {
       const remainingPandals = [...selectedPandals];
+
       console.table(
         remainingPandals.map((pandal) => ({
           name: pandal.name,
@@ -386,9 +489,10 @@ const App = () => {
 
         console.log("Current location:", currentLocation);
         console.log("Nearest pandal:", nearest);
-        console.log("Route order:", segments.map(
-          (segment) => segment.destination?.name
-        ));
+        console.log(
+          "Route order:",
+          segments.map((segment) => segment.destination?.name)
+        );
 
         if (!nearest) break;
 
@@ -457,18 +561,23 @@ const App = () => {
 
         {/* 2. Main Map Canvas Viewport */}
         <main className="relative flex-1 w-full min-h-0 overflow-hidden">
-          {/* Google Maps / Fallback SVG Map */}
           <GoogleMapCanvas
             pandals={filteredPandals}
             selectedPandal={selectedPandal}
             selectedPandals={selectedPandals}
             routeSegments={routeSegments}
             routeData={routeData}
+            activeRouteMode={activeRouteMode}
             onSelectPandal={(pandal) => {
               setSelectedPandal(pandal);
+
               setRouteData(null);
               setRouteError("");
               setRouteSegments([]);
+
+              // Returning to normal map state
+              setActiveRouteMode(null);
+              setMetroActive(true);
             }}
             onTogglePandalSelection={togglePandalSelection}
             metroActive={metroActive}
@@ -480,7 +589,7 @@ const App = () => {
             }}
           />
 
-          {/* 3. Floating Search & Category Filter Section (Top) */}
+          {/* 3. Floating Search & Category Filter Section */}
           <SearchFilterOverlay
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -493,7 +602,7 @@ const App = () => {
             totalCount={pandals.length}
           />
 
-          {/* 4. Floating Map Utility Controls (Right Side) */}
+          {/* 4. Floating Map Utility Controls */}
           <div
             className={`absolute right-3 sm:right-6 z-30 pointer-events-auto transition-all ${
               selectedPandal && !isDesktop
@@ -503,11 +612,18 @@ const App = () => {
           >
             <MapControls
               metroActive={metroActive}
-              onToggleMetro={() => setMetroActive((prev) => !prev)}
+              onToggleMetro={() =>
+                setMetroActive((prev) => !prev)
+              }
               routeModeActive={routeModeActive}
               onToggleRouteMode={() => {
                 setRouteModeActive((prev) => !prev);
-                showToast(routeModeActive ? "Route mode disabled" : "Route mode enabled");
+
+                showToast(
+                  routeModeActive
+                    ? "Route mode disabled"
+                    : "Route mode enabled"
+                );
               }}
               activeLayer={activeLayer}
               onToggleLayer={handleToggleLayer}
@@ -533,6 +649,12 @@ const App = () => {
             onClearRoute={() => {
               setSelectedPandals([]);
               setRouteSegments([]);
+              setRouteData(null);
+              setRouteError("");
+              setActiveRouteMode(null);
+
+              // Metro lines should return after clearing the route
+              setMetroActive(true);
             }}
             onMetroRoute={handleMetroRoute}
             onRoadRoute={handleRoadRoute}
@@ -556,8 +678,11 @@ const App = () => {
             activeTab={activeNavTab}
             onSelectTab={(tab) => {
               setActiveNavTab(tab);
+
               if (tab !== "explore") {
-                showToast(`${tab.charAt(0).toUpperCase() + tab.slice(1)} tab coming soon!`);
+                showToast(
+                  `${tab.charAt(0).toUpperCase() + tab.slice(1)} tab coming soon!`
+                );
               }
             }}
           />
