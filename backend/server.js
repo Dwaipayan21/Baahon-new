@@ -5,6 +5,7 @@ import cors from "cors";
 
 import pandalRoutes from "./routes/pandal.route.js";
 import pathRoutes from "./routes/path.route.js";
+import checkInRoutes from "./routes/checkin.route.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { startCrowdScheduler } from "./services/crowd/crowdScheduler.service.js"
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/pandals", pandalRoutes);
 app.use("/api/path", pathRoutes);
+app.use("/api/checkins",checkInRoutes);
 
 app.use(errorHandler);
 
