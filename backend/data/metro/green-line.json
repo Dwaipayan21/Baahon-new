@@ -1,0 +1,146 @@
+[
+  {
+    "id": "howrah-maidan",
+    "name": "Howrah Maidan",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3339972,
+        22.5837786
+      ]
+    }
+  },
+  {
+    "id": "howrah",
+    "name": "Howrah",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.340164,
+        22.5833721
+      ]
+    }
+  },
+  {
+    "id": "mahakaran",
+    "name": "Mahakaran",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3505501,
+        22.5720495
+      ]
+    }
+  },
+  {
+    "id": "esplanade",
+    "name": "Esplanade",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3502681,
+        22.5641817
+      ]
+    }
+  },
+  {
+    "id": "sealdah",
+    "name": "Sealdah",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3700496,
+        22.5664743
+      ]
+    }
+  },
+  {
+    "id": "phoolbagan",
+    "name": "Phoolbagan",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3902604,
+        22.5720898
+      ]
+    }
+  },
+  {
+    "id": "salt-lake-stadium",
+    "name": "Salt Lake Stadium",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.4030833,
+        22.572966
+      ]
+    }
+  },
+  {
+    "id": "bengal-chemical",
+    "name": "Bengal Chemical",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.401335,
+        22.5799701
+      ]
+    }
+  },
+  {
+    "id": "city-centre",
+    "name": "City Centre",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.4079174,
+        22.5869882
+      ]
+    }
+  },
+  {
+    "id": "central-park",
+    "name": "Central Park",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.4156434,
+        22.5903984
+      ]
+    }
+  },
+  {
+    "id": "karunamoyee",
+    "name": "Karunamoyee",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.421568,
+        22.5862923
+      ]
+    }
+  },
+  {
+    "id": "salt-lake-sector-v",
+    "name": "Salt Lake Sector V",
+    "line": "Green",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.4290204,
+        22.5809412
+      ]
+    }
+  }
+]

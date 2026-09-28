@@ -1,0 +1,57 @@
+[
+  {
+    "from": "Howrah",
+    "to": "Howrah Maidan",
+    "line": "Green"
+  },
+  {
+    "from": "Mahakaran",
+    "to": "Howrah",
+    "line": "Green"
+  },
+  {
+    "from": "Esplanade",
+    "to": "Mahakaran",
+    "line": "Green"
+  },
+  {
+    "from": "Sealdah",
+    "to": "Esplanade",
+    "line": "Green"
+  },
+  {
+    "from": "Phoolbagan",
+    "to": "Sealdah",
+    "line": "Green"
+  },
+  {
+    "from": "Salt Lake Stadium",
+    "to": "Phoolbagan",
+    "line": "Green"
+  },
+  {
+    "from": "Bengal Chemical",
+    "to": "Salt Lake Stadium",
+    "line": "Green"
+  },
+  {
+    "from": "City Centre",
+    "to": "Bengal Chemical",
+    "line": "Green"
+  },
+  {
+    "from": "Central Park",
+    "to": "City Centre",
+    "line": "Green"
+  },
+  {
+    "from": "Karunamoyee",
+    "to": "Central Park",
+    "line": "Green"
+  },
+  {
+    "from": "Salt Lake Sector V",
+    "to": "Karunamoyee",
+    "line": "Green"
+  }
+]

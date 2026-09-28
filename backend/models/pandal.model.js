@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const pandalSchema = new mongoose.Schema(
   {
@@ -39,7 +39,89 @@ const pandalSchema = new mongoose.Schema(
       coordinates: {
         type: [Number],
         required: true,
+        validate: {
+          validator: (value) =>
+            value.length === 2 &&
+            Number.isFinite(value[0]) && Number.isFinite(value[1]) &&
+            value[0] >= -180 && value[0] <= 180 && //longitude range
+            value[1] >= -90 && value[1] <= 90,  //latitue range
+          message: "Coordinates must be [longitude, latitude]",
+        },
       },
+    },
+
+    // for crowd density
+    crowdSamplePoints: {
+      type: [
+        {
+          samplePointId: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+
+          name: {
+            type: String,
+            required: true,
+            trim: true,
+          },
+
+          location: {
+            type: {
+              type: String,
+              enum: ["Point"],
+              required: true,
+              default: "Point",
+            },
+
+            coordinates: {
+              type: [Number],
+              required: true,
+              validate: {
+                validator: (value) =>
+                  value.length === 2 &&
+                  Number.isFinite(value[0]) &&
+                  Number.isFinite(value[1]) &&
+                  value[0] >= -180 &&
+                  value[0] <= 180 &&
+                  value[1] >= -90 &&
+                  value[1] <= 90,
+
+                message:
+                  "Crowd sample coordinates must be [longitude, latitude]",
+              },
+            },
+          },
+
+          weight: {
+            type: Number,
+            default: 1,
+            min: 0,
+          },
+
+          enabled: {
+            type: Boolean,
+            default: true,
+          },
+
+          source: {
+            type: String,
+            default: "OpenStreetMap/Overpass",
+          },
+
+          highway: {
+            type: String,
+            default: "",
+          },
+
+          distanceMeters: {
+            type: Number,
+            default: null,
+            min: 0,
+          },
+        },
+      ],
+      default: [],
     },
 
     category: {
@@ -71,4 +153,6 @@ pandalSchema.index({
   location: "2dsphere",
 });
 
-module.exports = mongoose.model("Pandal", pandalSchema);
+const Pandal = mongoose.model("Pandal", pandalSchema);
+
+export default Pandal;

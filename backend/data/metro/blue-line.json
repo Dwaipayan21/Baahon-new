@@ -1,0 +1,314 @@
+[
+  {
+    "id": "kavi-subhash-blue-line",
+    "name": "Kavi Subhash (Blue Line)",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3980224,
+        22.4721341
+      ]
+    }
+  },
+  {
+    "id": "shahid-khudiram",
+    "name": "Shahid Khudiram",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3912447,
+        22.4658509
+      ]
+    }
+  },
+  {
+    "id": "kavi-nazrul",
+    "name": "Kavi Nazrul",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3800406,
+        22.4640623
+      ]
+    }
+  },
+  {
+    "id": "gitanjali",
+    "name": "Gitanjali",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3700144,
+        22.469362
+      ]
+    }
+  },
+  {
+    "id": "masterda-surya-sen",
+    "name": "Masterda Surya Sen",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3608305,
+        22.4734143
+      ]
+    }
+  },
+  {
+    "id": "netaji",
+    "name": "Netaji",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3455988,
+        22.4812746
+      ]
+    }
+  },
+  {
+    "id": "mahanayak-uttam-kumar",
+    "name": "Mahanayak Uttam Kumar",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3449794,
+        22.495293
+      ]
+    }
+  },
+  {
+    "id": "rabindra-sarobar",
+    "name": "Rabindra Sarobar",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3454327,
+        22.5076062
+      ]
+    }
+  },
+  {
+    "id": "kalighat",
+    "name": "Kalighat",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3457808,
+        22.5171299
+      ]
+    }
+  },
+  {
+    "id": "jatin-das-park",
+    "name": "Jatin Das Park",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3464254,
+        22.5242532
+      ]
+    }
+  },
+  {
+    "id": "netaji-bhavan",
+    "name": "Netaji Bhavan",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3459203,
+        22.5334398
+      ]
+    }
+  },
+  {
+    "id": "rabindra-sadan",
+    "name": "Rabindra Sadan",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3472276,
+        22.5417879
+      ]
+    }
+  },
+  {
+    "id": "maidan",
+    "name": "Maidan",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3487474,
+        22.5497087
+      ]
+    }
+  },
+  {
+    "id": "park-street",
+    "name": "Park Street",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3500414,
+        22.5552804
+      ]
+    }
+  },
+  {
+    "id": "esplanade-line-1",
+    "name": "Esplanade (Line 1)",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.351106,
+        22.5636505
+      ]
+    }
+  },
+  {
+    "id": "chandni-chowk",
+    "name": "Chandni Chowk",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3543062,
+        22.5670985
+      ]
+    }
+  },
+  {
+    "id": "central",
+    "name": "Central",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3587523,
+        22.5726466
+      ]
+    }
+  },
+  {
+    "id": "mahatma-gandhi-road",
+    "name": "Mahatma Gandhi Road",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3613384,
+        22.5811183
+      ]
+    }
+  },
+  {
+    "id": "girish-park",
+    "name": "Girish Park",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3629625,
+        22.5873608
+      ]
+    }
+  },
+  {
+    "id": "shobhabazar-sutanuti",
+    "name": "Shobhabazar Sutanuti",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3650951,
+        22.5960768
+      ]
+    }
+  },
+  {
+    "id": "shyambazar",
+    "name": "Shyambazar",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3726119,
+        22.6014912
+      ]
+    }
+  },
+  {
+    "id": "belgachia",
+    "name": "Belgachia",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3865976,
+        22.6061148
+      ]
+    }
+  },
+  {
+    "id": "dum-dum",
+    "name": "Dum Dum",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.392777,
+        22.6213386
+      ]
+    }
+  },
+  {
+    "id": "noapara-blue-line",
+    "name": "Noapara (Blue Line)",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3940511,
+        22.639981
+      ]
+    }
+  },
+  {
+    "id": "baranagar",
+    "name": "Baranagar",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3806696,
+        22.6530658
+      ]
+    }
+  },
+  {
+    "id": "dakshineshwar",
+    "name": "Dakshineshwar",
+    "line": "Blue",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        88.3637585,
+        22.6540156
+      ]
+    }
+  }
+]

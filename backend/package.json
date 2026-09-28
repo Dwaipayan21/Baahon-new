@@ -3,7 +3,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.10.0",
+    "fast-xml-parser": "^5.11.1",
+    "mongoose": "^9.10.1",
     "nodemon": "^3.1.14"
   },
   "name": "backend",
@@ -26,5 +27,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module"
 }

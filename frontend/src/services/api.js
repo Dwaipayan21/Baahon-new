@@ -2,18 +2,13 @@ import { PANDAL_FALLBACK_IMAGES } from "../data/constants";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
-const crowdLevels = [
-  { label: "Low Rush • ~5m queue", type: "low", color: "emerald" },
-  { label: "Moderate Crowd • ~15m queue", type: "moderate", color: "amber" },
-  { label: "High Rush • ~45m queue", type: "high", color: "rose" },
-];
 
 export const normalizePandal = (pandal, index = 0) => {
   const coords = pandal.location?.coordinates || [];
   const lng = Number(coords[0]);
   const lat = Number(coords[1]);
 
-  const defaultCrowd = crowdLevels[index % crowdLevels.length];
+  
 
   return {
     ...pandal,
@@ -29,9 +24,6 @@ export const normalizePandal = (pandal, index = 0) => {
     lng: Number.isFinite(lng) ? lng : 88.3639,
     image: pandal.image || PANDAL_FALLBACK_IMAGES[index % PANDAL_FALLBACK_IMAGES.length],
     rating: (4.6 + (index % 4) * 0.1).toFixed(1),
-    crowdLabel: defaultCrowd.label,
-    crowdType: defaultCrowd.type,
-    crowdColor: defaultCrowd.color,
     distanceText: `${(0.4 + (index % 8) * 0.5).toFixed(1)} km • ${(5 + (index % 8) * 4)} min`,
   };
 };
@@ -62,5 +54,134 @@ export const getPandalById = async (id) => {
   } catch (err) {
     console.error(`Failed to fetch pandal ${id}:`, err);
     throw err;
+  }
+};
+export const getNearbyPandals = async ({
+  latitude,
+  longitude,
+  maxDistance = 5000,
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      maxDistance: String(maxDistance),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/pandals/nearby?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Nearby pandal request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    const rawList = Array.isArray(json)
+      ? json
+      : json.data || json.pandals || [];
+
+    return rawList.map(normalizePandal);
+  } catch (error) {
+    console.error("Failed to fetch nearby pandals:", error);
+    throw error;
+  }
+};
+export const getWalkingRoute = async ({
+  latitude,
+  longitude,
+  pandalId,
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      pandalId: String(pandalId),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/path?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Route request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error("Failed to fetch walking route:", error);
+    throw error;
+  }
+};
+
+export const getRoute = async ({
+  latitude,
+  longitude,
+  pandalId,
+  mode = "walking",
+}) => {
+  try {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      pandalId: String(pandalId),
+      mode: String(mode),
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/path?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Route request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error(`Failed to fetch ${mode} route:`, error);
+    throw error;
+  }
+};
+export const getPandalCrowd = async (id) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/pandals/${id}/crowd`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Crowd request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error(`Failed to fetch crowd for pandal ${id}:`, error);
+    throw error;
   }
 };

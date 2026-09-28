@@ -1,3 +1,7 @@
+import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
 
 require("dotenv").config();
 
@@ -8,22 +12,28 @@ const cors = require("cors");
 const Pandal = require("./models/pandal.model.js");
 const errorHandler = require("./middleware/errorHandler.js");
 const foodRoutes = require("./routes/food.routes.js");
+import pandalRoutes from "./routes/pandal.route.js";
+import pathRoutes from "./routes/path.route.js";
+import checkInRoutes from "./routes/checkin.route.js";
+import errorHandler from "./middleware/errorHandler.js";
+import { startCrowdScheduler } from "./services/crowd/crowdScheduler.service.js"
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
+app.use("/api/pandals", pandalRoutes);
+app.use("/api/path", pathRoutes);
+app.use("/api/checkins",checkInRoutes);
+
+app.use(errorHandler);
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error.message);
-  });
 
 // Food routes (mounted before generic /:id route)
 app.use("/api/pandals", foodRoutes);
@@ -32,11 +42,10 @@ app.use("/api/pandals", foodRoutes);
 app.get("/api/pandals", async (req, res, next) => {
   try {
     const pandals = await Pandal.find();
+    startCrowdScheduler();
 
-    res.status(200).json({
-      success: true,
-      count: pandals.length,
-      data: pandals,
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     next(error);
@@ -85,3 +94,8 @@ if (require.main === module) {
 }
 
 module.exports = app;
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
+  });
