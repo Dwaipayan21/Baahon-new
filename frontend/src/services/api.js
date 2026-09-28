@@ -185,3 +185,65 @@ export const getPandalCrowd = async (id) => {
     throw error;
   }
 };
+export const createCheckIn = async ({
+  userId,
+  pandalId,
+  latitude,
+  longitude,
+}) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/checkin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        pandalId,
+        latitude,
+        longitude,
+      }),
+    });
+
+    const json = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const error = new Error(
+        json.message || `Check-in request failed: ${response.status}`
+      );
+
+      error.status = response.status;
+      error.data = json.data;
+
+      throw error;
+    }
+
+    return json.data;
+  } catch (error) {
+    console.error("Failed to create check-in:", error);
+    throw error;
+  }
+};
+export const getUserCheckIns = async (userId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/checkin/user/${encodeURIComponent(userId)}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Check-in history request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error("Failed to fetch user check-ins:", error);
+    throw error;
+  }
+};

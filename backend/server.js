@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use("/api/pandals", pandalRoutes);
 app.use("/api/path", pathRoutes);
-app.use("/api/checkins",checkInRoutes);
+app.use("/api/checkin", checkInRoutes);
 
 app.use(errorHandler);
 

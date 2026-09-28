@@ -166,3 +166,49 @@ export const getPandalCheckInCount = async (req, res, next) => {
     next(error);
   }
 };
+export const getUserCheckIns = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
+    }
+
+    const checkIns = await CheckIn.find({
+      userId: userId.trim(),
+    })
+      .populate("pandalId", "_id name category")
+      .sort({ createdAt: -1 });
+
+    const visits = checkIns.map((checkIn) => ({
+      checkInId: checkIn._id,
+      pandalId: checkIn.pandalId?._id || checkIn.pandalId,
+      pandalName: checkIn.pandalId?.name || "Unknown Pandal",
+      category:
+        checkIn.category ||
+        checkIn.pandalId?.category ||
+        "traditional",
+      points: checkIn.points,
+      checkedInAt: checkIn.createdAt,
+    }));
+
+    const totalPoints = visits.reduce(
+      (total, visit) => total + (Number(visit.points) || 0),
+      0
+    );
+
+    return res.json({
+      success: true,
+      data: {
+        visits,
+        totalPoints,
+        visitedCount: visits.length,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
