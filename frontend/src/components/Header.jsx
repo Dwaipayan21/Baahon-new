@@ -1,3 +1,10 @@
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/react";
+
 const Header = ({ onNavigate }) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] bg-[#faf8ff] border-b border-slate-200/70 shadow-sm pt-safe">
@@ -29,19 +36,42 @@ const Header = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Right: Profile */}
-        <button
-          type="button"
-          aria-label="Account Profile"
-          onClick={() => onNavigate?.("profile")}
-          className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center hover:ring-2 hover:ring-[#005bb3]/30 transition-all overflow-hidden flex-shrink-0"
-        >
-          <img
-            alt="Profile"
-            className="w-full h-full object-cover"
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-          />
-        </button>
+        {/* Right: Authentication */}
+        <div className="flex items-center gap-2">
+
+          {/* Logged out */}
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="px-3 py-2 text-sm font-semibold text-[#005bb3] hover:bg-blue-50 rounded-lg transition-all"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+
+            <SignUpButton mode="modal">
+              <button
+                type="button"
+                className="px-3 py-2 text-sm font-semibold text-white bg-[#005bb3] hover:bg-[#004a91] rounded-lg transition-all shadow-sm"
+              >
+                Sign Up
+              </button>
+            </SignUpButton>
+          </Show>
+
+          {/* Logged in */}
+          <Show when="signed-in">
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9",
+                },
+              }}
+            />
+          </Show>
+
+        </div>
 
       </div>
     </header>
