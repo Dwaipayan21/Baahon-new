@@ -5,12 +5,17 @@ import { CHECKIN_CONFIG } from "../config/checkin.config.js";
 
 export const createCheckIn = async (req, res, next) => {
   try {
-    const { userId, pandalId, latitude, longitude } = req.body;
+    // userId comes from Clerk authentication middleware
+    const userId = req.userId;
 
-    if (!userId?.trim() || typeof userId !== "string") {
-      return res.status(400).json({
+    const { pandalId, latitude, longitude } = req.body;
+
+    // Authentication middleware should already guarantee this,
+    // but keep this as a safety check.
+    if (!userId || typeof userId !== "string") {
+      return res.status(401).json({
         success: false,
-        message: "userId is required",
+        message: "Authentication required",
       });
     }
 
@@ -49,8 +54,10 @@ export const createCheckIn = async (req, res, next) => {
       });
     }
 
+    // Check whether THIS authenticated Clerk user
+    // has already checked in at this pandal.
     const existing = await CheckIn.findOne({
-      userId: userId.trim(),
+      userId,
       pandalId: pandal._id,
     });
 
@@ -84,19 +91,23 @@ export const createCheckIn = async (req, res, next) => {
         success: false,
         message: "Too far from pandal to check in",
         data: {
-          maxDistanceMeters: CHECKIN_CONFIG.PROXIMITY_RADIUS_METERS,
+          maxDistanceMeters:
+            CHECKIN_CONFIG.PROXIMITY_RADIUS_METERS,
         },
       });
     }
 
-    const category = (pandal.category || "traditional").trim().toLowerCase();
+    const category = (pandal.category || "traditional")
+      .trim()
+      .toLowerCase();
+
     const points =
       CHECKIN_CONFIG.POINTS_BY_CATEGORY[category] ??
       CHECKIN_CONFIG.DEFAULT_POINTS;
 
     try {
       const checkIn = await CheckIn.create({
-        userId: userId.trim(),
+        userId,
         pandalId: pandal._id,
         location: {
           type: "Point",
@@ -125,6 +136,7 @@ export const createCheckIn = async (req, res, next) => {
           message: "Already checked in at this pandal",
         });
       }
+
       throw error;
     }
   } catch (error) {

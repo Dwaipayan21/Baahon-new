@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const foodPlaceSchema = new mongoose.Schema(
   {
@@ -70,13 +70,13 @@ const foodPlaceSchema = new mongoose.Schema(
   }
 );
 
-// Compound unique index to prevent inserting duplicate provider records for the same pandal
 foodPlaceSchema.index(
   { source: 1, sourceId: 1, pandalId: 1 },
   { unique: true }
 );
 
-// Index for querying food places belonging to a specific pandal
 foodPlaceSchema.index({ pandalId: 1 });
 
-module.exports = mongoose.model("FoodPlace", foodPlaceSchema);
+const FoodPlace = mongoose.model("FoodPlace", foodPlaceSchema);
+
+export default FoodPlace;
