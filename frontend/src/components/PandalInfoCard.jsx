@@ -1,3 +1,4 @@
+import CrowdBadge from "./CrowdBadge";
 const PandalInfoCard = ({
   pandal,
   crowd,
@@ -21,19 +22,13 @@ const PandalInfoCard = ({
       </div>
 
       <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5 gap-1.5">
-        {/* Crowd */}
-        <div className="flex items-center gap-1.5">
-          <span
-            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold ${crowd.bg} ${crowd.text}`}
-          >
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${crowd.dot} animate-pulse`}
-            />
-
-            <span className="truncate">
-              {pandal.crowdLabel}
-            </span>
-          </span>
+        
+        {/* Real Crowd Data */}
+        <div className="flex items-center">
+          <CrowdBadge
+            status={pandal.crowdStatus}
+            observedAt={pandal.crowdObservedAt}
+          />
         </div>
 
         {/* Address */}
