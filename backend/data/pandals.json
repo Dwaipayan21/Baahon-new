@@ -345,7 +345,7 @@
     "location/coordinates/0": 88.3629,
     "location/coordinates/1": 22.5206,
     "category": "traditional",
-    "metroStation": "",
+    "metroStation": "Kalighat",
     "verified": false,
     "source": "Manual research"
   },
@@ -359,7 +359,7 @@
     "location/coordinates/0": 88.3463,
     "location/coordinates/1": 22.5102,
     "category": "community",
-    "metroStation": "",
+    "metroStation": "Rabindra Sarobar",
     "verified": false,
     "source": "Manual research"
   },
@@ -373,7 +373,7 @@
     "location/coordinates/0": 88.3556,
     "location/coordinates/1": 22.5160,
     "category": "traditional",
-    "metroStation": "",
+    "metroStation": "Kalighat",
     "verified": false,
     "source": "Manual research"
   },
@@ -387,7 +387,7 @@
     "location/coordinates/0": 88.3625,
     "location/coordinates/1": 22.5058,
     "category": "theme",
-    "metroStation": "",
+    "metroStation": "Rabindra Sarobar",
     "verified": false,
     "source": "Manual research"
   },
@@ -401,7 +401,7 @@
     "location/coordinates/0": 88.3618,
     "location/coordinates/1": 22.5178,
     "category": "theme",
-    "metroStation": "",
+    "metroStation": "Kalighat",
     "verified": false,
     "source": "Manual research"
   },
@@ -415,7 +415,7 @@
     "location/coordinates/0": 88.3360,
     "location/coordinates/1": 22.5172,
     "category": "community",
-    "metroStation": "",
+    "metroStation": "Kalighat",
     "verified": false,
     "source": "Manual research"
   }
