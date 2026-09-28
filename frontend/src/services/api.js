@@ -2,18 +2,13 @@ import { PANDAL_FALLBACK_IMAGES } from "../data/constants";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
-const crowdLevels = [
-  { label: "Low Rush • ~5m queue", type: "low", color: "emerald" },
-  { label: "Moderate Crowd • ~15m queue", type: "moderate", color: "amber" },
-  { label: "High Rush • ~45m queue", type: "high", color: "rose" },
-];
 
 export const normalizePandal = (pandal, index = 0) => {
   const coords = pandal.location?.coordinates || [];
   const lng = Number(coords[0]);
   const lat = Number(coords[1]);
 
-  const defaultCrowd = crowdLevels[index % crowdLevels.length];
+  
 
   return {
     ...pandal,
@@ -29,9 +24,6 @@ export const normalizePandal = (pandal, index = 0) => {
     lng: Number.isFinite(lng) ? lng : 88.3639,
     image: pandal.image || PANDAL_FALLBACK_IMAGES[index % PANDAL_FALLBACK_IMAGES.length],
     rating: (4.6 + (index % 4) * 0.1).toFixed(1),
-    crowdLabel: defaultCrowd.label,
-    crowdType: defaultCrowd.type,
-    crowdColor: defaultCrowd.color,
     distanceText: `${(0.4 + (index % 8) * 0.5).toFixed(1)} km • ${(5 + (index % 8) * 4)} min`,
   };
 };
@@ -167,6 +159,29 @@ export const getRoute = async ({
     return json.data;
   } catch (error) {
     console.error(`Failed to fetch ${mode} route:`, error);
+    throw error;
+  }
+};
+export const getPandalCrowd = async (id) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/pandals/${id}/crowd`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message ||
+          `Crowd request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+
+    return json.data;
+  } catch (error) {
+    console.error(`Failed to fetch crowd for pandal ${id}:`, error);
     throw error;
   }
 };

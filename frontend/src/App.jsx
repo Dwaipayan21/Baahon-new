@@ -4,6 +4,7 @@ import {
   getNearbyPandals,
   getRoute,
   getWalkingRoute,
+  getPandalCrowd,
 } from "./services/api";
 
 import { findNearestPandal } from "./utils/routeUtils";
@@ -102,30 +103,73 @@ const App = () => {
   }, [routeData]);
 
   // 1. Fetch Pandals from Backend API on Mount
-  useEffect(() => {
-    let isMounted = true;
+ useEffect(() => {
+  let isMounted = true;
 
-    getPandals()
-      .then((data) => {
-        if (!isMounted) return;
+  const loadPandalsWithCrowd = async () => {
+    try {
+      const data = await getPandals();
 
-        setPandals(data);
+      if (!isMounted) return;
 
-        if (data.length > 0) {
-          setSelectedPandal(data[0]);
-        }
-      })
-      .catch((err) => {
-        console.error("Backend fetch error:", err);
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
+      const pandalsWithCrowd = await Promise.all(
+        data.map(async (pandal) => {
+          try {
+            const crowd = await getPandalCrowd(pandal.id);
+            console.log("CROWD API:", {
+              name: pandal.name,
+              id: pandal.id,
+              crowd,
+            });
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+            return {
+              ...pandal,
+              crowdStatus: crowd?.status || "UNKNOWN",
+              crowdScore: crowd?.score ?? null,
+              crowdSampleCount: crowd?.sampleCount ?? 0,
+              crowdObservedAt: crowd?.observedAt ?? null,
+            };
+          } catch (error) {
+            console.error(
+              `Failed to load crowd for ${pandal.name}:`,
+              error
+            );
+
+            return {
+              ...pandal,
+              crowdStatus: "UNKNOWN",
+              crowdScore: null,
+              crowdSampleCount: 0,
+              crowdObservedAt: null,
+            };
+          }
+        })
+      );
+
+      if (!isMounted) return;
+      
+
+      setPandals(pandalsWithCrowd);
+      
+
+      if (pandalsWithCrowd.length > 0) {
+        setSelectedPandal(pandalsWithCrowd[0]);
+      }
+    } catch (err) {
+      console.error("Backend fetch error:", err);
+    } finally {
+      if (isMounted) {
+        setLoading(false);
+      }
+    }
+  };
+
+  loadPandalsWithCrowd();
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
 
   // 2. Responsive Screen Listener
   useEffect(() => {
@@ -153,7 +197,7 @@ const App = () => {
       }
 
       if (activeCategory === "low_rush") {
-        return pandal.crowdType === "low";
+        return pandal.crowdType === "LOW";
       }
 
       if (activeCategory === "bonedi") {
