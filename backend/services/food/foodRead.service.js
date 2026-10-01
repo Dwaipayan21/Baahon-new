@@ -89,6 +89,10 @@ async function getFoodPlacesForPandal(pandal, options = {}) {
     };
   }
 
+  if (typeof options.category === "string" && options.category.trim()) {
+    filter.category = options.category.trim().toLowerCase();
+  }
+
   let docs;
 
   try {

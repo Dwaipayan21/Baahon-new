@@ -5,9 +5,9 @@
  * Zero network or database server requirements.
  */
 
-const assert = require("node:assert/strict");
-const mongoose = require("mongoose");
-const FoodPlace = require("../models/foodPlace.model.js");
+import assert from "node:assert/strict";
+import mongoose from "mongoose";
+import FoodPlace from "../models/foodPlace.model.js";
 
 function test(name, fn) {
   try {

@@ -185,20 +185,23 @@ export const getPandalCrowd = async (id) => {
     throw error;
   }
 };
-export const createCheckIn = async ({
-  userId,
-  pandalId,
-  latitude,
-  longitude,
-}) => {
+export const createCheckIn = async (
+  { pandalId, latitude, longitude },
+  token
+) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/checkin`, {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/checkins`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
-        userId,
         pandalId,
         latitude,
         longitude,
@@ -224,10 +227,11 @@ export const createCheckIn = async ({
     throw error;
   }
 };
+
 export const getUserCheckIns = async (userId) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/checkin/user/${encodeURIComponent(userId)}`
+      `${API_BASE_URL}/checkins/user/${encodeURIComponent(userId)}`
     );
 
     if (!response.ok) {
@@ -244,6 +248,38 @@ export const getUserCheckIns = async (userId) => {
     return json.data;
   } catch (error) {
     console.error("Failed to fetch user check-ins:", error);
+    throw error;
+  }
+};
+
+export const getFoodForPandal = async (
+  pandalId,
+  { radius, limit, category } = {}
+) => {
+  try {
+    const params = new URLSearchParams();
+    if (radius !== undefined) params.append("radius", String(radius));
+    if (limit !== undefined) params.append("limit", String(limit));
+    if (category && category !== "all") params.append("category", String(category));
+
+    const query = params.toString();
+    const url = `${API_BASE_URL}/pandals/${encodeURIComponent(pandalId)}/food${
+      query ? `?${query}` : ""
+    }`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.message || `Food request failed: ${response.status}`
+      );
+    }
+
+    const json = await response.json();
+    return json.data || [];
+  } catch (error) {
+    console.error(`Failed to fetch food for pandal ${pandalId}:`, error);
     throw error;
   }
 };

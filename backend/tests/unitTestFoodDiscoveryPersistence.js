@@ -7,13 +7,13 @@
  * Zero live network, Geoapify, or database dependencies.
  */
 
-const assert = require("node:assert/strict");
-const mongoose = require("mongoose");
-const {
+import assert from "node:assert/strict";
+import mongoose from "mongoose";
+import {
   discoverAndPersistFoodForPandal,
   discoverAndPersistFoodForPandals
-} = require("../services/foodDiscoveryPersistence.service.js");
-const app = require("../server.js");
+} from "../services/food/foodDiscoveryPersistence.service.js";
+import app from "../server.js";
 
 function test(name, fn) {
   try {

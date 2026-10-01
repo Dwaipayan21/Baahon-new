@@ -196,6 +196,11 @@ async function getFoodForPandal(req, res, next) {
       limit = parsedLimit;
     }
 
+    let category;
+    if (typeof req.query.category === "string" && req.query.category.trim()) {
+      category = req.query.category.trim().toLowerCase();
+    }
+
     // ---------------------------------------
     // 4. Resolve Pandal
     // ---------------------------------------
@@ -221,6 +226,7 @@ async function getFoodForPandal(req, res, next) {
         {
           radiusMeters,
           limit,
+          category,
         }
       );
 
@@ -230,26 +236,31 @@ async function getFoodForPandal(req, res, next) {
     // ---------------------------------------
 
     if (places.length === 0) {
-      await discoverAndPersistFoodForPandal(
-        pandal,
-        {
-          radiusMeters,
-          limit,
-        }
-      );
-
-      // ---------------------------------------
-      // 7. Read newly persisted places
-      // ---------------------------------------
-
-      places =
-        await getFoodPlacesForPandal(
+      try {
+        await discoverAndPersistFoodForPandal(
           pandal,
           {
             radiusMeters,
             limit,
           }
         );
+
+        // ---------------------------------------
+        // 7. Read newly persisted places
+        // ---------------------------------------
+
+        places =
+          await getFoodPlacesForPandal(
+            pandal,
+            {
+              radiusMeters,
+              limit,
+              category,
+            }
+          );
+      } catch (discErr) {
+        // Safe fallback if discovery/persistence is unavailable or offline
+      }
     }
 
     // ---------------------------------------

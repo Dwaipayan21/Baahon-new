@@ -7,15 +7,15 @@
  * Deterministic and offline - zero network, Geoapify, or database dependencies.
  */
 
-const assert = require("node:assert/strict");
-const mongoose = require("mongoose");
-const {
+import assert from "node:assert/strict";
+import mongoose from "mongoose";
+import {
   validateNormalizedFoodPlace,
   persistFoodPlace,
   persistFoodPlaces,
   sanitizeDatabaseError,
   ALLOWED_DISTANCE_BANDS
-} = require("../services/foodPersistence.service.js");
+} from "../services/food/foodPersistence.service.js";
 
 function test(name, fn) {
   try {

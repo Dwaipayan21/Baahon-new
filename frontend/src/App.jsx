@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useAuth } from "@clerk/react";
 
 import {
   getPandals,
@@ -50,7 +51,15 @@ const App = () => {
   // USER / SCORECARD
   // --------------------------------------------------
 
+  const { isSignedIn, userId: clerkUserId, getToken } = useAuth();
+
+  const testClerkToken = async () => {
+    const token = await getToken();
+    console.log("CLERK TOKEN:", token);
+  };
+
   const [guestUserId] = useState(() => getGuestUserId());
+  const activeUserId = clerkUserId || guestUserId;
 
   const [scorecard, setScorecard] = useState({
     totalPoints: 0,
@@ -152,8 +161,9 @@ const App = () => {
     let cancelled = false;
 
     const loadScorecard = async () => {
+      if (!activeUserId) return;
       try {
-        const data = await getUserCheckIns(guestUserId);
+        const data = await getUserCheckIns(activeUserId);
 
         if (cancelled) {
           return;
@@ -187,7 +197,7 @@ const App = () => {
     return () => {
       cancelled = true;
     };
-  }, [guestUserId]);
+  }, [activeUserId]);
 
   // --------------------------------------------------
   // LOAD WALKING ROUTE FOR SELECTED PANDAL
@@ -391,13 +401,11 @@ const App = () => {
   // --------------------------------------------------
 
   useEffect(() => {
-    if (!userLocation || pandals.length === 0) {
+    if (!userLocation || pandals.length === 0 || !isSignedIn) {
       return;
     }
 
     const processAutomaticCheckIns = async () => {
-      const userId = guestUserId;
-
       for (const pandal of pandals) {
         if (
           !Number.isFinite(pandal.lat) ||
@@ -442,12 +450,16 @@ const App = () => {
         );
 
         try {
-          const result = await createCheckIn({
-            userId,
-            pandalId: pandal.id,
-            latitude: userLocation.lat,
-            longitude: userLocation.lng,
-          });
+          const token = await getToken();
+
+          const result = await createCheckIn(
+            {
+              pandalId: pandal.id,
+              latitude: userLocation.lat,
+              longitude: userLocation.lng,
+            },
+            token
+          );
 
           console.log(
             "AUTOMATIC CHECK-IN SUCCESS:",
@@ -465,7 +477,7 @@ const App = () => {
           // Refresh Scorecard from MongoDB
           try {
             const updatedScorecard =
-              await getUserCheckIns(userId);
+              await getUserCheckIns(clerkUserId);
 
             setScorecard({
               totalPoints:
@@ -519,7 +531,7 @@ const App = () => {
     };
 
     processAutomaticCheckIns();
-  }, [userLocation, pandals, guestUserId]);
+  }, [userLocation, pandals, isSignedIn, clerkUserId, getToken]);
 
   // --------------------------------------------------
   // RESPONSIVE SCREEN LISTENER
@@ -1164,6 +1176,13 @@ const App = () => {
       <LoadingScreen ready={!loading} />
 
       <div className="relative w-full h-screen h-[100dvh] flex flex-col bg-[#faf8ff] text-[#131b2e] overflow-hidden">
+        
+        <button
+          onClick={testClerkToken}
+          className="fixed top-20 left-4 z-[9999] bg-black text-white px-4 py-2 rounded-lg"
+        >
+          Get Token
+        </button>
         {/* 1. Header Bar */}
 
         <Header
@@ -1449,4 +1468,3 @@ const App = () => {
 };
 
 export default App;
-

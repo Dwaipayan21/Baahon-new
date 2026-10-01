@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const checkInSchema = new mongoose.Schema(
   {
-    // Used as the user/device identifier until authentication is added.
     userId: {
       type: String,
       required: true,
       trim: true,
+      index: true,
     },
 
     pandalId: {
@@ -15,7 +15,6 @@ const checkInSchema = new mongoose.Schema(
       required: true,
     },
 
-    // GeoJSON coordinates: [longitude, latitude].
     location: {
       type: {
         type: String,
@@ -23,7 +22,6 @@ const checkInSchema = new mongoose.Schema(
         required: true,
         default: "Point",
       },
-
       coordinates: {
         type: [Number],
         required: true,
@@ -41,7 +39,6 @@ const checkInSchema = new mongoose.Schema(
       },
     },
 
-    // Stores the category used when points were awarded.
     category: {
       type: String,
       required: true,
@@ -59,15 +56,9 @@ const checkInSchema = new mongoose.Schema(
   }
 );
 
-// Prevent the same user from checking into the same pandal twice.
 checkInSchema.index(
-  {
-    userId: 1,
-    pandalId: 1,
-  },
-  {
-    unique: true,
-  }
+  { userId: 1, pandalId: 1 },
+  { unique: true }
 );
 
 checkInSchema.index({
