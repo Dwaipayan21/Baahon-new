@@ -1,17 +1,14 @@
 import mongoose from "mongoose";
 import CheckIn from "../models/checkin.model.js";
 import Pandal from "../models/pandal.model.js";
+import User from "../models/user.model.js";
 import { CHECKIN_CONFIG } from "../config/checkin.config.js";
 
 export const createCheckIn = async (req, res, next) => {
   try {
-    // userId comes from Clerk authentication middleware
     const userId = req.userId;
-
     const { pandalId, latitude, longitude } = req.body;
 
-    // Authentication middleware should already guarantee this,
-    // but keep this as a safety check.
     if (!userId || typeof userId !== "string") {
       return res.status(401).json({
         success: false,
@@ -54,8 +51,6 @@ export const createCheckIn = async (req, res, next) => {
       });
     }
 
-    // Check whether THIS authenticated Clerk user
-    // has already checked in at this pandal.
     const existing = await CheckIn.findOne({
       userId,
       pandalId: pandal._id,
@@ -91,8 +86,7 @@ export const createCheckIn = async (req, res, next) => {
         success: false,
         message: "Too far from pandal to check in",
         data: {
-          maxDistanceMeters:
-            CHECKIN_CONFIG.PROXIMITY_RADIUS_METERS,
+          maxDistanceMeters: CHECKIN_CONFIG.PROXIMITY_RADIUS_METERS,
         },
       });
     }
@@ -116,6 +110,15 @@ export const createCheckIn = async (req, res, next) => {
         category,
         points,
       });
+
+      await User.findOneAndUpdate(
+        { clerkId: userId },
+        { $inc: { points } },
+        {
+          upsert: true,
+          setDefaultsOnInsert: true,
+        }
+      );
 
       return res.status(201).json({
         success: true,
@@ -166,7 +169,7 @@ export const getPandalCheckInCount = async (req, res, next) => {
 
     const visitorCount = await CheckIn.countDocuments({ pandalId });
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         pandalId: pandal._id,
@@ -178,20 +181,19 @@ export const getPandalCheckInCount = async (req, res, next) => {
     next(error);
   }
 };
+
 export const getUserCheckIns = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const userId = req.userId;
 
-    if (!userId?.trim()) {
-      return res.status(400).json({
+    if (!userId || typeof userId !== "string") {
+      return res.status(401).json({
         success: false,
-        message: "userId is required",
+        message: "Authentication required",
       });
     }
 
-    const checkIns = await CheckIn.find({
-      userId: userId.trim(),
-    })
+    const checkIns = await CheckIn.find({ userId })
       .populate("pandalId", "_id name category")
       .sort({ createdAt: -1 });
 

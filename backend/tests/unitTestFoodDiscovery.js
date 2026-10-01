@@ -13,9 +13,9 @@
  * 9. Error handling for missing or malformed pandals
  */
 
-const assert = require('node:assert/strict');
-const rawPandals = require('../data/pandals.json');
-const {
+import assert from "node:assert/strict";
+import rawPandals from "../data/pandals.json" with { type: "json" };
+import {
   FOOD_SEARCH_RADIUS_METERS,
   DEFAULT_FOOD_CATEGORIES,
   CATEGORY_MAP,
@@ -27,7 +27,7 @@ const {
   normalizeGeoapifyPlace,
   isDuplicatePlace,
   discoverFoodNearPandal
-} = require('../services/foodDiscovery.service.js');
+} from "../services/food/foodDiscovery.service.js";
 
 let passed = 0;
 let total = 0;
