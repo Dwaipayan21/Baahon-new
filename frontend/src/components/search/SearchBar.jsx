@@ -1,4 +1,4 @@
-import { CATEGORIES } from "../data/constants";
+import { CATEGORIES } from "../../../data/constants";
 
 const SearchBar = ({
   searchQuery,

@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import ScoreHeader from "../components/Scorecard/ScoreHeader";
-import ScoreProfileCard from "../components/Scorecard/ScoreProfileCard";
-import JourneyProgress from "../components/Scorecard/JourneyProgress";
-import ScoreStats from "../components/Scorecard/ScoreStats";
-import RouteActivity from "../components/Scorecard/RouteActivity";
-import CrowdReporterCard from "../components/Scorecard/CrowdReporterCard";
-import Achievements from "../components/Scorecard/Achievements";
-import VisitHistory from "../components/Scorecard/VisitHistory";
+import ScoreHeader from "../components/UI/Scorecard/ScoreHeader";
+import ScoreProfileCard from "../components/UI/Scorecard/ScoreProfileCard";
+import JourneyProgress from "../components/UI/Scorecard/JourneyProgress";
+import ScoreStats from "../components/UI/Scorecard/ScoreStats";
+import RouteActivity from "../components/UI/Scorecard/RouteActivity";
+import CrowdReporterCard from "../components/UI/Scorecard/CrowdReporterCard";
+import Achievements from "../components/UI/Scorecard/Achievements";
+import VisitHistory from "../components/UI/Scorecard/VisitHistory";
 
 import { getGuestUserId } from "../services/scorecardService";
 import { getScorecardRouteSummary } from "../utils/scorecardRouteMetrics";

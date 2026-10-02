@@ -1,5 +1,5 @@
 import SearchBar from "./SearchBar";
-import MetroLegend from "./MetroLegend";
+import MetroLegend from "../../map/MetroLegend";
 
 const SearchFilterOverlay = ({
   searchQuery,
@@ -13,7 +13,12 @@ const SearchFilterOverlay = ({
   totalCount,
 }) => {
   return (
-    <div className="absolute top-20 sm:top-4 inset-x-0 px-3 sm:px-6 pointer-events-none z-[60] flex flex-col items-center">
+    <div
+      className="absolute top-20 inset-x-0 px-3 sm:px-6 pointer-events-none flex flex-col items-center"
+      style={{
+        zIndex: 200,
+      }}
+    >
       <div className="w-full max-w-md pointer-events-auto flex flex-col gap-2">
         <SearchBar
           searchQuery={searchQuery}

@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import {
   KOLKATA_CENTER,
   DEFAULT_ZOOM,
-} from "../data/constants";
-import { MAP_STYLES } from "../utils/mapCanvasUtils";
-import KolkataSvgMap from "./KolkataSvgMap";
+} from "../../../data/constants";
+import { MAP_STYLES } from "../../../utils/mapCanvasUtils";
 import UserLocationMarker from "./UserLocationMarker";
 import GoogleMapMetroLayer from "./GoogleMapMetroLayer";
 import GoogleMapRouteLayer from "./GoogleMapRouteLayer";
@@ -21,6 +20,7 @@ const GoogleMapCanvas = ({
   activeLayer = "roadmap",
   userLocation,
   onMapReady,
+  onMapError,
   zoom = 1,
 }) => {
   const containerRef = useRef(null);
@@ -32,6 +32,28 @@ const GoogleMapCanvas = ({
 
   const [error, setError] = useState(false);
   const [mapInstance, setMapInstance] = useState(null);
+  void zoom;
+
+  // ---------------------------------------------------------
+  // Google Maps authentication failure
+  // ---------------------------------------------------------
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const previousAuthFailure = window.gm_authFailure;
+
+    window.gm_authFailure = () => {
+      console.error("Google Maps authentication failed.");
+      setError(true);
+      onMapError?.();
+
+      previousAuthFailure?.();
+    };
+
+    return () => {
+      window.gm_authFailure = previousAuthFailure;
+    };
+  }, [onMapError]);
 
   // ---------------------------------------------------------
   // Load Google Maps
@@ -73,30 +95,53 @@ const GoogleMapCanvas = ({
     }
   }, [loaded]);
 
+  useEffect(() => {
+    if (error) {
+      onMapError?.();
+    }
+  }, [error, onMapError]);
+
   // ---------------------------------------------------------
   // Initialize Google Map
   // ---------------------------------------------------------
   useEffect(() => {
-    if (!loaded || !containerRef.current || mapRef.current) return;
+    if (!loaded || !containerRef.current || mapRef.current) {
+      return;
+    }
 
-    const map = new window.google.maps.Map(containerRef.current, {
-      center: KOLKATA_CENTER,
-      zoom: DEFAULT_ZOOM,
-      styles: MAP_STYLES,
-      disableDefaultUI: true,
-      gestureHandling: "greedy",
-    });
+    try {
+      const map = new window.google.maps.Map(
+        containerRef.current,
+        {
+          center: KOLKATA_CENTER,
+          zoom: DEFAULT_ZOOM,
+          styles: MAP_STYLES,
+          disableDefaultUI: true,
+          gestureHandling: "greedy",
+        }
+      );
 
-    mapRef.current = map;
-    setMapInstance(map);
+      mapRef.current = map;
+      setMapInstance(map);
 
-    onMapReady?.(map);
+      console.log("Google Maps: map initialized");
+
+      onMapReady?.(map);
+    } catch (mapError) {
+      console.error(
+        "Google Maps initialization failed:",
+        mapError
+      );
+
+      setError(true);
+      onMapError?.();
+    }
 
     return () => {
       mapRef.current = null;
       setMapInstance(null);
     };
-  }, [loaded]);
+  }, [loaded, onMapReady, onMapError]);
 
   // ---------------------------------------------------------
   // Map type
@@ -131,15 +176,7 @@ const GoogleMapCanvas = ({
   // Google Maps fallback
   // ---------------------------------------------------------
   if (!loaded || error) {
-    return (
-      <KolkataSvgMap
-        pandals={pandals}
-        selectedPandal={selectedPandal}
-        onSelectPandal={onSelectPandal}
-        metroActive={metroActive}
-        zoom={zoom}
-      />
-    );
+    return null;
   }
 
   // ---------------------------------------------------------

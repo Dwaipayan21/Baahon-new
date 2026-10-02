@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { getFoodForPandal } from "../services/api";
+import { getFoodForPandal } from "../../services/api";
 
 const FOOD_CATEGORY_ICONS = {
   restaurant: "restaurant",

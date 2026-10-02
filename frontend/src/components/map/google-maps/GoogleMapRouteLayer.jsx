@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { geoJsonToGooglePath } from "../utils/mapCanvasUtils";
+import { geoJsonToGooglePath } from "../../../utils/mapCanvasUtils";
 
 const GoogleMapRouteLayer = ({
   map,
