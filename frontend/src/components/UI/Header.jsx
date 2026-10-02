@@ -7,7 +7,7 @@ import {
 
 const Header = ({ onNavigate }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#faf8ff] border-b border-slate-200/70 shadow-sm pt-safe">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#faf8ff] border-b border-slate-200/70 shadow-sm pt-safe" style={{ zIndex: 100 }}>
       <div className="h-16 px-4 sm:px-6 max-w-7xl mx-auto flex items-center justify-between">
 
         {/* Left: Logo + PujoPath */}

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { createPandalIcon } from "../utils/mapCanvasUtils";
+import { createPandalIcon } from "../../../utils/mapCanvasUtils";
 
 const GoogleMapPandalMarkers = ({
   map,

@@ -1,4 +1,4 @@
-import PandalBottomSheet from "./PandalBottomSheet";
+import PandalBottomSheet from "../pandal/PandalBottomSheet";
 import RouteSelectionBar from "./RouteSelectionBar";
 
 const PandalRouteOverlay = ({
@@ -30,7 +30,7 @@ const PandalRouteOverlay = ({
   return isDesktop ? (
     <>
       {selectedPandal && (
-        <div className="absolute bottom-8 left-6 z-30 pointer-events-auto">
+        <div className="absolute bottom-8 left-6 z-30 pointer-events-auto" style={{ zIndex: 30 }}>
           <PandalBottomSheet
             pandal={selectedPandal}
             onClose={onClosePandal}
@@ -45,18 +45,23 @@ const PandalRouteOverlay = ({
         </div>
       )}
 
-      <RouteSelectionBar
-        selectedPandals={selectedPandals}
-        routeData={routeData}
-        routeError={routeError}
-        routeLoading={routeLoading}
-        onClear={onClearRoute}
-        onMetroRoute={onMetroRoute}
-        onRoadRoute={onRoadRoute}
-      />
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full px-4"
+        style={{ zIndex: 30 }}
+      >
+        <RouteSelectionBar
+          selectedPandals={selectedPandals}
+          routeData={routeData}
+          routeError={routeError}
+          routeLoading={routeLoading}
+          onClear={onClearRoute}
+          onMetroRoute={onMetroRoute}
+          onRoadRoute={onRoadRoute}
+        />
+      </div>
     </>
   ) : (
-    <div className="absolute bottom-14 inset-x-0 px-2 z-30 pointer-events-auto flex flex-col gap-2">
+    <div className="absolute bottom-14 inset-x-0 px-2 z-30 pointer-events-auto flex flex-col gap-2" style={{ zIndex: 30 }}>
       {selectedPandal && (
         <PandalBottomSheet
           pandal={selectedPandal}
