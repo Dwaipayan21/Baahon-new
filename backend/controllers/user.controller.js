@@ -1,13 +1,14 @@
 import User from "../models/user.model.js";
 import CheckIn from "../models/checkin.model.js";
+import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 export const getCurrentUser = async (req, res, next) => {
   try {
     const clerkId = req.userId;
 
-    if (!clerkId) {
-      return res.status(401).json({
-        success: false,
+    if (typeof clerkId !== "string" || !clerkId.trim()) {
+      return sendError(res, {
+        statusCode: 401,
         message: "Authentication required",
       });
     }
@@ -44,8 +45,8 @@ export const getCurrentUser = async (req, res, next) => {
       checkedInAt: checkIn.createdAt,
     }));
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "User profile fetched successfully",
       data: {
         userId: user.clerkId,
         name: user.name,

@@ -1,4 +1,5 @@
 import CheckIn from "../models/checkin.model.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
 export const getScoreboard = async (req, res, next) => {
   try {
@@ -25,8 +26,8 @@ export const getScoreboard = async (req, res, next) => {
       checkins: user.checkins,
     }));
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Scoreboard fetched successfully",
       data,
     });
   } catch (error) {

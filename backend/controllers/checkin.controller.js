@@ -3,6 +3,7 @@ import CheckIn from "../models/checkin.model.js";
 import Pandal from "../models/pandal.model.js";
 import User from "../models/user.model.js";
 import { CHECKIN_CONFIG } from "../config/checkin.config.js";
+import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 export const createCheckIn = async (req, res, next) => {
   try {
@@ -10,15 +11,15 @@ export const createCheckIn = async (req, res, next) => {
     const { pandalId, latitude, longitude } = req.body;
 
     if (!userId || typeof userId !== "string") {
-      return res.status(401).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 401,
         message: "Authentication required",
       });
     }
 
     if (!mongoose.Types.ObjectId.isValid(pandalId)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid pandal ID",
       });
     }
@@ -34,8 +35,8 @@ export const createCheckIn = async (req, res, next) => {
       lng < -180 ||
       lng > 180
     ) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid coordinates",
       });
     }
@@ -45,8 +46,8 @@ export const createCheckIn = async (req, res, next) => {
     );
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
@@ -57,8 +58,8 @@ export const createCheckIn = async (req, res, next) => {
     });
 
     if (existing) {
-      return res.status(409).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 409,
         message: "Already checked in at this pandal",
         data: {
           checkInId: existing._id,
@@ -82,8 +83,8 @@ export const createCheckIn = async (req, res, next) => {
     });
 
     if (!nearby) {
-      return res.status(403).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 403,
         message: "Too far from pandal to check in",
         data: {
           maxDistanceMeters: CHECKIN_CONFIG.PROXIMITY_RADIUS_METERS,
@@ -120,8 +121,8 @@ export const createCheckIn = async (req, res, next) => {
         }
       );
 
-      return res.status(201).json({
-        success: true,
+      return sendSuccess(res, {
+        statusCode: 201,
         message: "Check-in successful",
         data: {
           checkInId: checkIn._id,
@@ -134,8 +135,8 @@ export const createCheckIn = async (req, res, next) => {
       });
     } catch (error) {
       if (error.code === 11000) {
-        return res.status(409).json({
-          success: false,
+        return sendError(res, {
+          statusCode: 409,
           message: "Already checked in at this pandal",
         });
       }
@@ -152,8 +153,8 @@ export const getPandalCheckInCount = async (req, res, next) => {
     const { pandalId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(pandalId)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid pandal ID",
       });
     }
@@ -161,16 +162,16 @@ export const getPandalCheckInCount = async (req, res, next) => {
     const pandal = await Pandal.findById(pandalId).select("_id name");
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
 
     const visitorCount = await CheckIn.countDocuments({ pandalId });
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Pandal check-in count fetched successfully",
       data: {
         pandalId: pandal._id,
         pandalName: pandal.name,
@@ -187,8 +188,8 @@ export const getUserCheckIns = async (req, res, next) => {
     const userId = req.userId;
 
     if (!userId || typeof userId !== "string") {
-      return res.status(401).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 401,
         message: "Authentication required",
       });
     }
@@ -214,8 +215,8 @@ export const getUserCheckIns = async (req, res, next) => {
       0
     );
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "User check-ins fetched successfully",
       data: {
         visits,
         totalPoints,

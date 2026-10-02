@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
 import rawPandals from "../data/pandals.json" with { type: "json" };
+import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 import {
   getFoodPlacesForPandal,
@@ -15,298 +16,215 @@ const MAX_RADIUS_METERS = 1000;
 const MAX_LIMIT = 50;
 const DEFAULT_LIMIT = 25;
 
-async function resolvePandal(pandalId) {
-  if (!pandalId || typeof pandalId !== "string") return null;
+const isDbConnected = () => mongoose.connection.readyState === 1;
 
-  const trimmedId = pandalId.trim();
+const normalize = (value = "") =>
+  value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
 
-  if (!trimmedId) return null;
+const sanitizeError = (message = "") =>
+  message
+    .replace(/mongodb(\+srv)?:\/\/[^@\s]+@/gi, "mongodb://$1<redacted>@")
+    .replace(/apiKey=[a-zA-Z0-9_-]+/gi, "apiKey=<redacted>")
+    .replace(/key=[a-zA-Z0-9_-]+/gi, "key=<redacted>");
 
-  // First try MongoDB ObjectId
-  if (mongoose.Types.ObjectId.isValid(trimmedId)) {
-    try {
-      if (mongoose.connection.readyState === 1) {
-        const doc = await Pandal.findById(trimmedId).lean();
+function validateQueryParams(req) {
+  let radiusMeters = DEFAULT_SEARCH_RADIUS_METERS;
+  let limit = DEFAULT_LIMIT;
 
-        if (doc) {
-          return doc;
-        }
-      }
-    } catch {}
+  if (req.query.radius !== undefined) {
+    const radius = Number(req.query.radius);
+
+    if (
+      !Number.isFinite(radius) ||
+      radius <= 0 ||
+      radius > MAX_RADIUS_METERS
+    ) {
+      return {
+        error: `Query parameter 'radius' must be a positive number up to ${MAX_RADIUS_METERS} meters`,
+      };
+    }
+
+    radiusMeters = Math.round(radius);
   }
 
-  let matchedPandal = null;
+  if (req.query.limit !== undefined) {
+    const parsedLimit = Number(req.query.limit);
 
-  // Support pandal-0 / 0 style IDs
+    if (
+      !Number.isInteger(parsedLimit) ||
+      parsedLimit <= 0 ||
+      parsedLimit > MAX_LIMIT
+    ) {
+      return {
+        error: `Query parameter 'limit' must be a positive integer up to ${MAX_LIMIT}`,
+      };
+    }
+
+    limit = parsedLimit;
+  }
+
+  const category =
+    typeof req.query.category === "string" &&
+    req.query.category.trim()
+      ? req.query.category.trim().toLowerCase()
+      : undefined;
+
+  return {
+    radiusMeters,
+    limit,
+    category,
+  };
+}
+
+function findRawPandal(pandalId) {
   const indexMatch =
-    trimmedId.match(/^pandal-(\d+)$/i) ||
-    trimmedId.match(/^(\d+)$/);
+    pandalId.match(/^pandal-(\d+)$/i) ||
+    pandalId.match(/^(\d+)$/);
 
   if (indexMatch) {
-    const idx = parseInt(indexMatch[1], 10);
+    const index = Number(indexMatch[1]);
 
-    if (idx >= 0 && idx < rawPandals.length) {
-      matchedPandal = {
-        ...rawPandals[idx],
-        id: `pandal-${idx}`,
+    if (index >= 0 && index < rawPandals.length) {
+      return {
+        ...rawPandals[index],
+        id: `pandal-${index}`,
       };
     }
   }
 
-  // Search by pandal name
-  if (!matchedPandal) {
-    const normalizedSearch = trimmedId
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "");
+  const normalizedSearch = normalize(pandalId);
 
-    for (let i = 0; i < rawPandals.length; i++) {
-      const p = rawPandals[i];
+  return rawPandals.reduce((match, pandal, index) => {
+    if (match || !pandal.name) return match;
 
-      const pName = p.name
-        ? p.name.trim()
-        : "";
+    const name = pandal.name.trim();
 
-      // Exact name match
-      if (
-        pName.toLowerCase() ===
-        trimmedId.toLowerCase()
-      ) {
-        matchedPandal = {
-          ...p,
-          id: `pandal-${i}`,
-        };
-
-        break;
-      }
-
-      // Normalized name match
-      const pSlug = pName
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-
-      if (
-        pSlug &&
-        pSlug === normalizedSearch
-      ) {
-        matchedPandal = {
-          ...p,
-          id: `pandal-${i}`,
-        };
-
-        break;
-      }
+    if (
+      name.toLowerCase() === pandalId.toLowerCase() ||
+      normalize(name) === normalizedSearch
+    ) {
+      return {
+        ...pandal,
+        id: `pandal-${index}`,
+      };
     }
-  }
 
-  if (!matchedPandal) {
+    return null;
+  }, null);
+}
+
+async function resolvePandal(pandalId) {
+  if (!pandalId || typeof pandalId !== "string") {
     return null;
   }
 
-  // If raw pandal doesn't have MongoDB _id,
-  // try to find the corresponding DB document.
-  if (
-    !matchedPandal._id &&
-    mongoose.connection.readyState === 1
-  ) {
-    try {
-      const dbPandal = await Pandal.findOne({
-        name: matchedPandal.name,
-      }).lean();
+  const id = pandalId.trim();
 
-      if (dbPandal) {
-        matchedPandal._id = dbPandal._id;
+  if (!id) {
+    return null;
+  }
+
+  // Try MongoDB ObjectId first
+  if (mongoose.Types.ObjectId.isValid(id) && isDbConnected()) {
+    try {
+      const pandal = await Pandal.findById(id).lean();
+
+      if (pandal) {
+        return pandal;
       }
     } catch {}
   }
 
-  return matchedPandal;
+  // Fall back to raw JSON data
+  const pandal = findRawPandal(id);
+
+  if (!pandal) {
+    return null;
+  }
+
+  // Resolve MongoDB _id when possible
+  if (!pandal._id && isDbConnected()) {
+    try {
+      const dbPandal = await Pandal.findOne({
+        name: pandal.name,
+      }).lean();
+
+      if (dbPandal) {
+        pandal._id = dbPandal._id;
+      }
+    } catch {}
+  }
+
+  return pandal;
 }
 
 async function getFoodForPandal(req, res, next) {
   try {
     const { pandalId } = req.params;
 
-    // ---------------------------------------
-    // 1. Validate Pandal ID
-    // ---------------------------------------
-
-    if (
-      !pandalId ||
-      typeof pandalId !== "string" ||
-      !pandalId.trim()
-    ) {
-      return res.status(400).json({
-        success: false,
+    if (!pandalId?.trim()) {
+      return sendError(res, {
+        statusCode: 400,
         message: "Pandal ID is required",
       });
     }
 
-    // ---------------------------------------
-    // 2. Validate radius
-    // ---------------------------------------
+    const params = validateQueryParams(req);
 
-    let radiusMeters =
-      DEFAULT_SEARCH_RADIUS_METERS;
-
-    if (req.query.radius !== undefined) {
-      const parsedRadius = Number(
-        req.query.radius
-      );
-
-      if (
-        !Number.isFinite(parsedRadius) ||
-        parsedRadius <= 0 ||
-        parsedRadius > MAX_RADIUS_METERS
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            `Query parameter 'radius' must be a positive number up to ${MAX_RADIUS_METERS} meters`,
-        });
-      }
-
-      radiusMeters = Math.round(
-        parsedRadius
-      );
+    if (params.error) {
+      return sendError(res, {
+        statusCode: 400,
+        message: params.error,
+      });
     }
 
-    // ---------------------------------------
-    // 3. Validate limit
-    // ---------------------------------------
-
-    let limit = DEFAULT_LIMIT;
-
-    if (req.query.limit !== undefined) {
-      const parsedLimit = Number(
-        req.query.limit
-      );
-
-      if (
-        !Number.isInteger(parsedLimit) ||
-        parsedLimit <= 0 ||
-        parsedLimit > MAX_LIMIT
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            `Query parameter 'limit' must be a positive integer up to ${MAX_LIMIT}`,
-        });
-      }
-
-      limit = parsedLimit;
-    }
-
-    let category;
-    if (typeof req.query.category === "string" && req.query.category.trim()) {
-      category = req.query.category.trim().toLowerCase();
-    }
-
-    // ---------------------------------------
-    // 4. Resolve Pandal
-    // ---------------------------------------
-
-    const pandal = await resolvePandal(
-      pandalId
-    );
+    const pandal = await resolvePandal(pandalId);
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
 
-    // ---------------------------------------
-    // 5. Read existing food places
-    // ---------------------------------------
+    const { radiusMeters, limit, category } = params;
 
-    let places =
-      await getFoodPlacesForPandal(
-        pandal,
-        {
+    let places = await getFoodPlacesForPandal(pandal, {
+      radiusMeters,
+      limit,
+      category,
+    });
+
+    // Discover and persist places when none exist
+    if (places.length === 0) {
+      try {
+        await discoverAndPersistFoodForPandal(pandal, {
+          radiusMeters,
+          limit,
+        });
+
+        places = await getFoodPlacesForPandal(pandal, {
           radiusMeters,
           limit,
           category,
-        }
-      );
-
-    // ---------------------------------------
-    // 6. If no food places exist,
-    //    run Geoapify discovery
-    // ---------------------------------------
-
-    if (places.length === 0) {
-      try {
-        await discoverAndPersistFoodForPandal(
-          pandal,
-          {
-            radiusMeters,
-            limit,
-          }
-        );
-
-        // ---------------------------------------
-        // 7. Read newly persisted places
-        // ---------------------------------------
-
-        places =
-          await getFoodPlacesForPandal(
-            pandal,
-            {
-              radiusMeters,
-              limit,
-              category,
-            }
-          );
-      } catch (discErr) {
-        // Safe fallback if discovery/persistence is unavailable or offline
-      }
+        });
+      } catch {}
     }
-
-    // ---------------------------------------
-    // 8. Resolve Pandal ID
-    // ---------------------------------------
 
     const resolvedId = pandal._id
       ? String(pandal._id)
       : pandal.id || pandalId;
 
-    // ---------------------------------------
-    // 9. Return response
-    // ---------------------------------------
-
-    return res.status(200).json({
-      success: true,
-
-      pandalId: resolvedId,
-
-      pandalName:
-        pandal.name ||
-        "Durga Puja Pandal",
-
-      count: places.length,
-
+    return sendSuccess(res, {
+      message: "Food places fetched successfully",
       data: places,
+      pandalId: resolvedId,
+      pandalName: pandal.name || "Durga Puja Pandal",
+      count: places.length,
     });
   } catch (error) {
-    // ---------------------------------------
-    // Sanitize sensitive information
-    // ---------------------------------------
-
     if (error?.message) {
-      error.message = error.message
-        .replace(
-          /mongodb(\+srv)?:\/\/[^@\s]+@/gi,
-          "mongodb://$1<redacted>@"
-        )
-        .replace(
-          /apiKey=[a-zA-Z0-9_-]+/gi,
-          "apiKey=<redacted>"
-        )
-        .replace(
-          /key=[a-zA-Z0-9_-]+/gi,
-          "key=<redacted>"
-        );
+      error.message = sanitizeError(error.message);
     }
 
     next(error);
