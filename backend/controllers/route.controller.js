@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
 import { getRoute } from "../services/routing.service.js";
 import { getMetroRoute } from "../services/metro.service.js";
+import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 const profiles = {
   walking: "foot-walking",
@@ -94,8 +95,8 @@ export const getRoutePath = async (req, res, next) => {
     const coordinates = parseCoordinates(latitude, longitude);
 
     if (!coordinates) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid latitude or longitude",
       });
     }
@@ -104,15 +105,15 @@ export const getRoutePath = async (req, res, next) => {
     const { lat, lng } = coordinates;
 
     if (!pandalId || !mongoose.Types.ObjectId.isValid(pandalId)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid pandal ID",
       });
     }
 
     if (!validModes.includes(mode)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid mode. Use walking, car or metro",
       });
     }
@@ -120,8 +121,8 @@ export const getRoutePath = async (req, res, next) => {
     const pandal = await Pandal.findById(pandalId);
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
@@ -129,8 +130,8 @@ export const getRoutePath = async (req, res, next) => {
     const destination = getPandalCoordinates(pandal);
 
     if (!destination) {
-      return res.status(500).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 500,
         message: "Pandal has invalid coordinates",
       });
     }
@@ -151,8 +152,8 @@ export const getRoutePath = async (req, res, next) => {
       });
 
       if (!metroRoute) {
-        return res.status(404).json({
-          success: false,
+        return sendError(res, {
+          statusCode: 404,
           message: "No metro route available for this journey",
         });
       }
@@ -180,8 +181,8 @@ export const getRoutePath = async (req, res, next) => {
       const lastLeg = fromMetro.features?.[0];
 
       if (!firstLeg || !lastLeg) {
-        return res.status(404).json({
-          success: false,
+        return sendError(res, {
+          statusCode: 404,
           message: "Walking route to or from metro station not found",
         });
       }
@@ -189,8 +190,8 @@ export const getRoutePath = async (req, res, next) => {
       const first = firstLeg.properties.summary;
       const last = lastLeg.properties.summary;
 
-      return res.json({
-        success: true,
+      return sendSuccess(res, {
+        message: "Metro route calculated successfully",
         data: {
           mode: "metro",
           targetPandalId: pandal._id,
@@ -246,16 +247,16 @@ export const getRoutePath = async (req, res, next) => {
     const feature = route.features?.[0];
 
     if (!feature) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Route not found",
       });
     }
 
     const { distance, duration } = feature.properties.summary;
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Route calculated successfully",
       data: {
         mode,
         targetPandalId: pandal._id,
@@ -296,8 +297,8 @@ export const getNextPandalRoute = async (req, res, next) => {
     const coordinates = parseCoordinates(latitude, longitude);
 
     if (!coordinates) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid latitude or longitude",
       });
     }
@@ -305,15 +306,15 @@ export const getNextPandalRoute = async (req, res, next) => {
     const { lat, lng } = coordinates;
 
     if (!Array.isArray(selectedPandalIds) || !selectedPandalIds.length) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "At least one selected pandal is required",
       });
     }
 
     if (!Array.isArray(visitedPandalIds)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "visitedPandalIds must be an array",
       });
     }
@@ -328,8 +329,8 @@ export const getNextPandalRoute = async (req, res, next) => {
         (id) => !mongoose.Types.ObjectId.isValid(id)
       )
     ) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "One or more pandal IDs are invalid",
       });
     }
@@ -338,8 +339,8 @@ export const getNextPandalRoute = async (req, res, next) => {
       hasDuplicateIds(selectedPandalIds) ||
       hasDuplicateIds(visitedPandalIds)
     ) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Duplicate pandal IDs are not allowed",
       });
     }
@@ -354,15 +355,15 @@ export const getNextPandalRoute = async (req, res, next) => {
         (id) => !selectedSet.has(String(id))
       )
     ) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "visitedPandalIds must belong to selectedPandalIds",
       });
     }
 
     if (!["walking", "car"].includes(mode)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid mode. Use walking or car",
       });
     }
@@ -372,8 +373,8 @@ export const getNextPandalRoute = async (req, res, next) => {
     });
 
     if (pandals.length !== selectedPandalIds.length) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "One or more selected pandals were not found",
       });
     }
@@ -388,8 +389,8 @@ export const getNextPandalRoute = async (req, res, next) => {
 
     // All selected pandals have been visited
     if (!remaining.length) {
-      return res.json({
-        success: true,
+      return sendSuccess(res, {
+        message: "All selected pandals have been visited",
         data: {
           completed: true,
           start: {
@@ -427,8 +428,8 @@ export const getNextPandalRoute = async (req, res, next) => {
     }
 
     if (!nearest) {
-      return res.status(500).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 500,
         message: "No remaining pandal has valid coordinates",
       });
     }
@@ -447,8 +448,8 @@ export const getNextPandalRoute = async (req, res, next) => {
     const feature = route.features?.[0];
 
     if (!feature) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Route to next pandal not found",
       });
     }
@@ -456,8 +457,8 @@ export const getNextPandalRoute = async (req, res, next) => {
     const { distance, duration } =
       feature.properties.summary;
 
-    return res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Next pandal route calculated successfully",
       data: {
         completed: false,
         targetPandalId: nearest._id,

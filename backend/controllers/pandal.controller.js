@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
 import { getPandalCrowdStatus } from "../services/crowd/crowdAggregation.service.js";
+import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -25,10 +26,10 @@ export const getAllPandals = async (req, res, next) => {
 
     const pandals = await Pandal.find(filter);
 
-    res.json({
-      success: true,
-      count: pandals.length,
+    return sendSuccess(res, {
+      message: "Pandals fetched successfully",
       data: pandals,
+      count: pandals.length,
     });
   } catch (error) {
     next(error);
@@ -51,9 +52,16 @@ export const getNearbyPandals = async (req, res, next) => {
       lat < -90 ||
       lat > 90
     ) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid coordinates",
+      });
+    }
+
+    if (!Number.isFinite(maxDistance) || maxDistance <= 0) {
+      return sendError(res, {
+        statusCode: 400,
+        message: "Invalid maxDistance. It must be a positive number",
       });
     }
 
@@ -69,10 +77,10 @@ export const getNearbyPandals = async (req, res, next) => {
       },
     });
 
-    res.json({
-      success: true,
-      count: pandals.length,
+    return sendSuccess(res, {
+      message: "Nearby pandals fetched successfully",
       data: pandals,
+      count: pandals.length,
     });
   } catch (error) {
     next(error);
@@ -82,17 +90,24 @@ export const getNearbyPandals = async (req, res, next) => {
 // GET /api/pandals/:id
 export const getPandalById = async (req, res, next) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, {
+        statusCode: 400,
+        message: "Invalid pandal ID",
+      });
+    }
+
     const pandal = await Pandal.findById(req.params.id);
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
 
-    res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Pandal fetched successfully",
       data: pandal,
     });
   } catch (error) {
@@ -105,8 +120,8 @@ export const createPandal = async (req, res, next) => {
   try {
     const pandal = await Pandal.create(req.body);
 
-    res.status(201).json({
-      success: true,
+    return sendSuccess(res, {
+      statusCode: 201,
       message: "Pandal created successfully",
       data: pandal,
     });
@@ -119,8 +134,8 @@ export const createPandal = async (req, res, next) => {
 export const updatePandal = async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid pandal ID",
       });
     }
@@ -135,29 +150,27 @@ export const updatePandal = async (req, res, next) => {
     );
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
 
-    res.json({
-      success: true,
+    return sendSuccess(res, {
       message: "Pandal updated successfully",
       data: pandal,
     });
   } catch (error) {
     next(error);
   }
-
 };
 
 // GET /api/pandals/:id/crowd
 export const getPandalCrowd = async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 400,
         message: "Invalid pandal ID",
       });
     }
@@ -167,16 +180,16 @@ export const getPandalCrowd = async (req, res, next) => {
     );
 
     if (!pandal) {
-      return res.status(404).json({
-        success: false,
+      return sendError(res, {
+        statusCode: 404,
         message: "Pandal not found",
       });
     }
 
     const crowd = await getPandalCrowdStatus(pandal);
 
-    res.json({
-      success: true,
+    return sendSuccess(res, {
+      message: "Pandal crowd status fetched successfully",
       data: {
         pandalId: pandal._id,
         pandalName: pandal.name,
