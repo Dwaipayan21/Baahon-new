@@ -25,9 +25,7 @@ import BottomNavigation from "./components/UI/BottomNavigation";
 import SearchFilterOverlay from "./components/UI/search/SearchFilterOverlay";
 import PandalRouteOverlay from "./components/routes/PandalRouteOverlay";
 import ToastNotification from "./components/UI/ToastNotification";
-import LoadingScreen from "./components/UI/LoadingScreen";
-
-import { getGuestUserId } from "./services/scorecardService";
+import LoadingScreen from "./components/LoadingScreen";
 
 // --------------------------------------------------
 // DISTANCE HELPER
@@ -68,9 +66,6 @@ const App = () => {
     const token = await getToken();
     console.log("CLERK TOKEN:", token);
   };
-
-  const [guestUserId] = useState(() => getGuestUserId());
-  const activeUserId = clerkUserId || guestUserId;
 
   const [scorecard, setScorecard] = useState({
     totalPoints: 0,
@@ -184,9 +179,17 @@ const App = () => {
     let cancelled = false;
 
     const loadScorecard = async () => {
-      if (!activeUserId) return;
+      if (!isSignedIn) {
+        setScorecard({
+          totalPoints: 0,
+          visits: [],
+        });
+        return;
+      }
+
       try {
-        const data = await getUserCheckIns(activeUserId);
+        const token = await getToken();
+        const data = await getUserCheckIns(token);
 
         if (cancelled) {
           return;
@@ -220,7 +223,7 @@ const App = () => {
     return () => {
       cancelled = true;
     };
-  }, [activeUserId]);
+  }, [isSignedIn, getToken]);
 
   // --------------------------------------------------
   // LOAD WALKING ROUTE FOR SELECTED PANDAL
@@ -492,8 +495,9 @@ const App = () => {
           );
 
           try {
+            const token = await getToken();
             const updatedScorecard =
-              await getUserCheckIns(clerkUserId);
+              await getUserCheckIns(token);
 
             setScorecard({
               totalPoints:

@@ -228,22 +228,31 @@ export const createCheckIn = async (
   }
 };
 
-export const getUserCheckIns = async (userId) => {
+export const getUserCheckIns = async (token) => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/checkins/user/${encodeURIComponent(userId)}`
-    );
+    const headers = {};
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-
-      throw new Error(
-        errorData.message ||
-          `Check-in history request failed: ${response.status}`
-      );
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
 
-    const json = await response.json();
+    const response = await fetch(`${API_BASE_URL}/checkins/me`, {
+      headers,
+    });
+
+    const json = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const error = new Error(
+        json.message ||
+          `Check-in history request failed: ${response.status}`
+      );
+
+      error.status = response.status;
+      error.data = json.data;
+
+      throw error;
+    }
 
     return json.data;
   } catch (error) {

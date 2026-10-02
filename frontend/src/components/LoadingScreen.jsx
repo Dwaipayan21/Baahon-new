@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import "../../index.css";
-import LoadingPujoArtwork from "./LoadingPujoArtwork";
+import "../index.css";
+import LoadingPujoArtwork from "./UI/LoadingPujoArtwork";
 
 /*
  * LoadingScreen
