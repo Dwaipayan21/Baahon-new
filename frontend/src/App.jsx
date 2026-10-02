@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 import {
   getPandals,
@@ -11,19 +11,26 @@ import {
   getUserCheckIns,
 } from "./services/api";
 
+import MapProvider from "./components/MapProvider";
+
 import { findNearestPandal } from "./utils/routeUtils";
+
 import ScorecardPage from "./Pages/ScoreCardPage";
-import Header from "./components/Header";
-import MapControls from "./components/MapControls";
-import GoogleMapCanvas from "./components/GoogleMapCanvas";
-import PandalDetailsModal from "./components/PandalDetailsModal";
-import BottomNavigation from "./components/BottomNavigation";
-import LoadingScreen from "./components/LoadingScreen";
-import SearchFilterOverlay from "./components/SearchFilterOverlay";
-import PandalRouteOverlay from "./components/PandalRouteOverlay";
-import ToastNotification from "./components/ToastNotification";
+
+import Header from "./components/UI/Header";
+import MapControls from "./components/map/MapControls";
+import PandalDetailsModal from "./components/pandal/PandalDetailsModal";
+import BottomNavigation from "./components/UI/BottomNavigation";
+import SearchFilterOverlay from "./components/UI/search/SearchFilterOverlay";
+import PandalRouteOverlay from "./components/routes/PandalRouteOverlay";
+import ToastNotification from "./components/UI/ToastNotification";
+import LoadingScreen from "./components/UI/LoadingScreen";
 
 import { getGuestUserId } from "./services/scorecardService";
+
+// --------------------------------------------------
+// DISTANCE HELPER
+// --------------------------------------------------
 
 const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   const earthRadius = 6371000;
@@ -36,14 +43,18 @@ const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
+    Math.cos(toRadians(lat2)) *
+    Math.sin(dLng / 2) *
+    Math.sin(dLng / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return earthRadius * c;
 };
+
+// --------------------------------------------------
+// APP
+// --------------------------------------------------
 
 const App = () => {
   // --------------------------------------------------
@@ -62,17 +73,7 @@ const App = () => {
   // --------------------------------------------------
 
   const [pandals, setPandals] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  console.log(
-    "PANDAL LOCATIONS:",
-    pandals.map((pandal) => ({
-      id: pandal._id,
-      name: pandal.name,
-      lat: pandal.location?.coordinates?.[1],
-      lng: pandal.location?.coordinates?.[0],
-    }))
-  );
+  const [appReady, setAppReady] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -81,9 +82,12 @@ const App = () => {
   const [modalPandal, setModalPandal] = useState(null);
 
   const [metroActive, setMetroActive] = useState(true);
+
+  // Kept for compatibility with the existing MapControls UI.
   const [activeLayer, setActiveLayer] = useState("roadmap");
 
   const [routeModeActive, setRouteModeActive] = useState(false);
+
   const [activeNavTab, setActiveNavTab] = useState("explore");
 
   const [userLocation, setUserLocation] = useState(null);
@@ -96,6 +100,11 @@ const App = () => {
 
   const [toastMessage, setToastMessage] = useState("");
 
+  const handleLoadingComplete = useCallback(() => {
+    console.log("PujoPath loading complete");
+  }, []);
+
+  // Kept for compatibility with previous app state.
   const [svgZoom, setSvgZoom] = useState(1.0);
 
   // --------------------------------------------------
@@ -108,14 +117,19 @@ const App = () => {
   const [selectedPandals, setSelectedPandals] = useState([]);
 
   const [routeSegments, setRouteSegments] = useState([]);
+
   const [routeLoading, setRouteLoading] = useState(false);
 
   const [routeData, setRouteData] = useState(null);
+
   const [activeRouteMode, setActiveRouteMode] = useState(null);
+
   const [routeError, setRouteError] = useState("");
 
-  const [selectedPandalRoute, setSelectedPandalRoute] =
-    useState(null);
+  const [
+    selectedPandalRoute,
+    setSelectedPandalRoute,
+  ] = useState(null);
 
   const [
     selectedPandalRouteLoading,
@@ -126,10 +140,19 @@ const App = () => {
   // REFS
   // --------------------------------------------------
 
-  const googleMapRef = useRef(null);
+  // MapLibre exposes:
+  // flyTo()
+  // zoomIn()
+  // zoomOut()
+  const mapRef = useRef(null);
+
+  // Keep this alias for backwards compatibility.
+  const googleMapRef = mapRef;
+
   const locationWatchRef = useRef(null);
 
   const checkedInPandalsRef = useRef(new Set());
+
   const checkInInProgressRef = useRef(new Set());
 
   // --------------------------------------------------
@@ -276,14 +299,10 @@ const App = () => {
 
               return {
                 ...pandal,
-                crowdStatus:
-                  crowd?.status || "UNKNOWN",
-                crowdScore:
-                  crowd?.score ?? null,
-                crowdSampleCount:
-                  crowd?.sampleCount ?? 0,
-                crowdObservedAt:
-                  crowd?.observedAt ?? null,
+                crowdStatus: crowd?.status || "UNKNOWN",
+                crowdScore: crowd?.score ?? null,
+                crowdSampleCount: crowd?.sampleCount ?? 0,
+                crowdObservedAt: crowd?.observedAt ?? null,
               };
             } catch (error) {
               console.error(
@@ -315,7 +334,7 @@ const App = () => {
         console.error("Backend fetch error:", err);
       } finally {
         if (isMounted) {
-          setLoading(false);
+          setAppReady(true);
         }
       }
     };
@@ -431,8 +450,6 @@ const App = () => {
           )}m`
         );
 
-        // Frontend pre-check.
-        // Backend performs the final verification.
         if (distance > 100) {
           continue;
         }
@@ -462,7 +479,6 @@ const App = () => {
             `📍 ${result.pandalName} visited! +${result.points} points`
           );
 
-          // Refresh Scorecard from MongoDB
           try {
             const updatedScorecard =
               await getUserCheckIns(userId);
@@ -472,7 +488,6 @@ const App = () => {
                 Number(
                   updatedScorecard?.totalPoints
                 ) || 0,
-
               visits: Array.isArray(
                 updatedScorecard?.visits
               )
@@ -491,7 +506,6 @@ const App = () => {
             );
           }
         } catch (error) {
-          // 409 = already checked in
           if (error.status === 409) {
             checkedInPandalsRef.current.add(
               pandal.id
@@ -548,9 +562,7 @@ const App = () => {
   // --------------------------------------------------
 
   const filteredPandals = useMemo(() => {
-    const query = searchQuery
-      .toLowerCase()
-      .trim();
+    const query = searchQuery.toLowerCase().trim();
 
     return pandals.filter((pandal) => {
       const searchableText =
@@ -603,31 +615,14 @@ const App = () => {
   // --------------------------------------------------
 
   const handleZoom = (delta) => {
-    if (
-      googleMapRef.current &&
-      window.google?.maps
-    ) {
-      const currentZoom =
-        googleMapRef.current.getZoom() || 13;
+    if (!mapRef.current) {
+      return;
+    }
 
-      googleMapRef.current.setZoom(
-        currentZoom + delta
-      );
+    if (delta > 0) {
+      mapRef.current.zoomIn();
     } else {
-      setSvgZoom((prev) =>
-        Math.min(
-          Math.max(
-            Number(
-              (
-                prev +
-                delta * 0.15
-              ).toFixed(2)
-            ),
-            0.75
-          ),
-          2.2
-        )
-      );
+      mapRef.current.zoomOut();
     }
   };
 
@@ -640,7 +635,6 @@ const App = () => {
       showToast(
         "Geolocation is not supported by this browser"
       );
-
       return;
     }
 
@@ -682,12 +676,11 @@ const App = () => {
 
         setUserLocation(coords);
 
-        if (
-          googleMapRef.current &&
-          window.google?.maps
-        ) {
-          googleMapRef.current.panTo(coords);
-          googleMapRef.current.setZoom(15);
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: [coords.lng, coords.lat],
+            zoom: 15,
+          });
         }
 
         try {
@@ -704,10 +697,9 @@ const App = () => {
           );
 
           showToast(
-            `${nearbyPandals.length} nearby ${
-              nearbyPandals.length === 1
-                ? "pandal"
-                : "pandals"
+            `${nearbyPandals.length} nearby ${nearbyPandals.length === 1
+              ? "pandal"
+              : "pandals"
             } found`
           );
         } catch (error) {
@@ -750,6 +742,7 @@ const App = () => {
         }
 
         setLocationError(message);
+
         showToast(message);
       },
 
@@ -771,8 +764,8 @@ const App = () => {
         prev === "roadmap"
           ? "satellite"
           : prev === "satellite"
-          ? "terrain"
-          : "roadmap";
+            ? "terrain"
+            : "roadmap";
 
       showToast(
         `Switched map layer to ${next}`
@@ -822,13 +815,11 @@ const App = () => {
       showToast(
         "Please use My Location before starting the route"
       );
-
       return;
     }
 
     setMetroActive(true);
     setActiveRouteMode("metro");
-
     setRouteLoading(true);
     setRouteData(null);
 
@@ -925,13 +916,13 @@ const App = () => {
       showToast(
         "Please use My Location before starting the route"
       );
-
       return;
     }
 
+    // Road route automatically disables metro.
     setMetroActive(false);
-    setActiveRouteMode("road");
 
+    setActiveRouteMode("road");
     setRouteLoading(true);
     setRouteData(null);
 
@@ -1017,7 +1008,6 @@ const App = () => {
       showToast(
         "Add at least one pandal to your route"
       );
-
       return;
     }
 
@@ -1025,7 +1015,6 @@ const App = () => {
       showToast(
         "Please use My Location before starting the route"
       );
-
       return;
     }
 
@@ -1120,7 +1109,7 @@ const App = () => {
             total +
             Number(
               segment.distance?.value ||
-                0
+              0
             ),
           0
         );
@@ -1159,294 +1148,247 @@ const App = () => {
   // RENDER
   // --------------------------------------------------
 
+
   return (
     <>
-      <LoadingScreen ready={!loading} />
+      <LoadingScreen
+        ready={appReady}
+        onComplete={handleLoadingComplete}
+      />
 
-      <div className="relative w-full h-screen h-[100dvh] flex flex-col bg-[#faf8ff] text-[#131b2e] overflow-hidden">
-        {/* 1. Header Bar */}
-
-        <Header
-          onNavigate={(tab) => {
-            setActiveNavTab(tab);
-
-            if (tab !== "explore") {
-              showToast(
-                `${tab.toUpperCase()} coming soon!`
-              );
-            }
+      <div
+        className="relative w-full h-screen overflow-hidden bg-[#faf8ff] text-[#131b2e]"
+        style={{
+          minHeight: "100dvh",
+          isolation: "isolate",
+        }}
+      >
+        {/* =========================
+          MAP — BACKGROUND
+      ========================== */}
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 0,
           }}
-        />
-
-        {/* 2. Main Map / Scorecard Viewport */}
-
-        <main
-          className={`relative flex-1 w-full min-h-0 ${
-            activeNavTab === "scorecard"
-              ? `overflow-y-auto pt-[calc(4rem+1px+env(safe-area-inset-top,0px))] ${
-                  isDesktop
-                    ? ""
-                    : "pb-[calc(4rem+env(safe-area-inset-bottom,0px))]"
-                }`
-              : "overflow-hidden"
-          }`}
         >
-          {activeNavTab === "scorecard" ? (
+          {activeNavTab !== "scorecard" && (
+            <MapProvider
+              mapRef={mapRef}
+              pandals={filteredPandals}
+              selectedPandal={selectedPandal}
+              selectedPandals={selectedPandals}
+              routeSegments={routeSegments}
+              routeData={routeData}
+              onSelectPandal={setSelectedPandal}
+              metroActive={metroActive}
+              activeLayer={activeLayer}
+              userLocation={userLocation}
+            />
+          )}
+        </div>
+
+        {/* =========================
+          HEADER
+      ========================== */}
+        <div
+          className="absolute top-0 left-0 right-0"
+          style={{
+            zIndex: 300,
+            pointerEvents: "auto",
+          }}
+        >
+          {activeNavTab !== "scorecard" && (
+            <Header
+              onNavigate={(tab) => {
+                setActiveNavTab(tab);
+
+                if (tab !== "explore") {
+                  showToast(`${tab.toUpperCase()} coming soon!`);
+                }
+              }}
+            />
+          )}
+        </div>
+
+        {/* =========================
+          SCORECARD
+      ========================== */}
+        {activeNavTab === "scorecard" && (
+          <div
+            className="absolute inset-0 overflow-y-auto"
+            style={{
+              zIndex: 90,
+              background: "#faf8ff",
+            }}
+          >
             <ScorecardPage
-              isActive={
-                activeNavTab === "scorecard"
-              }
+              isActive={activeNavTab === "scorecard"}
               scorecard={scorecard}
               pandals={pandals}
               userLocation={userLocation}
               routeData={routeData}
               routeSegments={routeSegments}
-              selectedPandals={
-                selectedPandals
-              }
-              activeRouteMode={
-                activeRouteMode
-              }
-              onBack={() =>
-                setActiveNavTab("explore")
-              }
+              selectedPandals={selectedPandals}
+              activeRouteMode={activeRouteMode}
+              onBack={() => setActiveNavTab("explore")}
             />
-          ) : (
-            <>
-              {/* Google Map */}
-
-              <GoogleMapCanvas
-                pandals={filteredPandals}
-                selectedPandal={selectedPandal}
-                selectedPandals={
-                  selectedPandals
-                }
-                routeSegments={
-                  routeSegments
-                }
-                routeData={routeData}
-                activeRouteMode={
-                  activeRouteMode
-                }
-                onSelectPandal={(pandal) => {
-                  setSelectedPandal(
-                    pandal
-                  );
-
-                  setRouteData(null);
-                  setRouteError("");
-                  setRouteSegments(
-                    []
-                  );
-
-                  setActiveRouteMode(
-                    null
-                  );
-
-                  setMetroActive(true);
-                }}
-                onTogglePandalSelection={
-                  togglePandalSelection
-                }
-                metroActive={metroActive}
-                activeLayer={activeLayer}
-                userLocation={
-                  userLocation
-                }
-                zoom={svgZoom}
-                onMapReady={(map) => {
-                  googleMapRef.current =
-                    map;
-                }}
-              />
-
-              {/* Search + Category Filter */}
-
-              <SearchFilterOverlay
-                searchQuery={
-                  searchQuery
-                }
-                onSearchChange={
-                  setSearchQuery
-                }
-                activeCategory={
-                  activeCategory
-                }
-                onSelectCategory={
-                  setActiveCategory
-                }
-                onClearSearch={() =>
-                  setSearchQuery("")
-                }
-                metroActive={
-                  metroActive
-                }
-                onToggleMetro={() =>
-                  setMetroActive(
-                    (prev) => !prev
-                  )
-                }
-                visibleCount={
-                  filteredPandals.length
-                }
-                totalCount={
-                  pandals.length
-                }
-              />
-
-              {/* Map Controls */}
-
-              <div
-                className={`absolute right-3 sm:right-6 z-30 pointer-events-auto transition-all ${
-                  selectedPandal &&
-                  !isDesktop
-                    ? "bottom-72 sm:bottom-8"
-                    : "bottom-20 sm:bottom-8"
-                }`}
-              >
-                <MapControls
-                  metroActive={
-                    metroActive
-                  }
-                  onToggleMetro={() =>
-                    setMetroActive(
-                      (prev) => !prev
-                    )
-                  }
-                  routeModeActive={
-                    routeModeActive
-                  }
-                  onToggleRouteMode={() => {
-                    setRouteModeActive(
-                      (prev) => !prev
-                    );
-
-                    showToast(
-                      routeModeActive
-                        ? "Route mode disabled"
-                        : "Route mode enabled"
-                    );
-                  }}
-                  activeLayer={
-                    activeLayer
-                  }
-                  onToggleLayer={
-                    handleToggleLayer
-                  }
-                  onRecenter={
-                    handleRecenter
-                  }
-                  onZoomIn={() =>
-                    handleZoom(1)
-                  }
-                  onZoomOut={() =>
-                    handleZoom(-1)
-                  }
-                />
-              </div>
-
-              {/* Mobile Pandal + Route Stack */}
-
-              <PandalRouteOverlay
-                isDesktop={
-                  isDesktop
-                }
-                selectedPandal={
-                  selectedPandal
-                }
-                onClosePandal={() =>
-                  setSelectedPandal(
-                    null
-                  )
-                }
-                onViewDetails={(p) =>
-                  setModalPandal(p)
-                }
-                selectedPandals={
-                  selectedPandals
-                }
-                onTogglePandalSelection={
-                  togglePandalSelection
-                }
-                selectedPandalRoute={
-                  selectedPandalRoute
-                }
-                selectedPandalRouteLoading={
-                  selectedPandalRouteLoading
-                }
-                routeData={routeData}
-                routeError={
-                  routeError
-                }
-                routeLoading={
-                  routeLoading
-                }
-                onClearRoute={() => {
-                  setSelectedPandals(
-                    []
-                  );
-
-                  setRouteSegments(
-                    []
-                  );
-
-                  setRouteData(null);
-                  setRouteError("");
-
-                  setActiveRouteMode(
-                    null
-                  );
-
-                  setMetroActive(
-                    true
-                  );
-                }}
-                onMetroRoute={
-                  handleMetroRoute
-                }
-                onRoadRoute={
-                  handleRoadRoute
-                }
-              />
-
-              {/* Toast */}
-
-              <ToastNotification
-                message={
-                  toastMessage
-                }
-              />
-            </>
-          )}
-        </main>
-
-        {/* Pandal Details Modal */}
-
-        {modalPandal && (
-          <PandalDetailsModal
-            pandal={modalPandal}
-            onClose={() =>
-              setModalPandal(null)
-            }
-          />
+          </div>
         )}
 
-        {/* Mobile Bottom Navigation */}
-
-        {!isDesktop && (
-          <BottomNavigation
-            activeTab={
-              activeNavTab
-            }
-            onSelectTab={(tab) => {
-              setActiveNavTab(tab);
+        {/* =========================
+          SEARCH + FILTER
+      ========================== */}
+        {activeNavTab !== "scorecard" && (
+          <div
+            className="absolute top-0 left-0 right-0"
+            style={{
+              zIndex: 200,
+              pointerEvents: "auto",
             }}
-          />
+          >
+            <SearchFilterOverlay
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+              onClearSearch={() => setSearchQuery("")}
+              metroActive={metroActive}
+              onToggleMetro={() => setMetroActive((prev) => !prev)}
+              visibleCount={filteredPandals.length}
+              totalCount={pandals.length}
+            />
+          </div>
+        )}
+
+        {/* =========================
+          MAP CONTROLS
+      ========================== */}
+        {activeNavTab !== "scorecard" && (
+          <div
+            className="absolute right-3 sm:right-6"
+            style={{
+              zIndex: 200,
+              bottom: isDesktop ? "100px" : "90px",
+              pointerEvents: "auto",
+            }}
+          >
+            <MapControls
+              metroActive={metroActive}
+              onToggleMetro={() => setMetroActive((prev) => !prev)}
+              routeModeActive={routeModeActive}
+              onToggleRouteMode={() => {
+                setRouteModeActive((prev) => !prev);
+
+                showToast(
+                  routeModeActive
+                    ? "Route mode disabled"
+                    : "Route mode enabled"
+                );
+              }}
+              activeLayer={activeLayer}
+              onToggleLayer={handleToggleLayer}
+              onRecenter={handleRecenter}
+              onZoomIn={() => handleZoom(1)}
+              onZoomOut={() => handleZoom(-1)}
+            />
+          </div>
+        )}
+
+        {/* =========================
+          PANDAL / ROUTE OVERLAY
+      ========================== */}
+        {activeNavTab !== "scorecard" && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              zIndex: 250,
+            }}
+          >
+            <div className="pointer-events-auto">
+              <PandalRouteOverlay
+                isDesktop={isDesktop}
+                selectedPandal={selectedPandal}
+                onClosePandal={() => setSelectedPandal(null)}
+                onViewDetails={(p) => setModalPandal(p)}
+                selectedPandals={selectedPandals}
+                onTogglePandalSelection={togglePandalSelection}
+                selectedPandalRoute={selectedPandalRoute}
+                selectedPandalRouteLoading={selectedPandalRouteLoading}
+                routeData={routeData}
+                routeError={routeError}
+                routeLoading={routeLoading}
+                onClearRoute={() => {
+                  setSelectedPandals([]);
+                  setRouteSegments([]);
+                  setRouteData(null);
+                  setRouteError("");
+                  setActiveRouteMode(null);
+                  setMetroActive(true);
+                }}
+                onMetroRoute={handleMetroRoute}
+                onRoadRoute={handleRoadRoute}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* =========================
+          TOAST
+      ========================== */}
+        {activeNavTab !== "scorecard" && (
+          <div
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{
+              zIndex: 400,
+            }}
+          >
+            <ToastNotification message={toastMessage} />
+          </div>
+        )}
+
+        {/* =========================
+          DETAILS MODAL
+      ========================== */}
+        {modalPandal && (
+          <div
+            className="absolute inset-0"
+            style={{
+              zIndex: 1000,
+              pointerEvents: "auto",
+            }}
+          >
+            <PandalDetailsModal
+              pandal={modalPandal}
+              onClose={() => setModalPandal(null)}
+            />
+          </div>
+        )}
+
+        {/* =========================
+          BOTTOM NAVIGATION
+      ========================== */}
+        {!isDesktop && (
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              zIndex: 500,
+              pointerEvents: "auto",
+            }}
+          >
+            <BottomNavigation
+              activeTab={activeNavTab}
+              onSelectTab={(tab) => setActiveNavTab(tab)}
+            />
+          </div>
         )}
       </div>
     </>
   );
+
+
+
 };
 
-export default App;
 
+export default App;

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { METRO_DATA, METRO_GEOJSON } from "../data/constants";
-import { geoJsonToGooglePath } from "../utils/mapCanvasUtils";
+import { METRO_DATA, METRO_GEOJSON } from "../../../data/constants";
+import { geoJsonToGooglePath } from "../../../utils/mapCanvasUtils";
 
 const GoogleMapMetroLayer = ({ map, metroActive = true }) => {
   const metroLinesRef = useRef([]);
