@@ -9,11 +9,12 @@ import CrowdReporterCard from "../components/UI/Scorecard/CrowdReporterCard";
 import Achievements from "../components/UI/Scorecard/Achievements";
 import VisitHistory from "../components/UI/Scorecard/VisitHistory";
 
-import { getGuestUserId } from "../services/scorecardService";
+
 import { getScorecardRouteSummary } from "../utils/scorecardRouteMetrics";
 
 const ScorecardPage = ({
   scorecard = null,
+  user = null,
   pandals = [],
   userLocation,
   routeData = null,
@@ -22,7 +23,7 @@ const ScorecardPage = ({
   activeRouteMode = null,
   onBack,
 }) => {
-  const [guestUserId] = useState(() => getGuestUserId());
+  
 
   /*
    * SCORECARD SOURCE OF TRUTH
@@ -144,10 +145,7 @@ const ScorecardPage = ({
           onBack={onBack}
         />
 
-        <ScoreProfileCard
-          guestUserId={guestUserId}
-          userLocation={userLocation}
-        />
+        <ScoreProfileCard user={user} />
 
         <JourneyProgress
           visited={visitedCount}

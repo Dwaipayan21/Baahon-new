@@ -1,14 +1,15 @@
-
 const BottomNavigation = ({ activeTab = "explore", onSelectTab }) => {
   const tabs = [
     { id: "explore", label: "Explore", icon: "explore" },
-    { id: "routes", label: "Routes", icon: "route" },
     { id: "scorecard", label: "Scorecard", icon: "emoji_events" },
     { id: "profile", label: "Profile", icon: "person" },
   ];
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 pb-safe bg-white/95 backdrop-blur-xl border-t border-slate-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] sm:hidden select-none" style={{ zIndex: 100 }}>
+    <nav
+      className="fixed bottom-0 inset-x-0 z-40 pb-safe bg-white/95 backdrop-blur-xl border-t border-slate-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] sm:hidden select-none"
+      style={{ zIndex: 100 }}
+    >
       <div className="flex items-center justify-around h-15 px-4 max-w-md mx-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -44,4 +45,3 @@ const BottomNavigation = ({ activeTab = "explore", onSelectTab }) => {
 };
 
 export default BottomNavigation;
-

@@ -8,6 +8,9 @@ import UserLocationMarker from "./UserLocationMarker";
 import GoogleMapMetroLayer from "./GoogleMapMetroLayer";
 import GoogleMapRouteLayer from "./GoogleMapRouteLayer";
 import GoogleMapPandalMarkers from "./GoogleMapPandalMarkers";
+import FoodMarkers from "../../Food/FoodMarker";
+
+console.log("🔥 GOOGLE MAP CANVAS LOADED");
 
 const GoogleMapCanvas = ({
   pandals = [],
@@ -19,6 +22,9 @@ const GoogleMapCanvas = ({
   metroActive = true,
   activeLayer = "roadmap",
   userLocation,
+  foodPlaces = [],
+  selectedFoodPlace = null,
+  onSelectFoodPlace,
   onMapReady,
   onMapError,
   zoom = 1,
@@ -206,6 +212,13 @@ const GoogleMapCanvas = ({
         selectedPandal={selectedPandal}
         selectedPandals={selectedPandals}
         onSelectPandal={onSelectPandal}
+      />
+
+      <FoodMarkers
+        map={mapInstance}
+        foodPlaces={foodPlaces}
+        selectedFoodPlace={selectedFoodPlace}
+        onSelectFoodPlace={onSelectFoodPlace}
       />
 
       <UserLocationMarker

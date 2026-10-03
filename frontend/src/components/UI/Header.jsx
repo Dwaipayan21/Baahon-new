@@ -2,12 +2,22 @@ import {
   Show,
   SignInButton,
   SignUpButton,
-  UserButton,
+  useUser,
 } from "@clerk/react";
 
-const Header = ({ onNavigate }) => {
+const Header = () => {
+  const { user } = useUser();
+
+  const displayName =
+    user?.fullName ||
+    user?.username ||
+    "Profile";
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#faf8ff] border-b border-slate-200/70 shadow-sm pt-safe" style={{ zIndex: 100 }}>
+    <header
+      className="fixed top-0 left-0 right-0 z-[100] bg-[#faf8ff] border-b border-slate-200/70 shadow-sm pt-safe"
+      style={{ zIndex: 100 }}
+    >
       <div className="h-16 px-4 sm:px-6 max-w-7xl mx-auto flex items-center justify-between">
 
         {/* Left: Logo + PujoPath */}
@@ -62,13 +72,17 @@ const Header = ({ onNavigate }) => {
 
           {/* Logged in */}
           <Show when="signed-in">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-9 h-9",
-                },
-              }}
-            />
+            <div
+              className="w-9 h-9 rounded-full overflow-hidden border border-slate-200"
+              title={displayName}
+              aria-label={`${displayName} profile picture`}
+            >
+              <img
+                src={user?.imageUrl}
+                alt={displayName}
+                className="w-full h-full object-cover"
+              />
+            </div>
           </Show>
 
         </div>
