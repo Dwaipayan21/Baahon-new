@@ -1,14 +1,5 @@
 ﻿import { useEffect, useRef } from "react";
 
-const ROAD_SOURCE = "route-road";
-const ROAD_LAYER = "route-road-layer";
-
-const WALK_SOURCE_PREFIX = "route-walk-";
-const WALK_LAYER_PREFIX = "route-walk-layer-";
-
-const METRO_ROUTE_SOURCE = "route-metro-segment";
-const METRO_ROUTE_LAYER = "route-metro-segment-layer";
-
 const METRO_FILES = [
   "/metro/blue/blue.geojson",
   "/metro/greenline/greenline.geojson",
@@ -256,21 +247,17 @@ const MapLibreRouteLayer = ({
   routeData,
   routeSegments = [],
 }) => {
-  const walkLayerIdsRef = useRef([]);
+  const routeLayersRef = useRef([]);
 
   useEffect(() => {
     if (!map) {
       return;
     }
 
-    const cleanup = () => {
-      removeLayerAndSource(
-        map,
-        ROAD_LAYER,
-        ROAD_SOURCE
-      );
+    let cancelled = false;
 
-      walkLayerIdsRef.current.forEach(
+    const cleanup = () => {
+      routeLayersRef.current.forEach(
         ({ layerId, sourceId }) => {
           removeLayerAndSource(
             map,
@@ -280,36 +267,35 @@ const MapLibreRouteLayer = ({
         }
       );
 
-      walkLayerIdsRef.current = [];
-
-      for (let i = 0; i < 10; i++) {
-        removeLayerAndSource(
-          map,
-          `${METRO_ROUTE_LAYER}-${i}`,
-          `${METRO_ROUTE_SOURCE}-${i}`
-        );
-      }
+      routeLayersRef.current = [];
     };
 
-    const addWalkingLayer = (
+    const addLineLayer = ({
       geometry,
-      idSuffix
-    ) => {
+      layerId,
+      sourceId,
+      color = "#2563eb",
+      width = 6,
+      opacity = 0.95,
+      dotted = false,
+    }) => {
       if (!geometry) {
         return;
       }
 
-      const sourceId =
-        `${WALK_SOURCE_PREFIX}${idSuffix}`;
-
-      const layerId =
-        `${WALK_LAYER_PREFIX}${idSuffix}`;
+      const geojson = toFeatureCollection(
+        geometry
+      );
 
       upsertSource(
         map,
         sourceId,
-        toFeatureCollection(geometry)
+        geojson
       );
+
+      if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+      }
 
       map.addLayer({
         id: layerId,
@@ -321,15 +307,21 @@ const MapLibreRouteLayer = ({
           "line-cap": "round",
         },
 
-        paint: {
-          "line-color": "#2563eb",
-          "line-width": 4,
-          "line-dasharray": [2, 2],
-          "line-opacity": 0.9,
-        },
+        paint: dotted
+          ? {
+              "line-color": color,
+              "line-width": width,
+              "line-dasharray": [1, 2],
+              "line-opacity": opacity,
+            }
+          : {
+              "line-color": color,
+              "line-width": width,
+              "line-opacity": opacity,
+            },
       });
 
-      walkLayerIdsRef.current.push({
+      routeLayersRef.current.push({
         layerId,
         sourceId,
       });
@@ -338,25 +330,28 @@ const MapLibreRouteLayer = ({
     const applyRoutes = async () => {
       cleanup();
 
-      if (!map.isStyleLoaded()) {
+      if (cancelled || !map.isStyleLoaded()) {
         return;
       }
 
-      /* -------------------------------------------------
-         Multi-stop walking route
-      ------------------------------------------------- */
-
       if (routeSegments.length > 0) {
-        routeSegments.forEach((segment, index) => {
-          if (!segment?.geometry) {
-            return;
-          }
+        routeSegments.forEach(
+          (segment, index) => {
+            if (!segment?.geometry) {
+              return;
+            }
 
-          addWalkingLayer(
-            segment.geometry,
-            `multi-${index}`
-          );
-        });
+            addLineLayer({
+              geometry: segment.geometry,
+              layerId: `route-road-layer-${index}`,
+              sourceId: `route-road-${index}`,
+              color: "#2563eb",
+              width: 6,
+              opacity: 0.95,
+              dotted: false,
+            });
+          }
+        );
 
         return;
       }
@@ -374,6 +369,10 @@ const MapLibreRouteLayer = ({
         routeIndex < routes.length;
         routeIndex++
       ) {
+        if (cancelled) {
+          return;
+        }
+
         const route = routes[routeIndex];
 
         if (!route) {
@@ -388,18 +387,32 @@ const MapLibreRouteLayer = ({
           const toMetroGeom =
             route.walking?.toMetro?.geometry;
 
-          addWalkingLayer(
-            toMetroGeom,
-            `to-${routeIndex}`
-          );
+          if (toMetroGeom) {
+            addLineLayer({
+              geometry: toMetroGeom,
+              layerId: `route-walk-to-${routeIndex}`,
+              sourceId: `route-walk-to-${routeIndex}`,
+              color: "#2563eb",
+              width: 3,
+              opacity: 0.95,
+              dotted: true,
+            });
+          }
 
           const fromMetroGeom =
             route.walking?.fromMetro?.geometry;
 
-          addWalkingLayer(
-            fromMetroGeom,
-            `from-${routeIndex}`
-          );
+          if (fromMetroGeom) {
+            addLineLayer({
+              geometry: fromMetroGeom,
+              layerId: `route-walk-from-${routeIndex}`,
+              sourceId: `route-walk-from-${routeIndex}`,
+              color: "#2563eb",
+              width: 3,
+              opacity: 0.95,
+              dotted: true,
+            });
+          }
 
           const fromStation =
             route.metro?.fromStation;
@@ -423,40 +436,19 @@ const MapLibreRouteLayer = ({
                 toCoords
               );
 
-            if (metroGeometry) {
-              const sourceId =
-                `${METRO_ROUTE_SOURCE}-${routeIndex}`;
-
-              const layerId =
-                `${METRO_ROUTE_LAYER}-${routeIndex}`;
-
-              upsertSource(
-                map,
-                sourceId,
-                toFeatureCollection(
-                  metroGeometry
-                )
-              );
-
+            if (metroGeometry && !cancelled) {
               const lineColor =
-                route.metro?.lines?.[0]?.color ||
-                "#005bb3";
+                route.metro?.lines?.[0]
+                  ?.color || "#005bb3";
 
-              map.addLayer({
-                id: layerId,
-                type: "line",
-                source: sourceId,
-
-                layout: {
-                  "line-join": "round",
-                  "line-cap": "round",
-                },
-
-                paint: {
-                  "line-color": lineColor,
-                  "line-width": 6,
-                  "line-opacity": 0.95,
-                },
+              addLineLayer({
+                geometry: metroGeometry,
+                layerId: `route-metro-${routeIndex}`,
+                sourceId: `route-metro-${routeIndex}`,
+                color: lineColor,
+                width: 6,
+                opacity: 0.95,
+                dotted: false,
               });
             }
           }
@@ -472,37 +464,15 @@ const MapLibreRouteLayer = ({
           const isWalking =
             route.mode === "walking";
 
-          if (isWalking) {
-            addWalkingLayer(
-              route.geometry,
-              `single-${routeIndex}`
-            );
-          } else {
-            upsertSource(
-              map,
-              ROAD_SOURCE,
-              toFeatureCollection(
-                route.geometry
-              )
-            );
-
-            map.addLayer({
-              id: ROAD_LAYER,
-              type: "line",
-              source: ROAD_SOURCE,
-
-              layout: {
-                "line-join": "round",
-                "line-cap": "round",
-              },
-
-              paint: {
-                "line-color": "#2563eb",
-                "line-width": 6,
-                "line-opacity": 0.95,
-              },
-            });
-          }
+          addLineLayer({
+            geometry: route.geometry,
+            layerId: `route-${route.mode || "road"}-${routeIndex}`,
+            sourceId: `route-${route.mode || "road"}-${routeIndex}`,
+            color: "#2563eb",
+            width: isWalking ? 3 : 6,
+            opacity: 0.95,
+            dotted: isWalking,
+          });
         }
       }
     };
@@ -513,7 +483,10 @@ const MapLibreRouteLayer = ({
       map.once("load", applyRoutes);
     }
 
-    return cleanup;
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
   }, [
     map,
     routeData,
