@@ -261,6 +261,22 @@ export const getUserCheckIns = async (token) => {
   }
 };
 
+export const getLeaderboard = async () => {
+  const response = await fetch(
+    `${API_BASE_URL}/checkins/leaderboard`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.message || "Failed to fetch leaderboard"
+    );
+  }
+
+  return data?.data || [];
+};
+
 export const getFoodForPandal = async (
   pandalId,
   { radius, limit, category } = {}

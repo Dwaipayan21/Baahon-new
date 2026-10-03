@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { clerkClient } from "@clerk/express";
 import CheckIn from "../models/checkin.model.js";
 import Pandal from "../models/pandal.model.js";
 import User from "../models/user.model.js";
@@ -112,9 +113,22 @@ export const createCheckIn = async (req, res, next) => {
         points,
       });
 
+      const clerkUser = await clerkClient.users.getUser(userId);
+
+      const userName =
+        clerkUser.fullName ||
+        clerkUser.firstName ||
+        clerkUser.username ||
+        "Pujo Explorer";
+
       await User.findOneAndUpdate(
         { clerkId: userId },
-        { $inc: { points } },
+        {
+          $inc: { points },
+          $set: {
+            name: userName,
+          },
+        },
         {
           upsert: true,
           setDefaultsOnInsert: true,
@@ -222,6 +236,74 @@ export const getUserCheckIns = async (req, res, next) => {
         totalPoints,
         visitedCount: visits.length,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getLeaderboard = async (req, res, next) => {
+  try {
+    const users = await User.find({})
+      .select("clerkId name")
+      .lean();
+
+    const leaderboard = await Promise.all(
+      users.map(async (user) => {
+        const checkIns = await CheckIn.find({
+          userId: user.clerkId,
+        })
+          .select("points")
+          .lean();
+
+        const totalPoints = checkIns.reduce(
+          (sum, checkIn) => sum + (Number(checkIn.points) || 0),
+          0
+        );
+
+        let name = user.name;
+
+        try {
+          const clerkUser = await clerkClient.users.getUser(user.clerkId);
+
+          name =
+            clerkUser.fullName ||
+            clerkUser.firstName ||
+            clerkUser.username ||
+            name ||
+            "Pujo Explorer";
+        } catch (error) {
+          console.error(
+            `Failed to fetch Clerk user ${user.clerkId}:`,
+            error.message
+          );
+
+          name = name || "Pujo Explorer";
+        }
+
+        return {
+          userId: user.clerkId,
+          name,
+          totalPoints,
+          visits: checkIns.length,
+        };
+      })
+    );
+
+    leaderboard.sort((a, b) => {
+      if (b.totalPoints !== a.totalPoints) {
+        return b.totalPoints - a.totalPoints;
+      }
+
+      if (b.visits !== a.visits) {
+        return b.visits - a.visits;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
+
+    return sendSuccess(res, {
+      message: "Scorecard leaderboard fetched successfully",
+      data: leaderboard,
     });
   } catch (error) {
     next(error);
