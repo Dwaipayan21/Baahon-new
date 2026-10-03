@@ -2,11 +2,10 @@
 import * as maplibregl from "maplibre-gl";
 
 // Pandal SVG icon — temple shape, color-coded for selection state
-const createPandalSvg = (selected = false, routeSelected = false) => {
-  const color = routeSelected ? "#005bb3" : selected ? "#c1121f" : "#c1121f";
-  const scale = routeSelected ? 1.15 : selected ? 1.1 : 1;
-  const size = Math.round(40 * scale);
-  const height = Math.round(50 * scale);
+const createPandalSvg = (selected = false) => {
+  const color = selected ? "#005bb3" : "#c1121f";
+  const size = selected ? 46 : 40;
+  const height = selected ? 58 : 50;
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +14,7 @@ const createPandalSvg = (selected = false, routeSelected = false) => {
         C1.5 33.8 20 48.8 20 48.8
         C20 48.8 38.5 33.8 38.5 20
         C38.5 9.8 30.2 1.5 20 1.5Z"
-        fill="${color}" stroke="${routeSelected ? "#fbbf24" : "#fbbf24"}" stroke-width="1.8"/>
+        fill="${color}" stroke="#fbbf24" stroke-width="1.8"/>
       <circle cx="20" cy="19.2" r="12.2"
         fill="#fff" stroke="#fef08a" stroke-width=".6"/>
       <path d="M20 8V12M17.5 10C17.5 11.5 20 12 20 12
@@ -39,7 +38,12 @@ const createPandalSvg = (selected = false, routeSelected = false) => {
       <rect x="10.5" y="27" width="19" height="1.8" fill="#8b0000"/>
     </svg>
   `;
-  return { svg, width: size, height };
+
+  return {
+    svg,
+    width: size,
+    height,
+  };
 };
 
 const MapLibrePandalMarkers = ({
@@ -59,45 +63,63 @@ const MapLibrePandalMarkers = ({
   useEffect(() => {
     if (!map) return;
 
-    // Remove old markers
-    markersRef.current.forEach((m) => m.remove());
+    markersRef.current.forEach((marker) => {
+      marker.remove();
+    });
+
     markersRef.current = [];
 
-    const newMarkers = pandals.map((pandal) => {
-      if (!Number.isFinite(pandal.lat) || !Number.isFinite(pandal.lng)) {
-        return null;
-      }
+    const newMarkers = pandals
+      .map((pandal) => {
+        if (
+          !Number.isFinite(pandal.lat) ||
+          !Number.isFinite(pandal.lng)
+        ) {
+          return null;
+        }
 
-      const isRouteSelected = selectedPandals.some((s) => s.id === pandal.id);
-      const isOpened = selectedPandal?.id === pandal.id;
+        const isRouteSelected = selectedPandals.some(
+          (selected) => selected.id === pandal.id
+        );
 
-      const { svg, width, height } = createPandalSvg(isOpened, isRouteSelected);
+        const isOpened = selectedPandal?.id === pandal.id;
+        const isSelected = isOpened || isRouteSelected;
 
-      const el = document.createElement("div");
-      el.innerHTML = svg;
-      el.style.cursor = "pointer";
-      el.style.width = `${width}px`;
-      el.style.height = `${height}px`;
-      el.style.zIndex = isOpened ? "1000" : isRouteSelected ? "500" : "1";
-      el.title = pandal.name;
+        const { svg, width, height } = createPandalSvg(isSelected);
+        const element = document.createElement("div");
 
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        onSelectRef.current?.(pandal);
-      });
+        element.innerHTML = svg;
+        element.style.cursor = "pointer";
+        element.style.width = `${width}px`;
+        element.style.height = `${height}px`;
+        element.style.zIndex = isOpened
+          ? "1000"
+          : isRouteSelected
+            ? "500"
+            : "1";
+        element.title = pandal.name;
 
-      // MapLibre: [lng, lat]
-      const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
-        .setLngLat([pandal.lng, pandal.lat])
-        .addTo(map);
+        element.addEventListener("click", (event) => {
+          event.stopPropagation();
+          onSelectRef.current?.(pandal);
+        });
 
-      return marker;
-    }).filter(Boolean);
+        return new maplibregl.Marker({
+          element,
+          anchor: "bottom",
+        })
+          .setLngLat([pandal.lng, pandal.lat])
+          .addTo(map);
+      })
+      .filter(Boolean);
 
     markersRef.current = newMarkers;
 
     return () => {
-      markersRef.current.forEach((m) => m.remove());
+      markersRef.current.forEach((marker) => {
+        marker.remove();
+      });
+
       markersRef.current = [];
     };
   }, [map, pandals, selectedPandal, selectedPandals]);

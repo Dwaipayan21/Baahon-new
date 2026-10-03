@@ -229,6 +229,9 @@ const MapProvider = ({
       onSelectPandal={onSelectPandal}
       metroActive={metroActive}
       userLocation={userLocation}
+      foodPlaces={foodPlaces}
+      selectedFoodPlace={selectedFoodPlace}
+      onSelectFoodPlace={onSelectFoodPlace}
     />
   );
 };
