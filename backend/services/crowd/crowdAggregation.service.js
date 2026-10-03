@@ -5,10 +5,45 @@ export async function getPandalCrowdStatus(pandal) {
     pandalId: pandal._id,
     congestionScore: { $ne: null },
     observedAt: {
-      $gte: new Date(Date.now() - 15 * 60 * 1000),
+      $gte: new Date(Date.now() - 35 * 60 * 1000),
     },
   }).lean();
 
+  return aggregatePandalCrowdStatus(pandal, observations);
+}
+
+export async function getPandalCrowdStatuses(pandals) {
+  if (!pandals.length) {
+    return [];
+  }
+
+  const observations = await CrowdSample.find({
+    pandalId: { $in: pandals.map((pandal) => pandal._id) },
+    congestionScore: { $ne: null },
+    observedAt: {
+      $gte: new Date(Date.now() - 35 * 60 * 1000),
+    },
+  }).lean();
+
+  const observationsByPandal = new Map();
+
+  for (const observation of observations) {
+    const pandalId = String(observation.pandalId);
+    const pandalObservations = observationsByPandal.get(pandalId) || [];
+
+    pandalObservations.push(observation);
+    observationsByPandal.set(pandalId, pandalObservations);
+  }
+
+  return pandals.map((pandal) =>
+    aggregatePandalCrowdStatus(
+      pandal,
+      observationsByPandal.get(String(pandal._id)) || []
+    )
+  );
+}
+
+function aggregatePandalCrowdStatus(pandal, observations) {
   if (!observations.length) {
     return {
       status: "UNKNOWN",

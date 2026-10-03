@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
-import { getPandalCrowdStatus } from "../services/crowd/crowdAggregation.service.js";
+import {
+  getPandalCrowdStatus,
+  getPandalCrowdStatuses,
+} from "../services/crowd/crowdAggregation.service.js";
 import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -30,6 +33,39 @@ export const getAllPandals = async (req, res, next) => {
       message: "Pandals fetched successfully",
       data: pandals,
       count: pandals.length,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /api/pandals/crowd
+export const getAllPandalCrowd = async (req, res, next) => {
+  try {
+    const pandals = await Pandal.find().select(
+      "_id name crowdSamplePoints"
+    );
+
+    const crowdStatuses = await getPandalCrowdStatuses(pandals);
+
+    const data = pandals.map((pandal, index) => ({
+      pandalId: pandal._id,
+      pandalName: pandal.name,
+      ...crowdStatuses[index],
+    }));
+
+    for (const pandal of data) {
+      if (pandal.status !== "UNKNOWN") {
+        console.log(
+          `[CACHE] ${pandal.pandalName} → reused existing crowd observation`
+        );
+      }
+    }
+
+    return sendSuccess(res, {
+      message: "Pandal crowd statuses fetched successfully",
+      data,
+      count: data.length,
     });
   } catch (error) {
     next(error);
@@ -187,6 +223,12 @@ export const getPandalCrowd = async (req, res, next) => {
     }
 
     const crowd = await getPandalCrowdStatus(pandal);
+
+    if (crowd.status !== "UNKNOWN") {
+      console.log(
+        `[CACHE] ${pandal.name} → reused existing crowd observation`
+      );
+    }
 
     return sendSuccess(res, {
       message: "Pandal crowd status fetched successfully",

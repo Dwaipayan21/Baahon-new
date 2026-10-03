@@ -1,9 +1,15 @@
+import { recordTomTomRequest } from "./tomtomUsage.service.js";
+
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 const trafficCache = new Map();
 const inFlightRequests = new Map();
 
-export async function getTrafficObservation(latitude, longitude) {
+export async function getTrafficObservation(
+  latitude,
+  longitude,
+  requestLabel = `coordinates ${latitude}, ${longitude}`
+) {
   const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
 
   if (!TOMTOM_API_KEY) {
@@ -33,7 +39,8 @@ export async function getTrafficObservation(latitude, longitude) {
     latitude,
     longitude,
     TOMTOM_API_KEY,
-    cacheKey
+    cacheKey,
+    requestLabel
   );
 
   inFlightRequests.set(cacheKey, requestPromise);
@@ -49,7 +56,8 @@ async function fetchTomTomTraffic(
   latitude,
   longitude,
   TOMTOM_API_KEY,
-  cacheKey
+  cacheKey,
+  requestLabel
 ) {
   const url =
     "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json" +
@@ -57,6 +65,7 @@ async function fetchTomTomTraffic(
       TOMTOM_API_KEY
     )}`;
 
+  recordTomTomRequest(requestLabel);
   const response = await fetch(url);
   const data = await response.json();
 

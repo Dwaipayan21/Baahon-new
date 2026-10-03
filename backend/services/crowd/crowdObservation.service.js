@@ -3,7 +3,7 @@ import CrowdSample from "../../models/crowdSample.model.js";
 import { getTrafficObservation } from "./tomtomTraffic.service.js";
 
 const CONCURRENCY = 3;
-const POINTS_PER_REFRESH = 2;
+const POINTS_PER_REFRESH = 1;
 const REFRESH_AFTER_MS = 30 * 60 * 1000;
 
 export async function collectPandalCrowdObservations(pandalId) {
@@ -47,6 +47,7 @@ export async function collectPandalCrowdObservations(pandalId) {
 
     return (
       !latest?.observedAt ||
+      !Number.isFinite(latest.congestionScore) ||
       now - new Date(latest.observedAt).getTime() >= REFRESH_AFTER_MS
     );
   });
@@ -78,10 +79,11 @@ export async function collectPandalCrowdObservations(pandalId) {
 
         const observation = await getTrafficObservation(
           latitude,
-          longitude
+          longitude,
+          pandal.name
         );
 
-        if (observation.congestionScore === null) {
+        if (!Number.isFinite(observation.congestionScore)) {
           return null;
         }
 
