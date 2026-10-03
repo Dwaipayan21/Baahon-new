@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 
 import {
   getPandals,
@@ -11,6 +11,7 @@ import {
   createCheckIn,
   getUserCheckIns,
 } from "./services/api";
+import { getFoodPlacesForPandal } from "./services/foodService";
 
 import MapProvider from "./components/MapProvider";
 
@@ -19,8 +20,10 @@ import { findNearestPandal } from "./utils/routeUtils";
 import ScorecardPage from "./Pages/ScoreCardPage";
 
 import Header from "./components/UI/Header";
+import ProfilePage from "./Pages/ProfilePage";
 import MapControls from "./components/map/MapControls";
 import PandalDetailsModal from "./components/pandal/PandalDetailsModal";
+import FoodPlaceCard from "./components/food/FoodPlaceCard";
 import BottomNavigation from "./components/UI/BottomNavigation";
 import SearchFilterOverlay from "./components/UI/search/SearchFilterOverlay";
 import PandalRouteOverlay from "./components/routes/PandalRouteOverlay";
@@ -61,6 +64,7 @@ const App = () => {
   // --------------------------------------------------
 
   const { isSignedIn, userId: clerkUserId, getToken } = useAuth();
+  const { user } = useUser();
 
   const testClerkToken = async () => {
     const token = await getToken();
@@ -84,6 +88,8 @@ const App = () => {
 
   const [selectedPandal, setSelectedPandal] = useState(null);
   const [modalPandal, setModalPandal] = useState(null);
+  const [foodPlaces, setFoodPlaces] = useState([]);
+  const [selectedFoodPlace, setSelectedFoodPlace] = useState(null);
 
   const [metroActive, setMetroActive] = useState(true);
 
@@ -156,6 +162,7 @@ const App = () => {
   const locationWatchRef = useRef(null);
 
   const checkedInPandalsRef = useRef(new Set());
+  const foodLoadedPandalsRef = useRef(new Set());
 
   const checkInInProgressRef = useRef(new Set());
 
@@ -419,6 +426,43 @@ const App = () => {
   }, []);
 
   // --------------------------------------------------
+  // LOAD FOOD AFTER A SUCCESSFUL CHECK-IN
+  // --------------------------------------------------
+
+  const loadFoodForVisitedPandal = useCallback(
+    async (pandal) => {
+      if (!pandal?.id) {
+        return;
+      }
+
+      if (foodLoadedPandalsRef.current.has(pandal.id)) {
+        return;
+      }
+
+      foodLoadedPandalsRef.current.add(pandal.id);
+
+      try {
+        const places = await getFoodPlacesForPandal(pandal.id);
+
+        setFoodPlaces(Array.isArray(places) ? places : []);
+        setSelectedFoodPlace(null);
+      } catch (error) {
+        console.error(
+          `Failed to load food places for ${pandal.name}:`,
+          error
+        );
+
+        foodLoadedPandalsRef.current.delete(pandal.id);
+
+        // Food failure should not affect check-in.
+        setFoodPlaces([]);
+        setSelectedFoodPlace(null);
+      }
+    },
+    []
+  );
+
+  // --------------------------------------------------
   // AUTOMATIC CHECK-IN WITHIN 100M
   // --------------------------------------------------
 
@@ -455,12 +499,6 @@ const App = () => {
           pandal.lng
         );
 
-        console.log(
-          `Distance to ${pandal.name}: ${Math.round(
-            distance
-          )}m`
-        );
-
         if (distance > 100) {
           continue;
         }
@@ -481,11 +519,6 @@ const App = () => {
             token
           );
 
-          console.log(
-            "AUTOMATIC CHECK-IN SUCCESS:",
-            result
-          );
-
           checkedInPandalsRef.current.add(
             pandal.id
           );
@@ -493,6 +526,8 @@ const App = () => {
           showToast(
             `📍 ${result.pandalName} visited! +${result.points} points`
           );
+
+          await loadFoodForVisitedPandal(pandal);
 
           try {
             const token = await getToken();
@@ -522,15 +557,22 @@ const App = () => {
             );
           }
         } catch (error) {
-          if (error.status === 409) {
+          console.error("❌ AUTOMATIC CHECK-IN ERROR:", {
+            error,
+            status: error?.status,
+            message: error?.message,
+            response: error?.response,
+          });
+
+          if (error?.status === 409) {
             checkedInPandalsRef.current.add(
               pandal.id
             );
 
-            console.log(
-              `Already checked in at ${pandal.name}`
-            );
-          } else if (error.status === 403) {
+            await loadFoodForVisitedPandal(pandal);
+
+            continue;
+          } else if (error?.status === 403) {
             console.log(
               `Backend says user is outside the check-in radius for ${pandal.name}`
             );
@@ -549,7 +591,14 @@ const App = () => {
     };
 
     processAutomaticCheckIns();
-  }, [userLocation, pandals, isSignedIn, clerkUserId, getToken]);
+  }, [
+    userLocation,
+    pandals,
+    isSignedIn,
+    clerkUserId,
+    getToken,
+    loadFoodForVisitedPandal,
+  ]);
 
   // --------------------------------------------------
   // RESPONSIVE SCREEN LISTENER
@@ -1188,7 +1237,8 @@ const App = () => {
             zIndex: 0,
           }}
         >
-          {activeNavTab !== "scorecard" && (
+          {activeNavTab !== "scorecard" &&
+            activeNavTab !== "profile" && (
             <MapProvider
               mapRef={mapRef}
               pandals={filteredPandals}
@@ -1200,6 +1250,9 @@ const App = () => {
               metroActive={metroActive}
               activeLayer={activeLayer}
               userLocation={userLocation}
+              foodPlaces={foodPlaces}
+              selectedFoodPlace={selectedFoodPlace}
+              onSelectFoodPlace={setSelectedFoodPlace}
             />
           )}
         </div>
@@ -1214,17 +1267,10 @@ const App = () => {
             pointerEvents: "auto",
           }}
         >
-          {activeNavTab !== "scorecard" && (
-            <Header
-              onNavigate={(tab) => {
-                setActiveNavTab(tab);
-
-                if (tab !== "explore") {
-                  showToast(`${tab.toUpperCase()} coming soon!`);
-                }
-              }}
-            />
-          )}
+          {activeNavTab !== "scorecard" &&
+            activeNavTab !== "profile" && (
+              <Header />
+            )}
         </div>
 
         {/* =========================
@@ -1248,14 +1294,35 @@ const App = () => {
               selectedPandals={selectedPandals}
               activeRouteMode={activeRouteMode}
               onBack={() => setActiveNavTab("explore")}
+              user={user}
             />
           </div>
         )}
 
         {/* =========================
+                PROFILE
+          ========================== */}
+        {activeNavTab === "profile" && (
+          <div
+            className="absolute inset-0 overflow-y-auto"
+            style={{
+              zIndex: 90,
+              background: "#faf8ff",
+         }}
+        >
+          <ProfilePage
+            onViewScorecard={() => {
+              setActiveNavTab("scorecard");
+          }}
+          />
+        </div>
+      )}
+
+        {/* =========================
           SEARCH + FILTER
       ========================== */}
-        {activeNavTab !== "scorecard" && (
+        {activeNavTab !== "scorecard" &&
+          activeNavTab !== "profile" && (
           <div
             className="absolute top-0 left-0 right-0"
             style={{
@@ -1280,7 +1347,8 @@ const App = () => {
         {/* =========================
           MAP CONTROLS
       ========================== */}
-        {activeNavTab !== "scorecard" && (
+        {activeNavTab !== "scorecard" &&
+          activeNavTab !== "profile" && (
           <div
             className="absolute right-3 sm:right-6"
             style={{
@@ -1314,7 +1382,8 @@ const App = () => {
         {/* =========================
           PANDAL / ROUTE OVERLAY
       ========================== */}
-        {activeNavTab !== "scorecard" && (
+        {activeNavTab !== "scorecard" &&
+          activeNavTab !== "profile" && (
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -1349,10 +1418,21 @@ const App = () => {
           </div>
         )}
 
+        {activeNavTab !== "scorecard" &&
+          activeNavTab !== "profile" &&
+          selectedFoodPlace && (
+            <FoodPlaceCard
+              foodPlace={selectedFoodPlace}
+              userLocation={userLocation}
+              onClose={() => setSelectedFoodPlace(null)}
+            />
+          )}
+
         {/* =========================
           TOAST
       ========================== */}
-        {activeNavTab !== "scorecard" && (
+        {activeNavTab !== "scorecard" &&
+          activeNavTab !== "profile" && (
           <div
             className="absolute inset-x-0 top-0 pointer-events-none"
             style={{

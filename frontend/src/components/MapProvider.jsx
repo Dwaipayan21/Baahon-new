@@ -15,6 +15,9 @@ const MapProvider = ({
   metroActive = true,
   activeLayer = "roadmap",
   userLocation,
+  foodPlaces = [],
+  selectedFoodPlace = null,
+  onSelectFoodPlace,
   mapRef,
 }) => {
   const [provider, setProvider] = useState("google");
@@ -203,6 +206,9 @@ const MapProvider = ({
         metroActive={metroActive}
         activeLayer={activeLayer}
         userLocation={userLocation}
+        foodPlaces={foodPlaces}
+        selectedFoodPlace={selectedFoodPlace}
+        onSelectFoodPlace={onSelectFoodPlace}
         onMapReady={handleGoogleReady}
         onMapError={handleGoogleFailure}
       />

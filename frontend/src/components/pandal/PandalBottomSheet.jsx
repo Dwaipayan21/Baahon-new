@@ -35,76 +35,84 @@ const PandalBottomSheet = ({
   const crowd =
     crowdColors[pandal.crowdType] || crowdColors.moderate;
 
-  // Check whether this pandal has already been added as a route stop
   const isSelected = selectedPandals.some(
     (item) => item.id === pandal.id
   );
 
   return (
     <div
-      className={`animate-slide-up bg-white rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)] border border-slate-100 p-4 relative z-30 flex flex-col gap-3 transition-all duration-300 select-none ${
+      className={`animate-slide-up bg-white border border-slate-100 relative z-30 overflow-hidden select-none ${
         isDesktop
           ? "rounded-2xl max-w-sm shadow-[0_12px_36px_rgba(15,23,42,0.12)]"
-          : "w-full"
+          : "w-full rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)]"
       }`}
     >
       {!isDesktop && (
-        <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto -mt-1 mb-0.5 cursor-pointer" />
+        <div className="w-9 h-1 rounded-full bg-slate-300 mx-auto mt-2" />
       )}
 
-      {/* Pandal Header */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h2 className="font-bold text-base text-[#131b2e] truncate">
-              {pandal.name}
-            </h2>
+      {/* =====================================================
+          PANDAL CARD CONTENT
+         ===================================================== */}
+      <div className="p-4">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 flex-col">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h2 className="truncate text-[18px] font-extrabold leading-tight text-[#131b2e]">
+                {pandal.name}
+              </h2>
 
-            {pandal.verified && (
-              <span
-                className="material-symbols-outlined material-symbols-filled text-amber-500 text-[18px] flex-shrink-0"
-                title="Verified Pandal"
-              >
-                verified
-              </span>
-            )}
+              {pandal.verified && (
+                <span
+                  className="material-symbols-outlined material-symbols-filled shrink-0 text-[18px] text-amber-500"
+                  title="Verified Pandal"
+                >
+                  verified
+                </span>
+              )}
+            </div>
+
+            <span className="mt-0.5 truncate text-[12px] font-semibold text-slate-500">
+              {pandal.area} •{" "}
+              {pandal.category.charAt(0).toUpperCase() +
+                pandal.category.slice(1)}
+            </span>
           </div>
 
-          <span className="text-xs text-slate-500 truncate">
-            {pandal.area} •{" "}
-            {pandal.category.charAt(0).toUpperCase() +
-              pandal.category.slice(1)}
-          </span>
+          <button
+            type="button"
+            aria-label="Close sheet"
+            onClick={onClose}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800"
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              close
+            </span>
+          </button>
         </div>
 
-        <button
-          type="button"
-          aria-label="Close sheet"
-          onClick={onClose}
-          className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
-        >
-          <span className="material-symbols-outlined text-[16px]">
-            close
-          </span>
-        </button>
+        {/* Pandal Information */}
+        <div className="mt-3">
+          <PandalInfoCard
+            pandal={pandal}
+            crowd={crowd}
+            routeDistance={routeDistance}
+            routeDuration={routeDuration}
+            routeLoading={routeLoading}
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="mt-3">
+          <PandalSheetActions
+            pandal={pandal}
+            isSelected={isSelected}
+            onViewDetails={onViewDetails}
+            onTogglePandalSelection={onTogglePandalSelection}
+          />
+        </div>
       </div>
-
-      {/* Pandal Information */}
-      <PandalInfoCard
-        pandal={pandal}
-        crowd={crowd}
-        routeDistance={routeDistance}
-        routeDuration={routeDuration}
-        routeLoading={routeLoading}
-      />
-
-      {/* Action Buttons */}
-      <PandalSheetActions
-        pandal={pandal}
-        isSelected={isSelected}
-        onViewDetails={onViewDetails}
-        onTogglePandalSelection={onTogglePandalSelection}
-      />
     </div>
   );
 };
