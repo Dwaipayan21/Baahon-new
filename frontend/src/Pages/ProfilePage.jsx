@@ -5,7 +5,22 @@ import {
   SignUpButton,
 } from "@clerk/react";
 
-const ProfilePage = ({ onViewScorecard }) => {
+import JourneyProgress from "../components/UI/Scorecard/JourneyProgress";
+import ScoreStats from "../components/UI/Scorecard/ScoreStats";
+import RouteActivity from "../components/UI/Scorecard/RouteActivity";
+import Achievements from "../components/UI/Scorecard/Achievements";
+import VisitHistory from "../components/UI/Scorecard/VisitHistory";
+
+import { getScorecardRouteSummary } from "../utils/scorecardRouteMetrics";
+
+const ProfilePage = ({
+  scorecard = null,
+  pandals = [],
+  routeData = null,
+  routeSegments = [],
+  selectedPandals = [],
+  activeRouteMode = null,
+}) => {
   const { user } = useUser();
   const { signOut } = useClerk();
 
@@ -72,52 +87,172 @@ const ProfilePage = ({ onViewScorecard }) => {
     user.primaryEmailAddress?.emailAddress ||
     "No email available";
 
+  const visits = Array.isArray(scorecard?.visits)
+    ? scorecard.visits
+    : [];
+
+  const totalPoints = Number(scorecard?.totalPoints) || 0;
+
+  const totalPandals = Array.isArray(pandals)
+    ? pandals.length
+    : 0;
+
+  const visitedCount = visits.length;
+
+  const percentage =
+    totalPandals > 0
+      ? Math.min(
+          Math.round((visitedCount / totalPandals) * 100),
+          100
+        )
+      : 0;
+
+  const remaining = Math.max(
+    totalPandals - visitedCount,
+    0
+  );
+
+  const categoryCounts = visits.reduce(
+    (counts, visit) => {
+      const category = String(
+        visit?.category || ""
+      ).toLowerCase();
+
+      if (!category) {
+        return counts;
+      }
+
+      counts[category] =
+        (counts[category] || 0) + 1;
+
+      return counts;
+    },
+    {}
+  );
+
+  const categoryCount =
+    Object.keys(categoryCounts).length;
+
+  const routeSummary = getScorecardRouteSummary({
+    routeData,
+    routeSegments,
+    selectedPandals,
+    activeRouteMode,
+  });
+
+  const scorecardStats = {
+    visitedCount,
+    totalPandals,
+    percentage,
+    remaining,
+    categoryCount,
+    totalPoints,
+  };
+
+  const achievementStats = {
+    visited: visitedCount,
+    categories: categoryCount,
+    progress:
+      totalPandals > 0
+        ? visitedCount / totalPandals
+        : 0,
+    hasRoute: Boolean(routeSummary),
+    hasMetroRoute:
+      routeSummary?.mode === "metro",
+  };
+
   return (
     <div className="min-h-screen bg-[#faf8ff] text-[#131b2e] pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-[#faf8ff]/95 backdrop-blur-xl border-b border-slate-200/70">
-        <div className="h-16 px-5 flex items-center">
+      <div className="sticky top-0 z-20 border-b border-slate-200/70 bg-[#faf8ff]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-2xl items-center px-5">
           <h1 className="text-xl font-bold">
             Profile
           </h1>
         </div>
       </div>
 
-      <main className="max-w-xl mx-auto px-5 py-6">
+      <main className="mx-auto max-w-2xl px-4 py-5 sm:px-5 sm:py-6">
 
         {/* Profile identity */}
-        <section className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5">
+        <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-4">
-
             <img
               src={user.imageUrl}
               alt={displayName}
-              className="w-20 h-20 rounded-full object-cover border-4 border-blue-50"
+              className="h-20 w-20 shrink-0 rounded-full border-4 border-blue-50 object-cover"
             />
 
             <div className="min-w-0">
-              <h2 className="text-xl font-bold truncate">
+              <h2 className="truncate text-xl font-bold">
                 {displayName}
               </h2>
 
-              <p className="text-sm text-slate-500 mt-1 break-all">
+              <p className="mt-1 break-all text-sm text-slate-500">
                 {email}
               </p>
+
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#005bb3]">
+                <span className="material-symbols-outlined text-[15px]">
+                  emoji_events
+                </span>
+
+                {totalPoints} Pujo Points
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Account information */}
-        <section className="mt-5 bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden">
+        {/* Personal journey */}
+        <section className="mt-5">
+          <JourneyProgress
+            visited={visitedCount}
+            total={totalPandals}
+            percentage={percentage}
+            remaining={remaining}
+          />
+        </section>
 
-          <div className="px-5 py-4 border-b border-slate-100">
+        {/* Personal statistics */}
+        <section className="mt-5">
+          <ScoreStats
+            scorecardStats={scorecardStats}
+            categoryCounts={categoryCounts}
+            routeSummary={routeSummary}
+          />
+        </section>
+
+        {/* Route activity */}
+        <section className="mt-5">
+          <RouteActivity
+            routeSummary={routeSummary}
+          />
+        </section>
+
+        {/* Achievements */}
+        <section className="mt-5">
+          <Achievements
+            achievementStats={achievementStats}
+          />
+        </section>
+
+        {/* Visit history */}
+        <section className="mt-5">
+          <VisitHistory
+            visits={visits}
+          />
+        </section>
+
+        {/* Account information */}
+        <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
+          <div className="border-b border-slate-100 px-5 py-4">
             <h3 className="font-bold">
               Account information
             </h3>
           </div>
 
-          <div className="px-5 py-4 border-b border-slate-100">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+          <div className="border-b border-slate-100 px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               Name
             </p>
 
@@ -127,65 +262,29 @@ const ProfilePage = ({ onViewScorecard }) => {
           </div>
 
           <div className="px-5 py-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               Email
             </p>
 
-            <p className="mt-1 text-sm font-medium break-all">
+            <p className="mt-1 break-all text-sm font-medium">
               {email}
             </p>
           </div>
-
-        </section>
-
-        {/* Scorecard */}
-        <section className="mt-5 bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5">
-
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#005bb3]">
-                emoji_events
-              </span>
-            </div>
-
-            <div className="flex-1">
-              <h3 className="font-bold">
-                Your Pujo Scorecard
-              </h3>
-
-              <p className="text-sm text-slate-500 mt-0.5">
-                View your Pujo journey, visits and achievements.
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={onViewScorecard}
-            className="w-full mt-5 h-11 rounded-xl bg-[#005bb3] text-white font-semibold hover:bg-[#004a91] transition-colors flex items-center justify-center gap-2"
-          >
-            <span>View Scorecard</span>
-
-            <span className="material-symbols-outlined text-[19px]">
-              arrow_forward
-            </span>
-          </button>
-
         </section>
 
         {/* Sign out */}
         <section className="mt-5">
-            <button
-                type="button"
-                onClick={() => signOut()}
-                className="w-full h-11 rounded-xl bg-white border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
-            >
-                <span className="material-symbols-outlined text-[20px]">
-                    logout
-                </span>
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white font-semibold text-red-600 transition-colors hover:bg-red-50"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              logout
+            </span>
 
-                <span>Sign Out</span>
-            </button>
+            <span>Sign Out</span>
+          </button>
         </section>
 
       </main>

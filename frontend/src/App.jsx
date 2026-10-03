@@ -10,6 +10,7 @@ import {
   getPandalCrowd,
   createCheckIn,
   getUserCheckIns,
+  getLeaderboard,
 } from "./services/api";
 import { getFoodPlacesForPandal } from "./services/foodService";
 
@@ -75,6 +76,7 @@ const App = () => {
     totalPoints: 0,
     visits: [],
   });
+  const [leaderboard, setLeaderboard] = useState([]);
 
   // --------------------------------------------------
   // GENERAL APP STATE
@@ -231,6 +233,27 @@ const App = () => {
       cancelled = true;
     };
   }, [isSignedIn, getToken]);
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const data = await getLeaderboard();
+
+        setLeaderboard(
+          Array.isArray(data) ? data : []
+        );
+      } catch (error) {
+        console.error(
+          "Failed to load Scorecard:",
+          error
+        );
+
+        setLeaderboard([]);
+      }
+    };
+
+    loadLeaderboard();
+  }, []);
 
   // --------------------------------------------------
   // LOAD WALKING ROUTE FOR SELECTED PANDAL
@@ -1288,6 +1311,7 @@ const App = () => {
               isActive={activeNavTab === "scorecard"}
               scorecard={scorecard}
               pandals={pandals}
+              leaderboard={leaderboard}
               userLocation={userLocation}
               routeData={routeData}
               routeSegments={routeSegments}
@@ -1311,9 +1335,12 @@ const App = () => {
          }}
         >
           <ProfilePage
-            onViewScorecard={() => {
-              setActiveNavTab("scorecard");
-          }}
+            scorecard={scorecard}
+            pandals={pandals}
+            routeData={routeData}
+            routeSegments={routeSegments}
+            selectedPandals={selectedPandals}
+            activeRouteMode={activeRouteMode}
           />
         </div>
       )}
