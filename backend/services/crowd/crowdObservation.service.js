@@ -1,10 +1,10 @@
 import Pandal from "../../models/pandal.model.js";
 import CrowdSample from "../../models/crowdSample.model.js";
-import { getTrafficObservation } from "./googleTraffic.service.js";
+import { getTrafficObservation } from "./tomtomTraffic.service.js";
 
 const CONCURRENCY = 3;
 const POINTS_PER_REFRESH = 2;
-const REFRESH_AFTER_MS = 15 * 60 * 1000;
+const REFRESH_AFTER_MS = 30 * 60 * 1000;
 
 export async function collectPandalCrowdObservations(pandalId) {
   const pandal = await Pandal.findById(pandalId).select(
@@ -74,21 +74,34 @@ export async function collectPandalCrowdObservations(pandalId) {
 
     const observations = await Promise.all(
       batch.map(async (samplePoint) => {
-        const observation = await getTrafficObservation({
-          samplePoint,
-          pandalLocation: pandal.location,
-        });
+        const [longitude, latitude] = samplePoint.location.coordinates;
+
+        const observation = await getTrafficObservation(
+          latitude,
+          longitude
+        );
 
         if (observation.congestionScore === null) {
           return null;
         }
 
+        const congestionLevel =
+          observation.congestionScore < 30
+            ? "NORMAL"
+            : observation.congestionScore < 60
+              ? "SLOW"
+              : "TRAFFIC_JAM";
+
         return {
           pandalId: pandal._id,
           samplePointId: samplePoint.samplePointId,
           samplePointName: samplePoint.name,
-          ...observation,
-          source: "google",
+          congestionLevel,
+          congestionScore: observation.congestionScore,
+          durationSeconds: observation.currentTravelTime,
+          staticDurationSeconds: observation.freeFlowTravelTime,
+          trafficRatio: observation.trafficRatio,
+          source: "tomtom",
           observedAt: new Date(),
         };
       })

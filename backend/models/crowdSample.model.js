@@ -50,8 +50,8 @@ const crowdSampleSchema = new mongoose.Schema(
 
     source: {
       type: String,
-      enum: ["google"],
-      default: "google",
+      enum: ["google", "tomtom"],
+      default: "tomtom",
     },
 
     observedAt: {
