@@ -72,7 +72,7 @@ const LoadingScreen = ({ ready = false, onComplete }) => {
       id="pp"
       className={`pujo-loader${fading ? " is-fading" : ""}`}
       role="status"
-      aria-label="Loading PujoPath"
+      aria-label="Loading Baahon"
       aria-live="polite"
     >
       <div className="pp-st">
@@ -112,7 +112,7 @@ const LoadingScreen = ({ ready = false, onComplete }) => {
           <use href="#pp-md" />
         </svg>
 
-        {/* Main PujoPath artwork */}
+        {/* Main Baahon artwork */}
         <LoadingPujoArtwork />
       </div>
 

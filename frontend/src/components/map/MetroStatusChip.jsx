@@ -12,7 +12,7 @@ const MetroStatusChip = ({
           ? "gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border-slate-100 text-xs"
           : `w-11 h-11 rounded-full ${
               metroActive
-                ? "bg-blue-50 border-blue-200 text-[#005bb3]"
+                ? "bg-[var(--color-primary-container-light)] border-[var(--color-border-alt)] text-[var(--color-primary)]"
                 : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             }`
       }`}

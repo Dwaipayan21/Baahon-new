@@ -21,8 +21,8 @@ const BottomNavigation = ({ activeTab = "explore", onSelectTab }) => {
               onClick={() => onSelectTab?.(tab.id)}
               className={`flex flex-col items-center justify-center min-w-[56px] py-1 gap-1 transition-colors cursor-pointer ${
                 isActive
-                  ? "text-[#005bb3] font-bold"
-                  : "text-slate-500 hover:text-slate-800"
+                  ? "text-[var(--color-primary)] font-bold"
+                  : "text-[var(--color-icon-inactive)] hover:text-[var(--color-heading-secondary)]"
               }`}
             >
               <span

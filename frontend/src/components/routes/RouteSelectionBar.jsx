@@ -26,7 +26,7 @@ const RouteSelectionBar = ({
         <div className="flex items-center justify-between gap-3">
           
           <div className="min-w-0">
-            <p className="text-sm font-bold text-[#131b2e]">
+            <p className="text-sm font-bold text-[var(--color-heading)]">
               {selectedPandals.length}{" "}
               {selectedPandals.length === 1 ? "Pandal" : "Pandals"} Selected
             </p>
@@ -55,7 +55,7 @@ const RouteSelectionBar = ({
                 onMetroRoute?.();
               }}
               disabled={routeLoading}
-              className="px-3 py-2 rounded-full bg-[#005bb3] text-white text-[10px] font-bold shadow-[0_4px_12px_rgba(0,91,179,0.25)] hover:bg-[#004d99] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-3 py-2 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] text-[10px] font-bold shadow-sm hover:bg-[var(--color-heading-secondary)] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {routeLoading && loadingRoute === "metro" ? "LOADING..." : "🚇 Metro + Walk"}
             </button>
@@ -75,14 +75,14 @@ const RouteSelectionBar = ({
         </div>
 
         {routeError && (
-          <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-semibold leading-snug text-red-700">
+          <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] font-semibold leading-snug text-[var(--color-marigold-text)]">
             {routeError}
           </p>
         )}
 
         {routeData?.mode === "metro" && (
           <div className="mt-3 border-t border-slate-100 pt-3 text-[11px] text-slate-600 space-y-1">
-            <p className="font-bold text-[#005bb3]">🚇 Metro + Walk</p>
+            <p className="font-bold text-[var(--color-primary)]">🚇 Metro + Walk</p>
             <p>
               Walk: {routeData.walking?.toMetro?.distance?.value} {routeData.walking?.toMetro?.distance?.unit} · {routeData.walking?.toMetro?.estimatedTime?.value} min
             </p>

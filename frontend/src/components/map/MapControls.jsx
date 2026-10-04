@@ -34,9 +34,9 @@ const MapControls = ({
             aria-label="Toggle Metro Transit Lines"
             title="Toggle Metro Transit Lines"
             onClick={onToggleMetro}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.08)] border ${
+            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md border ${
               metroActive
-                ? "bg-[#005bb3] text-white border-transparent shadow-[0_4px_14px_rgba(0,91,179,0.3)]"
+                ? "bg-[var(--color-primary)] text-[var(--color-on-primary)] border-transparent shadow-md"
                 : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             }`}
           >
@@ -53,7 +53,7 @@ const MapControls = ({
             onClick={onToggleRouteMode}
             className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.08)] border ${
               routeModeActive
-                ? "bg-amber-500 text-white border-transparent shadow-[0_4px_14px_rgba(245,158,11,0.3)]"
+                ? "bg-[var(--color-marigold-container)] text-[var(--color-marigold-text)] border-transparent shadow-md"
                 : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
             }`}
           >
@@ -68,7 +68,7 @@ const MapControls = ({
             aria-label="Switch Map Layer"
             title={`Layer: ${activeLayer || "roadmap"}`}
             onClick={onToggleLayer}
-            className="w-11 h-11 rounded-full bg-white text-slate-700 border border-slate-200 shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
+            className="w-11 h-11 rounded-full bg-white text-slate-700 border border-slate-200 shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[20px]">
               layers
@@ -81,7 +81,7 @@ const MapControls = ({
             aria-label="Recenter Map / My Location"
             title="My Location / Recenter Kolkata"
             onClick={onRecenter}
-            className="w-11 h-11 rounded-full bg-white text-[#005bb3] border border-slate-200 shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-blue-50 transition-colors cursor-pointer"
+            className="w-11 h-11 rounded-full bg-white text-[var(--color-primary)] border border-slate-200 shadow-md flex items-center justify-center hover:bg-[var(--color-primary-container-light)] transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[20px]">
               my_location
@@ -102,9 +102,9 @@ const MapControls = ({
         aria-label={controlsOpen ? "Close map controls" : "Open map controls"}
         title={controlsOpen ? "Close map controls" : "Map controls"}
         onClick={() => setControlsOpen((prev) => !prev)}
-        className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.1)] border ${
+            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md border ${
           controlsOpen
-            ? "bg-[#005bb3] text-white border-transparent shadow-[0_4px_14px_rgba(0,91,179,0.3)]"
+            ? "bg-[var(--color-primary)] text-[var(--color-on-primary)] border-transparent shadow-md"
             : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
         }`}
       >

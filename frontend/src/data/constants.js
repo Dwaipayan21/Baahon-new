@@ -9,9 +9,9 @@ export const CATEGORIES = [
   { id: "all", label: "All Pandals", icon: "temple_hindu" },
   { id: "metro", label: "Metro Nearby", icon: "directions_subway" },
   { id: "low_rush", label: "Low Rush", icon: "family_restroom" },
-  { id: "bonedi", label: "Bonedi Bari", icon: "history_edu" },
-  { id: "theme", label: "Theme Pandals", icon: "palette" },
-  { id: "traditional", label: "Traditional", icon: "flare" },
+  { id: "bonedi", label: "Bonedi Bari", icon: "account_balance" },
+  { id: "theme", label: "Theme Pandals", icon: "auto_awesome" },
+ 
 ];
 
 export const METRO_STATIONS = {

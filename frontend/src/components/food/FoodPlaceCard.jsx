@@ -101,7 +101,7 @@ const FoodPlaceCard = ({
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-bold text-[#131b2e]">
+            <h3 className="truncate text-sm font-bold text-[var(--color-heading)]">
               {foodPlace.name}
             </h3>
 
@@ -125,7 +125,7 @@ const FoodPlaceCard = ({
         <button
           type="button"
           onClick={handleGoogleSearch}
-          className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#005bb3] text-xs font-bold text-white transition-colors hover:bg-[#004a91]"
+          className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] text-xs font-bold text-[var(--color-on-primary)] transition-colors hover:bg-[var(--color-heading-secondary)]"
         >
           <span className="material-symbols-outlined text-[17px]">
             search

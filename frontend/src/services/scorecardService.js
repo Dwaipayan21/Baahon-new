@@ -1,4 +1,4 @@
-const USER_ID_KEY = "pujopath_guest_user_id";
+const USER_ID_KEY = "Baahon_guest_user_id";
 
 export const getGuestUserId = () => {
   let userId = localStorage.getItem(USER_ID_KEY);
@@ -11,7 +11,7 @@ export const getGuestUserId = () => {
   return userId;
 };
 
-const STORAGE_KEY = "pujopath_scorecard";
+const STORAGE_KEY = "Baahon_scorecard";
 
 const DEFAULT_SCORECARD = {
   totalPoints: 0,

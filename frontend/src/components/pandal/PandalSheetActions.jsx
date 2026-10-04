@@ -25,11 +25,11 @@ const PandalSheetActions = ({
         onClick={() => onTogglePandalSelection?.(pandal)}
         className={`h-11 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
           isSelected
-            ? "bg-emerald-600 text-white shadow-[0_4px_14px_rgba(5,150,105,0.25)]"
-            : "bg-[#005bb3] text-white shadow-[0_4px_14px_rgba(0,91,179,0.25)]"
+            ? "bg-[var(--color-success-container)] text-[var(--color-heading-secondary)] shadow-sm"
+            : "bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-sm"
         }`}
       >
-        <span className="material-symbols-outlined text-[18px]">
+        <span className={`material-symbols-outlined text-[18px] ${isSelected ? "text-[var(--color-success)]" : ""}`}>
           {isSelected ? "check" : "add_location"}
         </span>
 

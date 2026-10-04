@@ -1,8 +1,8 @@
-# PujoPath Crowd Engine — Implementation Plan
+# Baahon Crowd Engine — Implementation Plan
 
 ## 1. Purpose
 
-This document defines the architecture and implementation plan for the **PujoPath Crowd Engine**.
+This document defines the architecture and implementation plan for the **Baahon Crowd Engine**.
 
 The goal is to provide a crowd status for every pandal while keeping external traffic-API usage low and making the system scalable when the number of pandals increases.
 
@@ -772,10 +772,10 @@ It should NOT own:
 - Crowd status storage.
 - Frontend logic.
 
-Those remain inside PujoPath.
+Those remain inside Baahon.
 
 ```text
-PujoPath
+Baahon
  ├── Pandal data
  ├── Check-ins
  ├── Traffic cache
@@ -1050,4 +1050,4 @@ Therefore:
 
 The 15-minute scheduler is responsible for keeping the crowd information reasonably fresh, while the traffic cache, geographic zones, queue, rate limiter, deduplication and stale-data fallback prevent unnecessary external requests.
 
-This architecture preserves the existing PujoPath responsibilities—MongoDB, Crowd API, Check-in API and frontend crowd display—while adding a scalable traffic-data layer. The project plan identifies these crowd and check-in capabilities as core backend/frontend deliverables. fileciteturn2file0turn2file1
+This architecture preserves the existing Baahon responsibilities—MongoDB, Crowd API, Check-in API and frontend crowd display—while adding a scalable traffic-data layer. The project plan identifies these crowd and check-in capabilities as core backend/frontend deliverables. fileciteturn2file0turn2file1

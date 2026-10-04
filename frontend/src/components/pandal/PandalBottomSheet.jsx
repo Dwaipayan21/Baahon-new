@@ -17,7 +17,7 @@ const PandalBottomSheet = ({
   const crowdColors = {
     low: {
       bg: "bg-emerald-50",
-      text: "text-emerald-800",
+      text: "text-[var(--color-heading-secondary)]",
       dot: "bg-emerald-500",
     },
     moderate: {
@@ -26,9 +26,9 @@ const PandalBottomSheet = ({
       dot: "bg-amber-500",
     },
     high: {
-      bg: "bg-rose-50",
-      text: "text-rose-900",
-      dot: "bg-rose-500",
+      bg: "bg-orange-100",
+      text: "text-orange-700",
+      dot: "bg-orange-500",
     },
   };
 
@@ -59,7 +59,7 @@ const PandalBottomSheet = ({
         <div className="flex items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col">
             <div className="flex items-center gap-1.5 min-w-0">
-              <h2 className="truncate text-[18px] font-extrabold leading-tight text-[#131b2e]">
+              <h2 className="truncate text-[18px] font-extrabold leading-tight text-[var(--color-heading)]">
                 {pandal.name}
               </h2>
 

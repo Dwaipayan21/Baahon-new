@@ -3,6 +3,34 @@
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --color-primary: #1E3A8A;
+    --color-primary-container: #E0E7FF;
+    --color-primary-container-light: #EEF2FF;
+    --color-on-primary: #FFFFFF;
+    --color-marigold: #D97706;
+    --color-marigold-light: #F59E0B;
+    --color-marigold-container: #FEF3C7;
+    --color-marigold-container-light: #FFFBEB;
+    --color-marigold-text: #92400E;
+    --color-heritage: #6D28D9;
+    --color-heritage-light: #7C3AED;
+    --color-heritage-container: #F3E8FF;
+    --color-success: #059669;
+    --color-success-light: #10B981;
+    --color-success-container: #ECFDF5;
+    --color-warning: #EA580C;
+    --color-background: #F8F9FD;
+    --color-background-alt: #FAF8FF;
+    --color-surface: #FFFFFF;
+    --color-surface-secondary: #F1F5F9;
+    --color-border: #E2E8F0;
+    --color-border-alt: #D2D9F4;
+    --color-heading: #0F172A;
+    --color-heading-secondary: #1E293B;
+    --color-text: #475569;
+    --color-muted: #64748B;
+    --color-muted-light: #94A3B8;
+    --color-icon-inactive: #64748B;
   }
 
   html,
@@ -13,8 +41,8 @@
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    background-color: #faf8ff;
-    color: #131b2e;
+    background-color: var(--color-background);
+    color: var(--color-heading);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -34,6 +62,67 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+}
+
+@theme inline {
+  --color-white: var(--color-surface);
+  --color-slate-50: var(--color-background);
+  --color-slate-100: var(--color-surface-secondary);
+  --color-slate-200: var(--color-border);
+  --color-slate-300: var(--color-muted-light);
+  --color-slate-400: var(--color-muted);
+  --color-slate-500: var(--color-muted);
+  --color-slate-600: var(--color-text);
+  --color-slate-700: var(--color-heading-secondary);
+  --color-slate-800: var(--color-heading-secondary);
+  --color-slate-900: var(--color-heading);
+  --color-gray-50: var(--color-background);
+  --color-gray-100: var(--color-surface-secondary);
+  --color-gray-200: var(--color-border);
+  --color-gray-400: var(--color-muted);
+  --color-gray-500: var(--color-muted);
+  --color-gray-600: var(--color-text);
+  --color-gray-700: var(--color-heading-secondary);
+  --color-gray-800: var(--color-heading-secondary);
+  --color-gray-900: var(--color-heading);
+  --color-indigo-50: var(--color-primary-container-light);
+  --color-indigo-100: var(--color-primary-container);
+  --color-indigo-600: var(--color-primary);
+  --color-indigo-700: var(--color-primary);
+  --color-amber-50: var(--color-marigold-container-light);
+  --color-amber-100: var(--color-marigold-container);
+  --color-amber-200: var(--color-marigold-container);
+  --color-amber-500: var(--color-marigold-light);
+  --color-amber-600: var(--color-marigold-light);
+  --color-amber-700: var(--color-marigold-text);
+  --color-amber-800: var(--color-marigold-text);
+  --color-yellow-50: var(--color-marigold-container-light);
+  --color-yellow-100: var(--color-marigold-container);
+  --color-yellow-500: var(--color-marigold-light);
+  --color-yellow-600: var(--color-marigold);
+  --color-yellow-700: var(--color-marigold-text);
+  --color-emerald-50: var(--color-success-container);
+  --color-emerald-100: var(--color-success-container);
+  --color-emerald-500: var(--color-success-light);
+  --color-emerald-600: var(--color-success);
+  --color-emerald-700: var(--color-success);
+  --color-orange-50: var(--color-marigold-container-light);
+  --color-orange-100: var(--color-marigold-container);
+  --color-orange-500: var(--color-warning);
+  --color-orange-600: var(--color-warning);
+  --color-orange-700: var(--color-marigold-text);
+  --color-red-50: var(--color-marigold-container-light);
+  --color-red-200: var(--color-border-alt);
+  --color-red-600: var(--color-warning);
+  --color-red-700: var(--color-warning);
+  --color-purple-50: var(--color-heritage-container);
+  --color-purple-100: var(--color-heritage-container);
+  --color-purple-600: var(--color-heritage);
+  --color-purple-700: var(--color-heritage);
+  --color-violet-50: var(--color-heritage-container);
+  --color-violet-100: var(--color-heritage-container);
+  --color-violet-600: var(--color-heritage);
+  --color-violet-700: var(--color-heritage);
 }
 
 /* Hide scrollbars for filter pill bar & horizontal tabs */
@@ -85,8 +174,8 @@
   animation: slideUp 0.4s ease-out;
 }
 /* =========================================================
-   PujoPath Loader
-   Converted from the supplied pujopath-loader.html
+   Baahon Loader
+   Converted from the supplied Baahon-loader.html
    ========================================================= */
 
 .pujo-loader {
@@ -101,8 +190,8 @@
   touch-action: none;
 
   background: radial-gradient(
-    #fbf8f2,
-    #f3ede2
+    var(--color-background-alt),
+    var(--color-background)
   );
 
   opacity: 1;
@@ -166,7 +255,7 @@
   top: 94.5%;
 }
 
-/* Main PujoPath artwork */
+/* Main Baahon artwork */
 .pujo-loader .pp-lg {
   position: absolute;
 

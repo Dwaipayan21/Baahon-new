@@ -127,7 +127,7 @@ async function fetchRoads(pandal) {
             headers: {
             Accept: "application/json",
             "User-Agent":
-                "PujoPath/1.0 (Durga Puja student project)",
+                "Baahon/1.0 (Durga Puja student project)",
             },
         });
 

@@ -43,8 +43,8 @@ const PandalInfoCard = ({
         </div>
 
         {/* Distance + Metro */}
-        <div className="flex items-center gap-2.5 text-[11px] font-semibold text-[#131b2e]">
-          <span className="flex items-center gap-1 text-[#005bb3]">
+        <div className="flex items-center gap-2.5 text-[11px] font-semibold text-[var(--color-heading)]">
+          <span className="flex items-center gap-1 text-[var(--color-primary)]">
             <span className="material-symbols-outlined text-[13px]">
               directions_walk
             </span>

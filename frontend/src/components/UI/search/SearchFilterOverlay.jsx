@@ -2,11 +2,8 @@ import SearchBar from "./SearchBar";
 import MetroLegend from "../../map/MetroLegend";
 
 const SearchFilterOverlay = ({
-  searchQuery,
-  onSearchChange,
   activeCategory,
   onSelectCategory,
-  onClearSearch,
   metroActive,
   onToggleMetro,
   visibleCount,
@@ -21,11 +18,8 @@ const SearchFilterOverlay = ({
     >
       <div className="w-full max-w-md pointer-events-auto flex flex-col gap-2">
         <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={onSearchChange}
           activeCategory={activeCategory}
           onSelectCategory={onSelectCategory}
-          onClearSearch={onClearSearch}
         />
 
         <MetroLegend
