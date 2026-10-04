@@ -61,12 +61,20 @@ const Achievements = ({ achievementStats }) => {
   return (
     <section>
       <div className="mb-2.5">
-        <p className="text-[10px] font-bold tracking-[0.16em] text-[#a86743]">MILESTONES</p>
-        <h2 className="mt-0.5 text-base font-bold text-[#1b302b]">Pujo Achievements</h2>
+        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-marigold-text)]">
+          Milestones
+        </p>
+
+        <h2 className="mt-0.5 text-base font-bold text-[var(--color-heading)]">
+          Pujo Achievements
+        </h2>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {achievements.map((achievement) => (
-          <AchievementBadge key={achievement.id} {...achievement} />
+          <AchievementBadge
+            key={achievement.id}
+            {...achievement}
+          />
         ))}
       </div>
     </section>

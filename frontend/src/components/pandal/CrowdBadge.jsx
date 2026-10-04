@@ -9,7 +9,7 @@ const CrowdBadge = ({
     LOW: {
       label: "LOW CROWD",
       bg: "bg-emerald-50",
-      text: "text-emerald-700",
+      text: "text-[var(--color-heading-secondary)]",
       dot: "bg-emerald-500",
     },
     MODERATE: {
@@ -20,9 +20,9 @@ const CrowdBadge = ({
     },
     HIGH: {
       label: "HIGH CROWD",
-      bg: "bg-rose-50",
-      text: "text-rose-700",
-      dot: "bg-rose-500",
+      bg: "bg-orange-100",
+      text: "text-orange-700",
+      dot: "bg-orange-500",
     },
     UNKNOWN: {
       label: "UNKNOWN",

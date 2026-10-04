@@ -19,69 +19,73 @@ const ScoreStats = ({ scorecardStats, categoryCounts, routeSummary }) => {
       value: scorecardStats.visitedCount,
       label: "Pandals Visited",
       detail: "Darshans completed",
-      tone: "text-[#a64935] bg-[#fff0e9]",
+      tone: "text-[var(--color-primary)] bg-[var(--color-primary-container-light)]",
     },
     {
       icon: "category",
       value: scorecardStats.categoryCount,
       label: "Categories",
       detail: "Puja styles explored",
-      tone: "text-[#2e6b5c] bg-[#e9f5ed]",
+      tone: "text-[var(--color-primary)] bg-[var(--color-primary-container-light)]",
     },
     {
       icon: "military_tech",
       value: scorecardStats.totalPoints,
       label: "Points Earned",
       detail: "Your Pujo score",
-      tone: "text-[#93631b] bg-[#fff4d8]",
+      tone: "text-[var(--color-primary)] bg-[var(--color-primary-container-light)]",
     },
     {
       icon: "route",
       ...routeStat,
-      tone: "text-[#3665a0] bg-[#edf3ff]",
+      tone: "text-[var(--color-success)] bg-[var(--color-success-container)]",
     },
   ];
 
   return (
     <section>
       <div className="mb-2.5 flex items-end justify-between gap-3">
-        <h2 className="text-base font-bold text-[#1b302b]">Darshan Highlights</h2>
-        <span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#56816b]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#5d9b70]" />
+        <h2 className="text-base font-bold text-[var(--color-heading)]">Darshan Highlights</h2>
+        <span className="flex items-center gap-1.5 text-[10px] font-semibold text-[var(--color-muted)]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-success)]" />
           Saved totals
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {stats.map((stat) => (
           <article
             key={stat.label}
-            className="min-w-0 rounded-xl border border-[#e5e9e2] bg-white p-3.5 shadow-[0_3px_12px_rgba(28,48,39,0.04)] sm:p-4"
+            className="min-w-0 rounded-2xl border border-[var(--color-border)] bg-white p-4 shadow-sm"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${stat.tone}`}>
+              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${stat.tone}`}>
                 <span className="material-symbols-outlined text-[18px]">{stat.icon}</span>
               </span>
-              <span className="truncate text-[10px] font-medium text-[#7b8982]">
-                {stat.label}
-              </span>
             </div>
-            <p className="mt-3 truncate text-[22px] font-extrabold leading-none tabular-nums text-[#1c302b] sm:text-2xl">
+            <p className={`mt-4 truncate text-[22px] font-extrabold leading-none tabular-nums ${
+              stat.label === "Points Earned"
+                ? "text-[var(--color-marigold)]"
+                : "text-[var(--color-heading)]"
+            }`}>
               {stat.value}
             </p>
-            <p className="mt-1 truncate text-[10px] text-[#78857f] sm:text-[11px]">
+            <p className="mt-1.5 truncate text-[11px] font-semibold text-[var(--color-muted)]">
+              {stat.label}
+            </p>
+            <p className="mt-0.5 truncate text-[10px] text-[var(--color-muted)]">
               {stat.detail}
             </p>
           </article>
         ))}
       </div>
       {Object.keys(categoryCounts).length > 0 && (
-        <div className="mt-2.5 flex flex-wrap gap-1.5">
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {Object.entries(categoryCounts).map(([category, count]) => (
             <span
               key={category}
-              className="rounded-full border border-[#e2e9e2] bg-white px-2.5 py-1 text-[9px] font-medium capitalize text-[#65756b]"
+              className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[9px] font-medium capitalize text-[var(--color-muted)]"
             >
-              {category} <strong className="text-[#344c40]">{count}</strong>
+              {category} <strong className="text-[var(--color-heading-secondary)]">{count}</strong>
             </span>
           ))}
         </div>

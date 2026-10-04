@@ -1,8 +1,8 @@
-# PujoPath Route Feature — AI Context & Frontend Integration Prompt
+# Baahon Route Feature — AI Context & Frontend Integration Prompt
 
 ## 1. Purpose of This File
 
-This document is a context prompt for the teammate responsible for building the **frontend UI for the route feature** of the PujoPath Durga Puja discovery application.
+This document is a context prompt for the teammate responsible for building the **frontend UI for the route feature** of the Baahon Durga Puja discovery application.
 
 Paste this entire Markdown file into ChatGPT/another AI before asking for help with the route UI. The AI should use this document as the backend/API context and should **not redesign or change the backend logic** unless explicitly asked.
 
@@ -10,7 +10,7 @@ Paste this entire Markdown file into ChatGPT/another AI before asking for help w
 
 # 2. Project Context
 
-PujoPath is a Durga Puja pandal discovery web application.
+Baahon is a Durga Puja pandal discovery web application.
 
 One of the implemented backend features is **route/navigation support**. The user can select a pandal and request a route from their current location to that pandal.
 
@@ -727,7 +727,7 @@ The frontend must never contain:
 OPENROUTESERVICE_API_KEY
 ```
 
-The frontend only calls the PujoPath backend route endpoint.
+The frontend only calls the Baahon backend route endpoint.
 
 The backend communicates with OpenRouteService.
 

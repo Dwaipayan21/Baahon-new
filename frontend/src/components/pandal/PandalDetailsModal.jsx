@@ -40,7 +40,7 @@ const PandalDetailsModal = ({ pandal, onClose }) => {
             <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-black/60 text-white backdrop-blur-md">
               ★ {pandal.rating} / 5.0
             </span>
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#005bb3] text-white uppercase tracking-wider">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[var(--color-primary)] text-[var(--color-on-primary)] uppercase tracking-wider">
               {pandal.category}
             </span>
           </div>
@@ -50,7 +50,7 @@ const PandalDetailsModal = ({ pandal, onClose }) => {
         <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
           <div>
             <div className="flex items-center gap-1.5">
-              <h2 className="text-lg font-bold text-[#131b2e] leading-tight">
+              <h2 className="text-lg font-bold text-[var(--color-heading)] leading-tight">
                 {pandal.name}
               </h2>
               {pandal.verified && (
@@ -100,7 +100,7 @@ const PandalDetailsModal = ({ pandal, onClose }) => {
 
             {pandal.metroStation && (
               <div className="flex items-center gap-2 text-[11px] text-slate-700">
-                <span className="material-symbols-outlined text-[#005bb3] text-[16px]">
+                <span className="material-symbols-outlined text-[var(--color-primary)] text-[16px]">
                   directions_subway
                 </span>
                 <span>
@@ -124,7 +124,7 @@ const PandalDetailsModal = ({ pandal, onClose }) => {
           <button
             type="button"
             onClick={handleOpenGoogleMaps}
-            className="flex-[1.4] h-10 rounded-full bg-[#005bb3] hover:bg-[#1173dd] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_14px_rgba(0,91,179,0.25)] transition-all cursor-pointer whitespace-nowrap"
+            className="flex-[1.4] h-10 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-heading-secondary)] text-[var(--color-on-primary)] text-xs font-bold flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap"
           >
             <span className="material-symbols-outlined text-[16px]">
               near_me

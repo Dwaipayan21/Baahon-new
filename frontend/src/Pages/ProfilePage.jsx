@@ -24,60 +24,103 @@ const ProfilePage = ({
   const { user } = useUser();
   const { signOut } = useClerk();
 
+  /* =====================================================
+     GUEST STATE
+     ===================================================== */
+
   if (!user) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-4 py-6 pb-24 sm:px-6 sm:py-8">
-        <div className="flex min-h-[70vh] flex-col items-center justify-center">
-          
-          {/* Guest avatar */}
-          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-[#dce9df] bg-[#edf5ee]">
-            <span className="material-symbols-outlined text-[38px] text-[#2d6a58]">
-              person
-            </span>
-          </div>
+      <main className="min-h-screen bg-[var(--color-background)] text-[var(--color-heading)] pb-24">
+        <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-lg items-center justify-center px-5 py-10">
+          <div className="w-full">
 
-          {/* Heading */}
-          <h1 className="text-xl font-bold text-[#20332d]">
-            Your Profile
-          </h1>
+            {/* Guest hero */}
+            <section className="relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-white shadow-sm">
 
-          <p className="mt-2 max-w-xs text-center text-sm leading-5 text-[#78867e]">
-            Sign in to save your Pujo journey, track your visits, and keep your
-            profile with you.
-          </p>
+              {/* Decorative top section */}
+              <div className="relative h-28 overflow-hidden bg-[var(--color-primary)]">
+                <div className="absolute -right-8 -top-12 h-36 w-36 rounded-full bg-[var(--color-marigold)]/20" />
+                <div className="absolute -left-10 bottom-[-55px] h-32 w-32 rounded-full bg-white/10" />
 
-          {/* Clerk authentication */}
-          <div className="mt-6 flex w-full max-w-xs flex-col gap-3">
-            <SignInButton mode="modal">
-              <button
-                type="button"
-                className="h-11 w-full rounded-xl bg-[#005bb3] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#004b93]"
-              >
-                Sign In
-              </button>
-            </SignInButton>
+                <div className="absolute left-5 top-5 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[20px] text-white">
+                    temple_hindu
+                  </span>
 
-            <SignUpButton mode="modal">
-              <button
-                type="button"
-                className="h-11 w-full rounded-xl border border-[#dce9df] bg-white px-5 text-sm font-semibold text-[#2d6a58] transition hover:bg-[#f4f8f5]"
-              >
-                Sign Up
-              </button>
-            </SignUpButton>
-          </div>
+                  <span className="text-sm font-semibold tracking-wide text-white">
+                    Baahon
+                  </span>
+                </div>
+              </div>
 
-          {/* Small guest note */}
-          <div className="mt-6 flex items-center gap-2 text-[11px] text-[#8a968f]">
-            <span className="material-symbols-outlined text-[16px]">
-              lock
-            </span>
-            <span>Your account keeps your Pujo progress safe.</span>
+              {/* Avatar */}
+              <div className="relative flex justify-center">
+                <div className="-mt-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-[var(--color-marigold-container)] shadow-md">
+                  <span className="material-symbols-outlined text-[36px] text-[var(--color-marigold-text)]">
+                    person
+                  </span>
+                </div>
+              </div>
+
+              <div className="px-6 pb-7 pt-4 text-center">
+                <h1 className="text-2xl font-bold tracking-tight text-[var(--color-heading)]">
+                  Your Puja Journey
+                </h1>
+
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--color-muted)]">
+                  Sign in to save your pandal visits, collect Pujo Points,
+                  unlock achievements, and keep your Baahon journey with you.
+                </p>
+
+                {/* Authentication */}
+                <div className="mt-6 flex flex-col gap-3">
+                  <SignInButton mode="modal">
+                    <button
+                      type="button"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[var(--color-heading-secondary)] active:scale-[0.99]"
+                    >
+                      <span className="material-symbols-outlined text-[19px]">
+                        login
+                      </span>
+
+                      Sign In
+                    </button>
+                  </SignInButton>
+
+                  <SignUpButton mode="modal">
+                    <button
+                      type="button"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] px-5 text-sm font-semibold text-[var(--color-primary)] transition-all hover:bg-[var(--color-primary-container-light)] active:scale-[0.99]"
+                    >
+                      <span className="material-symbols-outlined text-[19px]">
+                        person_add
+                      </span>
+
+                      Create Account
+                    </button>
+                  </SignUpButton>
+                </div>
+
+                {/* Privacy note */}
+                <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-[var(--color-muted-light)]">
+                  <span className="material-symbols-outlined text-[15px]">
+                    lock
+                  </span>
+
+                  <span>Your Puja journey stays connected to your account.</span>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </main>
     );
   }
+
+  /* =====================================================
+     USER DATA
+     ===================================================== */
+
   const displayName =
     user.fullName ||
     user.username ||
@@ -162,49 +205,156 @@ const ProfilePage = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8ff] text-[#131b2e] pb-24">
-      {/* Header */}
-      <div className="sticky top-0 z-20 border-b border-slate-200/70 bg-[#faf8ff]/95 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-2xl items-center px-5">
-          <h1 className="text-xl font-bold">
-            Profile
-          </h1>
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-heading)] pb-24">
+
+      {/* =================================================
+          HEADER
+          ================================================= */}
+
+      <header className="border-b border-[var(--color-primary)] bg-[var(--color-primary)] text-white">
+        <div className="mx-auto flex h-[68px] max-w-3xl items-center gap-3 px-4 sm:px-6">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
+            <span className="material-symbols-outlined text-[21px] text-white">
+              person
+            </span>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h1 className="text-base font-bold tracking-tight sm:text-lg">
+              Profile
+            </h1>
+
+            <p className="mt-0.5 text-[10px] font-medium text-white/75 sm:text-[11px]">
+              Maa Asche
+              <span className="px-1 text-[var(--color-marigold-light)]">•</span>
+              Kolkata
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs font-bold sm:block">
+              Baahon
+            </span>
+
+            <span className="material-symbols-outlined text-[21px]">
+              temple_hindu
+            </span>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <main className="mx-auto max-w-2xl px-4 py-5 sm:px-5 sm:py-6">
+      <main className="mx-auto w-full max-w-3xl px-4 py-5 sm:px-6 sm:py-7">
 
-        {/* Profile identity */}
-        <section className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-4">
-            <img
-              src={user.imageUrl}
-              alt={displayName}
-              className="h-20 w-20 shrink-0 rounded-full border-4 border-blue-50 object-cover"
-            />
+        {/* =================================================
+            PROFILE
+            ================================================= */}
 
-            <div className="min-w-0">
-              <h2 className="truncate text-xl font-bold">
+        <section className="rounded-2xl border border-[var(--color-border)] bg-white shadow-sm">
+
+          <div className="flex flex-col items-center px-5 py-7 text-center sm:flex-row sm:items-center sm:px-7 sm:py-6 sm:text-left">
+
+            {/* Profile avatar */}
+            <div className="relative shrink-0">
+
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-[var(--color-primary-container)] bg-[var(--color-primary-container-light)]">
+                {user.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt={displayName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="material-symbols-outlined text-3xl text-[var(--color-primary)]">
+                    person
+                  </span>
+                )}
+              </div>
+
+              {/* Online / active indicator */}
+              <div className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[var(--color-success)]">
+                <span className="material-symbols-outlined text-[13px] text-white">
+                  check
+                </span>
+              </div>
+
+            </div>
+
+            {/* Identity */}
+            <div className="mt-4 min-w-0 sm:ml-5 sm:mt-0">
+
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]">
+                Pujo Explorer
+              </p>
+
+              <h2 className="mt-1 truncate text-2xl font-bold tracking-tight text-[var(--color-heading)]">
                 {displayName}
               </h2>
 
-              <p className="mt-1 break-all text-sm text-slate-500">
+              <p className="mt-1 break-all text-sm text-[var(--color-muted)]">
                 {email}
               </p>
 
-              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#005bb3]">
-                <span className="material-symbols-outlined text-[15px]">
+              {/* Points */}
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-marigold-container)] px-3 py-1.5 text-xs font-bold text-[var(--color-marigold-text)]">
+                <span className="material-symbols-outlined text-[16px]">
                   emoji_events
                 </span>
 
                 {totalPoints} Pujo Points
               </div>
+
             </div>
+
           </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-3 border-t border-[var(--color-border)] bg-white">
+
+            <div className="px-3 py-4 text-center">
+              <p className="text-xl font-bold text-[var(--color-primary)]">
+                {visitedCount}
+              </p>
+
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                Visited
+              </p>
+            </div>
+
+            <div className="border-x border-[var(--color-border)] px-3 py-4 text-center">
+              <p className="text-xl font-bold text-[var(--color-primary)]">
+                {totalPoints}
+              </p>
+
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                Points
+              </p>
+            </div>
+
+            <div className="px-3 py-4 text-center">
+              <p className="text-xl font-bold text-[var(--color-primary)]">
+                {categoryCount}
+              </p>
+
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                Categories
+              </p>
+            </div>
+
+          </div>
+
         </section>
 
-        {/* Personal journey */}
-        <section className="mt-5">
+        {/* =================================================
+            JOURNEY
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="route"
+          title="Your Puja Journey"
+          subtitle="See how far you've explored"
+        />
+
+        <section className="mt-3">
           <JourneyProgress
             visited={visitedCount}
             total={totalPandals}
@@ -213,8 +363,17 @@ const ProfilePage = ({
           />
         </section>
 
-        {/* Personal statistics */}
-        <section className="mt-5">
+        {/* =================================================
+            STATS
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="insights"
+          title="Your Stats"
+          subtitle="A look at your Puja activity"
+        />
+
+        <section className="mt-3">
           <ScoreStats
             scorecardStats={scorecardStats}
             categoryCounts={categoryCounts}
@@ -222,72 +381,160 @@ const ProfilePage = ({
           />
         </section>
 
-        {/* Route activity */}
-        <section className="mt-5">
+        {/* =================================================
+            ROUTE ACTIVITY
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="alt_route"
+          title="Route Activity"
+          subtitle="Your recent exploration"
+        />
+
+        <section className="mt-3">
           <RouteActivity
             routeSummary={routeSummary}
           />
         </section>
 
-        {/* Achievements */}
-        <section className="mt-5">
+        {/* =================================================
+            ACHIEVEMENTS
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="emoji_events"
+          title="Achievements"
+          subtitle="Milestones from your journey"
+        />
+
+        <section className="mt-3">
           <Achievements
             achievementStats={achievementStats}
           />
         </section>
 
-        {/* Visit history */}
-        <section className="mt-5">
+        {/* =================================================
+            VISIT HISTORY
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="history"
+          title="Visit History"
+          subtitle="Pandals you've checked in to"
+        />
+
+        <section className="mt-3">
           <VisitHistory
             visits={visits}
           />
         </section>
 
-        {/* Account information */}
-        <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
-          <div className="border-b border-slate-100 px-5 py-4">
-            <h3 className="font-bold">
-              Account information
-            </h3>
+        {/* =================================================
+            ACCOUNT
+            ================================================= */}
+
+        <ProfileSectionHeader
+          icon="manage_accounts"
+          title="Account"
+          subtitle="Your Baahon account details"
+        />
+
+        <section className="mt-3 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white shadow-sm">
+
+          <div className="flex items-center gap-4 border-b border-[var(--color-border)] px-5 py-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-container-light)]">
+              <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">
+                person
+              </span>
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-muted-light)]">
+                Name
+              </p>
+
+              <p className="mt-0.5 truncate text-sm font-semibold text-[var(--color-heading)]">
+                {displayName}
+              </p>
+            </div>
           </div>
 
-          <div className="border-b border-slate-100 px-5 py-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Name
-            </p>
+          <div className="flex items-center gap-4 px-5 py-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-container-light)]">
+              <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">
+                mail
+              </span>
+            </div>
 
-            <p className="mt-1 text-sm font-medium">
-              {displayName}
-            </p>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-muted-light)]">
+                Email
+              </p>
+
+              <p className="mt-0.5 break-all text-sm font-semibold text-[var(--color-heading)]">
+                {email}
+              </p>
+            </div>
           </div>
 
-          <div className="px-5 py-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Email
-            </p>
-
-            <p className="mt-1 break-all text-sm font-medium">
-              {email}
-            </p>
-          </div>
         </section>
 
-        {/* Sign out */}
+        {/* =================================================
+            SIGN OUT
+            ================================================= */}
+
         <section className="mt-5">
           <button
             type="button"
             onClick={() => signOut()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white font-semibold text-red-600 transition-colors hover:bg-red-50"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white text-sm font-semibold text-red-600 transition-all hover:border-red-300 hover:bg-red-50 active:scale-[0.99]"
           >
-            <span className="material-symbols-outlined text-[20px]">
+            <span className="material-symbols-outlined text-[19px]">
               logout
             </span>
 
-            <span>Sign Out</span>
+            Sign Out
           </button>
         </section>
 
+        <p className="mt-4 text-center text-[11px] text-[var(--color-muted-light)]">
+          Baahon • Maa Asche
+        </p>
+
       </main>
+    </div>
+  );
+};
+
+
+/* =====================================================
+   SECTION HEADER
+   ===================================================== */
+
+const ProfileSectionHeader = ({
+  icon,
+  title,
+  subtitle,
+}) => {
+  return (
+    <div className="mt-7 flex items-center gap-3 px-1">
+
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-container-light)] text-[var(--color-primary)]">
+        <span className="material-symbols-outlined text-[18px] text-[var(--color-primary)]">
+          {icon}
+        </span>
+      </div>
+
+      <div className="min-w-0">
+        <h3 className="text-base font-bold text-[var(--color-heading)]">
+          {title}
+        </h3>
+
+        <p className="mt-0.5 text-xs text-[var(--color-muted)]">
+          {subtitle}
+        </p>
+      </div>
+
     </div>
   );
 };
