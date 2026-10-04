@@ -11,13 +11,13 @@ import checkInRoutes from "./routes/checkin.route.js";
 import userRoutes from "./routes/user.route.js";
 import scoreboardRoutes from "./routes/scoreboard.route.js";
 import errorHandler from "./middleware/errorHandler.js";
+import notFound from "./middleware/notFound.js";
 
 import { startCrowdScheduler } from "./services/crowd/crowdScheduler.service.js";
 import { printTomTomUsageSummary } from "./services/crowd/tomtomUsage.service.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 
 app.use(clerkMiddleware());
 
@@ -33,6 +33,7 @@ app.use(
 
 app.use(express.json({ limit: "1mb" }));
 
+// API Routes
 app.use("/api/pandals", foodRoutes);
 app.use("/api/pandals", pandalRoutes);
 app.use("/api/path", pathRoutes);
@@ -40,6 +41,10 @@ app.use("/api/checkins", checkInRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/scoreboard", scoreboardRoutes);
 
+// 404 - Route not found
+app.use(notFound);
+
+// Global error handler
 app.use(errorHandler);
 
 mongoose
