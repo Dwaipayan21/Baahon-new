@@ -13,7 +13,7 @@ import LoadingPujoArtwork from "./UI/LoadingPujoArtwork";
  * We preserve that timing, but React now controls
  * when the loader is actually allowed to disappear.
  */
-const LoadingScreen = ({ ready = false, onComplete }) => {
+const LoadingScreen = ({ ready = false }) => {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
   const startTimeRef = useRef(null);
@@ -48,7 +48,6 @@ const LoadingScreen = ({ ready = false, onComplete }) => {
 
       fadeTimerRef.current = setTimeout(() => {
         setVisible(false);
-        onComplete?.();
       }, FADE_DURATION);
     }, waitTime);
 
@@ -61,7 +60,7 @@ const LoadingScreen = ({ ready = false, onComplete }) => {
         clearTimeout(fadeTimerRef.current);
       }
     };
-  }, [ready, visible, onComplete]);
+  }, [ready, visible]);
 
   if (!visible) {
     return null;

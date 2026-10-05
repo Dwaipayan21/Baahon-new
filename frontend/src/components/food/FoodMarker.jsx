@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
 
-console.log("🔥 FOODMARKERS FILE LOADED");
-
 const createFoodIcon = () => {
   const svg = `
     <svg

@@ -130,7 +130,7 @@ spacing:
 
 ## Brand & Style
 
-This design system translates the quiet anticipation of Bengal’s autumn festival season—encapsulated by *Maa Asche*—into a calm, highly legible mobile utility. Moving away from the visual excess, saturated red-and-gold gradients, and dense ornament often associated with festive apps, the aesthetic is rooted in the serene clarity of early Sharodotsav mornings: vast cerulean skies, drifts of white *kash phool* grasses, and crisp early-morning sunlight.
+This design system translates the quiet anticipation of Bengal’s autumn festival season—encapsulated by *মা আসছেন*—into a calm, highly legible mobile utility. Moving away from the visual excess, saturated red-and-gold gradients, and dense ornament often associated with festive apps, the aesthetic is rooted in the serene clarity of early Sharodotsav mornings: vast cerulean skies, drifts of white *kash phool* grasses, and crisp early-morning sunlight.
 
 The design movement combines **Contemporary Soft Minimalism** with **Atmospheric Layering**:
 - **Purity over Clutter:** Broad negative space, luminous pale-sky backdrops, and cloud-soft card elevations create visual respite during hectic festival navigation.
