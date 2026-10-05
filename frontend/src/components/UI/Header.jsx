@@ -104,9 +104,15 @@ const Header = ({
               />
             </div>
 
-            <span className="font-bold text-lg text-[var(--color-heading)] tracking-tight">
-              Baahon
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="text-base font-extrabold tracking-tight">
+                BAAHON
+              </span>
+
+              <span className="mt-1 text-[11px] font-medium text-[var(--color-primary)]">
+                মা আসছেন
+              </span>
+            </div>
           </div>
 
           {/* =====================================

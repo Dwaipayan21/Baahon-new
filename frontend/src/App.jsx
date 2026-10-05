@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useAuth, useUser } from "@clerk/react";
 
+
 import { usePandalSearch } from "./hooks/usePandalSearch";
 import { usePandalData } from "./hooks/usePandalData";
 import { useScorecardData } from "./hooks/useScorecardData";
@@ -9,6 +10,7 @@ import { useUserLocation } from "./hooks/useUserLocation";
 import { usePandalCheckIn } from "./hooks/usePandalCheckIn";
 import { useRoutePlanning } from "./hooks/useRoutePlanning";
 import { useIsDesktop } from "./hooks/useIsDesktop";
+
 
 import AppLayout from "./components/layout/AppLayout";
 
@@ -27,11 +29,6 @@ const App = () => {
     isSignedIn,
     getToken,
   });
-
-  const testClerkToken = async () => {
-    const token = await getToken();
-    console.log("CLERK TOKEN:", token);
-  };
 
   // --------------------------------------------------
   // GENERAL APP STATE
@@ -55,10 +52,6 @@ const App = () => {
   const [userLocation, setUserLocation] = useState(null);
 
   const [toastMessage, setToastMessage] = useState("");
-
-  const handleLoadingComplete = useCallback(() => {
-    console.log("Baahon loading complete");
-  }, []);
 
   // Kept for compatibility with previous app state.
   const [svgZoom, setSvgZoom] = useState(1.0);
@@ -232,7 +225,6 @@ const App = () => {
   return (
     <AppLayout
       appReady={appReady}
-      handleLoadingComplete={handleLoadingComplete}
       activeNavTab={activeNavTab}
       setActiveNavTab={setActiveNavTab}
       mapRef={mapRef}

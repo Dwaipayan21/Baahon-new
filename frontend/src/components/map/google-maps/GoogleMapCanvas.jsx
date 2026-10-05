@@ -10,8 +10,6 @@ import GoogleMapRouteLayer from "./GoogleMapRouteLayer";
 import GoogleMapPandalMarkers from "./GoogleMapPandalMarkers";
 import FoodMarkers from "../../Food/FoodMarker";
 
-console.log("🔥 GOOGLE MAP CANVAS LOADED");
-
 const GoogleMapCanvas = ({
   pandals = [],
   selectedPandal,
@@ -129,8 +127,6 @@ const GoogleMapCanvas = ({
 
       mapRef.current = map;
       setMapInstance(map);
-
-      console.log("Google Maps: map initialized");
 
       onMapReady?.(map);
     } catch (mapError) {

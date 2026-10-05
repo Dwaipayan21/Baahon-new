@@ -5,9 +5,6 @@ import {
   SignUpButton,
 } from "@clerk/react";
 
-import JourneyProgress from "../components/UI/Scorecard/JourneyProgress";
-import ScoreStats from "../components/UI/Scorecard/ScoreStats";
-import RouteActivity from "../components/UI/Scorecard/RouteActivity";
 import Achievements from "../components/UI/Scorecard/Achievements";
 import VisitHistory from "../components/UI/Scorecard/VisitHistory";
 
@@ -136,45 +133,21 @@ const ProfilePage = ({
 
   const totalPoints = Number(scorecard?.totalPoints) || 0;
 
+  const bonediBariVisited = visits.filter(
+    (visit) => visit.category === "traditional"
+  ).length;
+
+  const themePandalsVisited = visits.filter(
+    (visit) =>
+      visit.category === "theme" ||
+      visit.category === "community"
+  ).length;
+
   const totalPandals = Array.isArray(pandals)
     ? pandals.length
     : 0;
 
   const visitedCount = visits.length;
-
-  const percentage =
-    totalPandals > 0
-      ? Math.min(
-          Math.round((visitedCount / totalPandals) * 100),
-          100
-        )
-      : 0;
-
-  const remaining = Math.max(
-    totalPandals - visitedCount,
-    0
-  );
-
-  const categoryCounts = visits.reduce(
-    (counts, visit) => {
-      const category = String(
-        visit?.category || ""
-      ).toLowerCase();
-
-      if (!category) {
-        return counts;
-      }
-
-      counts[category] =
-        (counts[category] || 0) + 1;
-
-      return counts;
-    },
-    {}
-  );
-
-  const categoryCount =
-    Object.keys(categoryCounts).length;
 
   const routeSummary = getScorecardRouteSummary({
     routeData,
@@ -183,18 +156,8 @@ const ProfilePage = ({
     activeRouteMode,
   });
 
-  const scorecardStats = {
-    visitedCount,
-    totalPandals,
-    percentage,
-    remaining,
-    categoryCount,
-    totalPoints,
-  };
-
   const achievementStats = {
     visited: visitedCount,
-    categories: categoryCount,
     progress:
       totalPandals > 0
         ? visitedCount / totalPandals
@@ -211,34 +174,39 @@ const ProfilePage = ({
           HEADER
           ================================================= */}
 
-      <header className="border-b border-[var(--color-primary)] bg-[var(--color-primary)] text-white">
-        <div className="mx-auto flex h-[68px] max-w-3xl items-center gap-3 px-4 sm:px-6">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
-            <span className="material-symbols-outlined text-[21px] text-white">
-              person
-            </span>
-          </div>
+      <header className="border-b border-slate-200/70 bg-[var(--color-background)] shadow-sm">
+        <div className="h-16 px-4 sm:px-6 max-w-7xl mx-auto flex items-center">
+          <div className="flex items-center gap-3 min-w-fit">
+            {/* Same logo sizing and position as Explore */}
+            <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
+              <img
+                src="/Baahon.jpeg"
+                alt="Baahon"
+                className="w-10 h-10 object-contain"
+              />
+            </div>
 
-          <div className="min-w-0 flex-1">
-            <h1 className="text-base font-bold tracking-tight sm:text-lg">
-              Profile
-            </h1>
+            <div className="flex flex-col leading-none">
+              {/* Brand */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[13px] font-medium tracking-tight text-[var(--color-heading)]">
+                  BAAHON
+                </span>
 
-            <p className="mt-0.5 text-[10px] font-medium text-white/75 sm:text-[11px]">
-              Maa Asche
-              <span className="px-1 text-[var(--color-marigold-light)]">•</span>
-              Kolkata
-            </p>
-          </div>
+                <span className="text-[13px] font-medium text-[var(--color-muted)]">
+                  ·
+                </span>
 
-          <div className="flex items-center gap-2">
-            <span className="hidden text-xs font-bold sm:block">
-              Baahon
-            </span>
+                <span className="text-[11px] font-medium text-[var(--color-primary)]">
+                  মা আসছেন
+                </span>
+              </div>
 
-            <span className="material-symbols-outlined text-[21px]">
-              temple_hindu
-            </span>
+              {/* Page */}
+              <span className="mt-1 text-[11px] font-extrabold tracking-[0.08em] text-[var(--color-heading)]">
+                PROFILE
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -246,17 +214,13 @@ const ProfilePage = ({
       <main className="mx-auto w-full max-w-3xl px-4 py-5 sm:px-6 sm:py-7">
 
         {/* =================================================
-            PROFILE
+            PROFILE SUMMARY
             ================================================= */}
 
-        <section className="rounded-2xl border border-[var(--color-border)] bg-white shadow-sm">
-
-          <div className="flex flex-col items-center px-5 py-7 text-center sm:flex-row sm:items-center sm:px-7 sm:py-6 sm:text-left">
-
-            {/* Profile avatar */}
+        <section className="overflow-hidden rounded-2xl border border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-sm">
+          <div className="flex items-center gap-4 px-5 py-5 sm:px-6 sm:py-6">
             <div className="relative shrink-0">
-
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-[var(--color-primary-container)] bg-[var(--color-primary-container-light)]">
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white/20 bg-white/10">
                 {user.imageUrl ? (
                   <img
                     src={user.imageUrl}
@@ -264,137 +228,128 @@ const ProfilePage = ({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="material-symbols-outlined text-3xl text-[var(--color-primary)]">
+                  <span className="material-symbols-outlined text-[28px] text-white">
                     person
                   </span>
                 )}
               </div>
 
-              {/* Online / active indicator */}
-              <div className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[var(--color-success)]">
-                <span className="material-symbols-outlined text-[13px] text-white">
+              <div className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[var(--color-primary)] bg-[var(--color-success)]">
+                <span className="material-symbols-outlined text-[11px] text-white">
                   check
                 </span>
               </div>
-
             </div>
 
-            {/* Identity */}
-            <div className="mt-4 min-w-0 sm:ml-5 sm:mt-0">
-
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/65">
                 Pujo Explorer
               </p>
 
-              <h2 className="mt-1 truncate text-2xl font-bold tracking-tight text-[var(--color-heading)]">
+              <h2 className="mt-0.5 truncate text-xl font-bold tracking-tight text-white">
                 {displayName}
               </h2>
 
-              <p className="mt-1 break-all text-sm text-[var(--color-muted)]">
+              <p className="mt-0.5 truncate text-xs text-white/65">
                 {email}
               </p>
-
-              {/* Points */}
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--color-marigold-container)] px-3 py-1.5 text-xs font-bold text-[var(--color-marigold-text)]">
-                <span className="material-symbols-outlined text-[16px]">
-                  emoji_events
-                </span>
-
-                {totalPoints} Pujo Points
-              </div>
-
             </div>
-
           </div>
 
-          {/* Quick stats */}
-          <div className="grid grid-cols-3 border-t border-[var(--color-border)] bg-white">
+        </section>
 
-            <div className="px-3 py-4 text-center">
-              <p className="text-xl font-bold text-[var(--color-primary)]">
+        {/* =================================================
+            DARSHAN HIGHLIGHTS
+            ================================================= */}
+
+        <section className="mt-5 rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-[var(--color-heading)]">
+                Darshan Highlights
+              </h3>
+
+              <p className="mt-1 text-xs text-[var(--color-muted)]">
+                Your Pujo journey so far
+              </p>
+            </div>
+
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-primary-container-light)]">
+              <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">
+                temple_hindu
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {/* Total Pandals */}
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-primary-container-light)]">
+                <span className="material-symbols-outlined text-[19px] text-[var(--color-primary)]">
+                  temple_hindu
+                </span>
+              </div>
+
+              <p className="mt-4 text-2xl font-extrabold text-[var(--color-heading)]">
                 {visitedCount}
               </p>
 
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-                Visited
+              <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">
+                Pandals Visited
               </p>
             </div>
 
-            <div className="border-x border-[var(--color-border)] px-3 py-4 text-center">
-              <p className="text-xl font-bold text-[var(--color-primary)]">
+            {/* Total Points */}
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-marigold-container)]">
+                <span className="material-symbols-outlined text-[19px] text-[var(--color-marigold-text)]">
+                  emoji_events
+                </span>
+              </div>
+
+              <p className="mt-4 text-2xl font-extrabold text-[var(--color-heading)]">
                 {totalPoints}
               </p>
 
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-                Points
+              <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">
+                Pujo Points
               </p>
             </div>
 
-            <div className="px-3 py-4 text-center">
-              <p className="text-xl font-bold text-[var(--color-primary)]">
-                {categoryCount}
+            {/* Bonedi Bari */}
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-primary-container-light)]">
+                <span className="material-symbols-outlined text-[19px] text-[var(--color-primary)]">
+                  account_balance
+                </span>
+              </div>
+
+              <p className="mt-4 text-2xl font-extrabold text-[var(--color-heading)]">
+                {bonediBariVisited}
               </p>
 
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-                Categories
+              <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">
+                Bonedi Bari
               </p>
             </div>
 
+            {/* Theme Pandals */}
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-marigold-container)]">
+                <span className="material-symbols-outlined text-[19px] text-[var(--color-marigold-text)]">
+                  palette
+                </span>
+              </div>
+
+              <p className="mt-4 text-2xl font-extrabold text-[var(--color-heading)]">
+                {themePandalsVisited}
+              </p>
+
+              <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">
+                Theme Pandals
+              </p>
+            </div>
           </div>
-
-        </section>
-
-        {/* =================================================
-            JOURNEY
-            ================================================= */}
-
-        <ProfileSectionHeader
-          icon="route"
-          title="Your Puja Journey"
-          subtitle="See how far you've explored"
-        />
-
-        <section className="mt-3">
-          <JourneyProgress
-            visited={visitedCount}
-            total={totalPandals}
-            percentage={percentage}
-            remaining={remaining}
-          />
-        </section>
-
-        {/* =================================================
-            STATS
-            ================================================= */}
-
-        <ProfileSectionHeader
-          icon="insights"
-          title="Your Stats"
-          subtitle="A look at your Puja activity"
-        />
-
-        <section className="mt-3">
-          <ScoreStats
-            scorecardStats={scorecardStats}
-            categoryCounts={categoryCounts}
-            routeSummary={routeSummary}
-          />
-        </section>
-
-        {/* =================================================
-            ROUTE ACTIVITY
-            ================================================= */}
-
-        <ProfileSectionHeader
-          icon="alt_route"
-          title="Route Activity"
-          subtitle="Your recent exploration"
-        />
-
-        <section className="mt-3">
-          <RouteActivity
-            routeSummary={routeSummary}
-          />
         </section>
 
         {/* =================================================
@@ -498,7 +453,7 @@ const ProfilePage = ({
         </section>
 
         <p className="mt-4 text-center text-[11px] text-[var(--color-muted-light)]">
-          Baahon • Maa Asche
+          Baahon • মা আসছেন
         </p>
 
       </main>

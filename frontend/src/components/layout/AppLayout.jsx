@@ -13,7 +13,6 @@ import LoadingScreen from "../LoadingScreen";
 
 const AppLayout = ({
   appReady,
-  handleLoadingComplete,
   activeNavTab,
   setActiveNavTab,
   mapRef,
@@ -62,10 +61,7 @@ const AppLayout = ({
 }) => {
   return (
     <>
-      <LoadingScreen
-        ready={appReady}
-        onComplete={handleLoadingComplete}
-      />
+      <LoadingScreen ready={appReady} />
 
       <div
         className="relative w-full h-screen overflow-hidden bg-[var(--color-background)] text-[var(--color-heading)]"
@@ -146,7 +142,6 @@ const AppLayout = ({
               routeSegments={routeSegments}
               selectedPandals={selectedPandals}
               activeRouteMode={activeRouteMode}
-              onBack={() => setActiveNavTab("explore")}
               user={user}
             />
           </div>

@@ -32,7 +32,6 @@ const MapLibreMap = ({ onMapReady }) => {
     mapRef.current = map;
 
     map.on("load", () => {
-      console.log("MapLibre: map loaded successfully");
       onMapReady?.(map);
     });
 

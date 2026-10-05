@@ -7,8 +7,6 @@ const MapLibreTest = () => {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    console.log("MAPLIBRE TEST: creating map");
-
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: "https://tiles.openfreemap.org/styles/liberty",
@@ -20,10 +18,6 @@ const MapLibreTest = () => {
       new maplibregl.NavigationControl(),
       "top-right"
     );
-
-    map.on("load", () => {
-      console.log("MAPLIBRE TEST: map loaded");
-    });
 
     map.on("error", (event) => {
       console.error("MAPLIBRE TEST ERROR:", event);
