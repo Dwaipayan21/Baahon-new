@@ -1,75 +1,192 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import Pandal from "./models/pandal.model.js";
-import rawPandals from "./data/pandals.json" with { type: "json" };
-import crowdSamplePoints from "./data/crowdSamplePoints.json" with { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const formatPandal = ({
-  ["location/type"]: type,
-  ["location/coordinates/0"]: longitude,
-  ["location/coordinates/1"]: latitude,
-  verified,
-  ...pandal
-}) => {
+import Pandal from "./models/pandal.model.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PANDAL_JSON_PATH = path.join(
+  __dirname,
+  "data",
+  "Baahon_final_sheet.json"
+);
+
+const CROWD_JSON_PATH = path.join(
+  __dirname,
+  "data",
+  "crowdSamplePoints.json"
+);
+
+// --------------------------------------------------
+// Load JSON files
+// --------------------------------------------------
+
+const loadJsonFile = (filePath) => {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`JSON file not found: ${filePath}`);
+  }
+
+  const file = fs.readFileSync(filePath, "utf-8");
+
+  try {
+    return JSON.parse(file);
+  } catch (error) {
+    throw new Error(`Invalid JSON file: ${filePath}`);
+  }
+};
+
+// --------------------------------------------------
+// Convert one pandal into MongoDB format
+// --------------------------------------------------
+
+const formatPandal = (item, crowdSamplePoints) => {
+  const {
+    ["location/type"]: type,
+    ["location/coordinates/0"]: longitude,
+    ["location/coordinates/1"]: latitude,
+    verified,
+    ...pandal
+  } = item;
+
+  // Validate location type
+  if (type !== "Point") {
+    throw new Error(
+      `Invalid location type for "${pandal.name}": ${type}`
+    );
+  }
+
+  // Validate coordinates exist
   if (
-    type !== "Point" ||
     longitude == null ||
     latitude == null ||
     String(longitude).trim() === "" ||
     String(latitude).trim() === ""
   ) {
-    throw new Error(`Invalid coordinates for "${pandal.name}"`);
+    throw new Error(
+      `Missing coordinates for "${pandal.name}"`
+    );
   }
 
-  const coordinates = [Number(longitude), Number(latitude)];
+  const lng = Number(longitude);
+  const lat = Number(latitude);
 
-  if (
-    !Number.isFinite(coordinates[0]) ||
-    !Number.isFinite(coordinates[1]) ||
-    coordinates[0] < -180 ||
-    coordinates[0] > 180 ||
-    coordinates[1] < -90 ||
-    coordinates[1] > 90
-  ) {
+  // Validate longitude
+  if (!Number.isFinite(lng) || lng < -180 || lng > 180) {
     throw new Error(
-      `Invalid GeoJSON coordinates for "${pandal.name}": [${coordinates.join(", ")}]`
+      `Invalid longitude for "${pandal.name}": ${longitude}`
     );
+  }
+
+  // Validate latitude
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
+    throw new Error(
+      `Invalid latitude for "${pandal.name}": ${latitude}`
+    );
+  }
+
+  // Validate name
+  if (!pandal.name || String(pandal.name).trim() === "") {
+    throw new Error("Pandal name is missing");
   }
 
   return {
     ...pandal,
 
-    verified:
-      String(verified).trim().toLowerCase() === "true",
+    name: String(pandal.name).trim(),
 
+    verified:
+      String(verified ?? "")
+        .trim()
+        .toLowerCase() === "true",
+
+    // GeoJSON requires [longitude, latitude]
     location: {
       type: "Point",
-      coordinates,
+      coordinates: [lng, lat],
     },
 
+    // Preserve existing crowd sample point data
     crowdSamplePoints:
       crowdSamplePoints[pandal.name] || [],
   };
 };
 
+// --------------------------------------------------
+// Seed database
+// --------------------------------------------------
+
 const seedDatabase = async () => {
   try {
-    const pandals = rawPandals.map(formatPandal);
+    // Check MongoDB URI
+    if (!process.env.MONGO_URI) {
+      throw new Error(
+        "MONGO_URI is missing from your .env file"
+      );
+    }
 
-    console.log(`Valid pandals: ${pandals.length}/${rawPandals.length}`);
+    // Load pandal JSON
+    const rawPandals = loadJsonFile(PANDAL_JSON_PATH);
 
+    if (!Array.isArray(rawPandals)) {
+      throw new Error(
+        "Baahon_final_sheet.json must contain an array"
+      );
+    }
+
+    // Load crowd sample points
+    const crowdSamplePoints = loadJsonFile(
+      CROWD_JSON_PATH
+    );
+
+    console.log(
+      `Found ${rawPandals.length} pandals in JSON`
+    );
+
+    // Format and validate every pandal BEFORE modifying DB
+    const pandals = rawPandals.map((pandal) =>
+      formatPandal(
+        pandal,
+        crowdSamplePoints
+      )
+    );
+
+    console.log(
+      `Validated ${pandals.length}/${rawPandals.length} pandals`
+    );
+
+    // Connect MongoDB
     await mongoose.connect(process.env.MONGO_URI);
+
     console.log("MongoDB connected");
 
+    // Remove existing pandal records
     await Pandal.deleteMany({});
-    await Pandal.insertMany(pandals);
 
-    console.log(`${pandals.length} pandals inserted successfully`);
+    console.log("Existing pandal records deleted");
+
+    // Insert new pandals
+    const insertedPandals =
+      await Pandal.insertMany(pandals);
+
+    console.log(
+      `${insertedPandals.length} pandals inserted successfully`
+    );
+
   } catch (error) {
-    console.error("Seeding failed:", error.message);
+    console.error("\nSeeding failed:");
+    console.error(error.message);
+
+    process.exitCode = 1;
+
   } finally {
-    await mongoose.connection.close();
-    console.log("MongoDB connection closed");
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+      console.log("MongoDB connection closed");
+    }
   }
 };
 
