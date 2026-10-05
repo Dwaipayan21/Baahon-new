@@ -21,12 +21,6 @@ export const usePandalData = (onInitialPandalSelect) => {
             try {
               const crowd = await getPandalCrowd(pandal.id);
 
-              console.log("CROWD API:", {
-                name: pandal.name,
-                id: pandal.id,
-                crowd,
-              });
-
               return {
                 ...pandal,
                 crowdStatus: crowd?.status || "UNKNOWN",

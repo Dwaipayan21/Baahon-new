@@ -27,8 +27,6 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
         return;
       }
 
-      console.log("AUTO CHECK-IN GPS:", coords);
-
       setUserLocation(coords);
     };
 
@@ -79,11 +77,6 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
           lng: pos.coords.longitude,
         };
 
-        console.log(
-          "MY GPS LOCATION:",
-          coords
-        );
-
         if (
           !Number.isFinite(coords.lat) ||
           !Number.isFinite(coords.lng) ||
@@ -121,11 +114,6 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
               longitude: coords.lng,
               maxDistance: 5000,
             });
-
-          console.log(
-            "Nearby pandals:",
-            nearbyPandals
-          );
 
           showToast(
             `${nearbyPandals.length} nearby ${nearbyPandals.length === 1

@@ -16,7 +16,8 @@ export const useRoutePlanning = ({
   const [activeRouteMode, setActiveRouteMode] = useState(null);
   const [routeError, setRouteError] = useState("");
   const [selectedPandalRoute, setSelectedPandalRoute] = useState(null);
-  const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] = useState(false);
+  const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] =
+    useState(false);
 
   useEffect(() => {
     if (!selectedPandal || !userLocation) {
@@ -65,15 +66,7 @@ export const useRoutePlanning = ({
     };
   }, [selectedPandal, userLocation]);
 
-  useEffect(() => {
-    console.log("FINAL ROUTE DATA:", routeData);
-  }, [routeData]);
-
   const handleMetroRoute = async () => {
-    console.log(
-      "handleMetroRoute called"
-    );
-
     setRouteError("");
 
     if (selectedPandals.length === 0) {
@@ -82,9 +75,7 @@ export const useRoutePlanning = ({
     }
 
     if (!userLocation) {
-      showToast(
-        "Please use My Location before starting the route"
-      );
+      showToast("Please use My Location before starting the route");
       return;
     }
 
@@ -93,47 +84,20 @@ export const useRoutePlanning = ({
     setRouteLoading(true);
     setRouteData(null);
 
-    const selectedPandalSnapshot = [
-      ...selectedPandals,
-    ];
+    const selectedPandalSnapshot = [...selectedPandals];
 
     try {
       const routes = [];
 
       let currentLocation = userLocation;
 
-      for (
-        const pandal of selectedPandalSnapshot
-      ) {
-        console.log(
-          "Metro getRoute request:",
-          {
-            mode: "metro",
-            userLocation:
-              currentLocation,
-            pandalId: pandal.id,
-          }
-        );
-
+      for (const pandal of selectedPandalSnapshot) {
         const route = await getRoute({
-          latitude:
-            currentLocation.lat,
-          longitude:
-            currentLocation.lng,
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
           pandalId: pandal.id,
           mode: "metro",
         });
-
-        console.log(
-          "Metro getRoute response:",
-          {
-            mode: "metro",
-            userLocation:
-              currentLocation,
-            pandalId: pandal.id,
-            route,
-          }
-        );
 
         routes.push(route);
 
@@ -143,34 +107,19 @@ export const useRoutePlanning = ({
         };
       }
 
-      setRouteData(
-        routes.length === 1
-          ? routes[0]
-          : routes
-      );
+      setRouteData(routes.length === 1 ? routes[0] : routes);
     } catch (error) {
-      console.error(
-        "Metro route failed:",
-        error
-      );
+      console.error("Metro route failed:", error);
 
-      setRouteError(
-        "Metro route is unavailable for this pandal"
-      );
+      setRouteError("Metro route is unavailable for this pandal");
 
-      showToast(
-        "Metro route is unavailable"
-      );
+      showToast("Metro route is unavailable");
     } finally {
       setRouteLoading(false);
     }
   };
 
   const handleRoadRoute = async () => {
-    console.log(
-      "handleRoadRoute called"
-    );
-
     setRouteError("");
 
     if (selectedPandals.length === 0) {
@@ -179,9 +128,7 @@ export const useRoutePlanning = ({
     }
 
     if (!userLocation) {
-      showToast(
-        "Please use My Location before starting the route"
-      );
+      showToast("Please use My Location before starting the route");
       return;
     }
 
@@ -191,47 +138,20 @@ export const useRoutePlanning = ({
     setRouteLoading(true);
     setRouteData(null);
 
-    const selectedPandalSnapshot = [
-      ...selectedPandals,
-    ];
+    const selectedPandalSnapshot = [...selectedPandals];
 
     try {
       const routes = [];
 
       let currentLocation = userLocation;
 
-      for (
-        const pandal of selectedPandalSnapshot
-      ) {
-        console.log(
-          "Road getRoute request:",
-          {
-            mode: "car",
-            userLocation:
-              currentLocation,
-            pandalId: pandal.id,
-          }
-        );
-
+      for (const pandal of selectedPandalSnapshot) {
         const route = await getRoute({
-          latitude:
-            currentLocation.lat,
-          longitude:
-            currentLocation.lng,
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
           pandalId: pandal.id,
           mode: "car",
         });
-
-        console.log(
-          "Road getRoute response:",
-          {
-            mode: "car",
-            userLocation:
-              currentLocation,
-            pandalId: pandal.id,
-            route,
-          }
-        );
 
         routes.push(route);
 
@@ -241,24 +161,13 @@ export const useRoutePlanning = ({
         };
       }
 
-      setRouteData(
-        routes.length === 1
-          ? routes[0]
-          : routes
-      );
+      setRouteData(routes.length === 1 ? routes[0] : routes);
     } catch (error) {
-      console.error(
-        "Road route failed:",
-        error
-      );
+      console.error("Road route failed:", error);
 
-      setRouteError(
-        "Road route is unavailable for this pandal"
-      );
+      setRouteError("Road route is unavailable for this pandal");
 
-      showToast(
-        "Could not create road route"
-      );
+      showToast("Could not create road route");
     } finally {
       setRouteLoading(false);
     }
@@ -266,66 +175,28 @@ export const useRoutePlanning = ({
 
   const handleStartRoute = async () => {
     if (selectedPandals.length === 0) {
-      showToast(
-        "Add at least one pandal to your route"
-      );
+      showToast("Add at least one pandal to your route");
       return;
     }
 
     if (!userLocation) {
-      showToast(
-        "Please use My Location before starting the route"
-      );
+      showToast("Please use My Location before starting the route");
       return;
     }
 
     setRouteLoading(true);
 
     try {
-      const remainingPandals = [
-        ...selectedPandals,
-      ];
-
-      console.table(
-        remainingPandals.map(
-          (pandal) => ({
-            name: pandal.name,
-            lat: pandal.lat,
-            lng: pandal.lng,
-          })
-        )
-      );
+      const remainingPandals = [...selectedPandals];
 
       const segments = [];
 
-      let currentLocation =
-        userLocation;
+      let currentLocation = userLocation;
 
-      while (
-        remainingPandals.length > 0
-      ) {
-        const nearest =
-          findNearestPandal(
-            currentLocation,
-            remainingPandals
-          );
-
-        console.log(
-          "Current location:",
-          currentLocation
-        );
-
-        console.log(
-          "Nearest pandal:",
-          nearest
-        );
-
-        console.log(
-          "Route order:",
-          segments.map(
-            (segment) =>
-              segment.destination?.name
-          )
+      while (remainingPandals.length > 0) {
+        const nearest = findNearestPandal(
+          currentLocation,
+          remainingPandals
         );
 
         if (!nearest) {
@@ -334,14 +205,11 @@ export const useRoutePlanning = ({
 
         const { pandal } = nearest;
 
-        const route =
-          await getWalkingRoute({
-            latitude:
-              currentLocation.lat,
-            longitude:
-              currentLocation.lng,
-            pandalId: pandal.id,
-          });
+        const route = await getWalkingRoute({
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
+          pandalId: pandal.id,
+        });
 
         segments.push(route);
 
@@ -350,41 +218,26 @@ export const useRoutePlanning = ({
           lng: route.destination.longitude,
         };
 
-        const index =
-          remainingPandals.findIndex(
-            (item) =>
-              item.id === pandal.id
-          );
-
-        remainingPandals.splice(
-          index,
-          1
+        const index = remainingPandals.findIndex(
+          (item) => item.id === pandal.id
         );
+
+        remainingPandals.splice(index, 1);
       }
 
       setRouteSegments(segments);
 
-      const totalDistance =
-        segments.reduce(
-          (total, segment) =>
-            total +
-            Number(
-              segment.distance?.value ||
-              0
-            ),
-          0
-        );
+      const totalDistance = segments.reduce(
+        (total, segment) =>
+          total + Number(segment.distance?.value || 0),
+        0
+      );
 
-      const totalTime =
-        segments.reduce(
-          (total, segment) =>
-            total +
-            Number(
-              segment.estimatedTime
-                ?.value || 0
-            ),
-          0
-        );
+      const totalTime = segments.reduce(
+        (total, segment) =>
+          total + Number(segment.estimatedTime?.value || 0),
+        0
+      );
 
       showToast(
         `Route ready • ${totalDistance.toFixed(
@@ -392,14 +245,9 @@ export const useRoutePlanning = ({
         )} km • ${totalTime} min`
       );
     } catch (error) {
-      console.error(
-        "Route creation failed:",
-        error
-      );
+      console.error("Route creation failed:", error);
 
-      showToast(
-        "Could not create walking route"
-      );
+      showToast("Could not create walking route");
     } finally {
       setRouteLoading(false);
     }

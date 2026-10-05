@@ -23,13 +23,6 @@ const ACHIEVEMENT_RULES = [
       unlocked: ({ visited }) => visited >= 10,
     },
     {
-      id: "category-explorer",
-      icon: "category",
-      title: "Category Explorer",
-      description: "Explore two Puja styles",
-      unlocked: ({ categories }) => categories >= 2,
-    },
-    {
       id: "pujo-explorer",
       icon: "explore",
       title: "Pujo Explorer",

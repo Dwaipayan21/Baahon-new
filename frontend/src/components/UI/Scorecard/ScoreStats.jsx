@@ -1,4 +1,4 @@
-const ScoreStats = ({ scorecardStats, categoryCounts, routeSummary }) => {
+const ScoreStats = ({ scorecardStats, routeSummary }) => {
   const routeDistanceAvailable = Boolean(routeSummary?.distanceLabel);
   const routeStat = routeDistanceAvailable
     ? {
@@ -19,13 +19,6 @@ const ScoreStats = ({ scorecardStats, categoryCounts, routeSummary }) => {
       value: scorecardStats.visitedCount,
       label: "Pandals Visited",
       detail: "Darshans completed",
-      tone: "text-[var(--color-primary)] bg-[var(--color-primary-container-light)]",
-    },
-    {
-      icon: "category",
-      value: scorecardStats.categoryCount,
-      label: "Categories",
-      detail: "Puja styles explored",
       tone: "text-[var(--color-primary)] bg-[var(--color-primary-container-light)]",
     },
     {
@@ -78,18 +71,6 @@ const ScoreStats = ({ scorecardStats, categoryCounts, routeSummary }) => {
           </article>
         ))}
       </div>
-      {Object.keys(categoryCounts).length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {Object.entries(categoryCounts).map(([category, count]) => (
-            <span
-              key={category}
-              className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[9px] font-medium capitalize text-[var(--color-muted)]"
-            >
-              {category} <strong className="text-[var(--color-heading-secondary)]">{count}</strong>
-            </span>
-          ))}
-        </div>
-      )}
     </section>
   );
 };

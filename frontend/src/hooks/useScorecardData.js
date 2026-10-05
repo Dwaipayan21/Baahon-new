@@ -35,7 +35,6 @@ export const useScorecardData = ({ isSignedIn, getToken }) => {
             : [],
         });
 
-        console.log("SCORECARD LOADED:", data);
       } catch (error) {
         console.error(
           "Failed to load Scorecard from backend:",

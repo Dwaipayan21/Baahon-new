@@ -23,7 +23,7 @@ const ScoreHeader = ({
           </p>
 
           <p className="mt-0.5 text-[10px] font-medium text-white/75 sm:text-[11px]">
-            Maa Asche{" "}
+            মা আসছেন{" "}
             <span className="px-1 text-[var(--color-marigold-light)]">
               •
             </span>{" "}
