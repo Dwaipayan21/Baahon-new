@@ -1,12 +1,15 @@
 import { useState } from "react";
 import MetroStatusChip from "./MetroStatusChip";
 import ZoomControlPill from "./ZoomControlPill";
+import MapLayerToggleButton from "./MapLayerToggleButton";
 
 const MapControls = ({
   metroActive,
   onToggleMetro,
-  routeModeActive,
-  onToggleRouteMode,
+  toiletsActive,
+  onToggleToilets,
+  medicinesActive,
+  onToggleMedicines,
   activeLayer,
   onToggleLayer,
   onRecenter,
@@ -45,22 +48,17 @@ const MapControls = ({
             </span>
           </button>
 
-          {/* Walking Route Mode Toggle */}
-          <button
-            type="button"
-            aria-label="Walking Route Mode"
-            title="Pedestrian Route Guidance"
-            onClick={onToggleRouteMode}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.08)] border ${
-              routeModeActive
-                ? "bg-[var(--color-marigold-container)] text-[var(--color-marigold-text)] border-transparent shadow-md"
-                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              directions_walk
-            </span>
-          </button>
+          <MapLayerToggleButton
+            type="toilet"
+            active={toiletsActive}
+            onClick={onToggleToilets}
+          />
+
+          <MapLayerToggleButton
+            type="medicine"
+            active={medicinesActive}
+            onClick={onToggleMedicines}
+          />
 
           {/* Map Layer Switcher */}
           <button

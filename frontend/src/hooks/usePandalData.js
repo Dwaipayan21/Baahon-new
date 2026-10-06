@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPandals, getPandalCrowd } from "../services/api";
 
-export const usePandalData = (onInitialPandalSelect) => {
+export const usePandalData = () => {
   const [pandals, setPandals] = useState([]);
   const [appReady, setAppReady] = useState(false);
 
@@ -51,9 +51,6 @@ export const usePandalData = (onInitialPandalSelect) => {
 
         setPandals(pandalsWithCrowd);
 
-        if (pandalsWithCrowd.length > 0) {
-          onInitialPandalSelect(pandalsWithCrowd[0]);
-        }
       } catch (err) {
         console.error("Backend fetch error:", err);
       } finally {
@@ -68,7 +65,7 @@ export const usePandalData = (onInitialPandalSelect) => {
     return () => {
       isMounted = false;
     };
-  }, [onInitialPandalSelect]);
+  }, []);
 
   return {
     pandals,

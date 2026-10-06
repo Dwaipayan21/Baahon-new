@@ -1,0 +1,1084 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-10-05T17:30:35Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1765139024",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Sree Ramkrishna Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3141608,
+          22.4958168
+        ]
+      },
+      "id": "node/1765139024"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1765139026",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3123307,
+          22.494997
+        ]
+      },
+      "id": "node/1765139026"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1833362469",
+        "addr:postcode": "700019",
+        "amenity": "pharmacy",
+        "check_date": "2023-12-16",
+        "description": "Medicine shop",
+        "healthcare": "pharmacy",
+        "name": "Ballygunge Drugs Centre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3648196,
+          22.5337863
+        ]
+      },
+      "id": "node/1833362469"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1833374663",
+        "addr:housenumber": "53/1/3",
+        "addr:street": "Hazra Road",
+        "amenity": "pharmacy",
+        "check_date": "2023-12-16",
+        "description": "Medicine shop",
+        "dispensing": "yes",
+        "healthcare": "pharmacy",
+        "internet_access": "no",
+        "name": "Frank Ross",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "website": "https://www.frankrosspharmacy.com/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3657852,
+          22.5262448
+        ]
+      },
+      "id": "node/1833374663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1833405150",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Sri Ramakrishna Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3551504,
+          22.5179768
+        ]
+      },
+      "id": "node/1833405150"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1833779747",
+        "addr:street": "Burdwan Road",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3285765,
+          22.5222059
+        ]
+      },
+      "id": "node/1833779747"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1872380336",
+        "addr:housenumber": "63",
+        "addr:postcode": "700026",
+        "addr:street": "Rash Behari Avenue",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Get Well",
+        "name:en": "Get Well Chemist & Druggist Pvt. Ltd.",
+        "opening_hours": "Fr-We 09:00-22:00",
+        "phone": "098314 61931"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3489454,
+          22.5169556
+        ]
+      },
+      "id": "node/1872380336"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2266850259",
+        "amenity": "pharmacy",
+        "check_date": "2026-03-22",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3680233,
+          22.5641673
+        ]
+      },
+      "id": "node/2266850259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2747132627",
+        "amenity": "pharmacy",
+        "check_date": "2026-03-22",
+        "healthcare": "pharmacy",
+        "name": "Aastha"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3560631,
+          22.5429973
+        ]
+      },
+      "id": "node/2747132627"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3410883894",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Frank Ross Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3900771,
+          22.5146803
+        ]
+      },
+      "id": "node/3410883894"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3413975338",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Das Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3723432,
+          22.5732985
+        ]
+      },
+      "id": "node/3413975338"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3566105743",
+        "amenity": "pharmacy",
+        "check_date": "2026-03-22",
+        "healthcare": "pharmacy",
+        "name": "Frank Ross Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3587315,
+          22.5382703
+        ]
+      },
+      "id": "node/3566105743"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3693814562",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Red Cross Society Medical Strore"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.390988,
+          22.4827482
+        ]
+      },
+      "id": "node/3693814562"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4573355409",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name:zh": "药店"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3509288,
+          22.5615452
+        ]
+      },
+      "id": "node/4573355409"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4594048692",
+        "amenity": "pharmacy",
+        "check_date": "2026-03-22",
+        "healthcare": "pharmacy",
+        "name:zh": "药房1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3533705,
+          22.5647569
+        ]
+      },
+      "id": "node/4594048692"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4716051247",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Lokenath Medical Shop"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3801206,
+          22.5223925
+        ]
+      },
+      "id": "node/4716051247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4716413052",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3827162,
+          22.5213418
+        ]
+      },
+      "id": "node/4716413052"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4716413053",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3829381,
+          22.5194831
+        ]
+      },
+      "id": "node/4716413053"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6135364591",
+        "amenity": "pharmacy",
+        "check_date": "2026-03-22",
+        "healthcare": "pharmacy",
+        "name": "Royd Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3543372,
+          22.55318
+        ]
+      },
+      "id": "node/6135364591"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6545669000",
+        "addr:housenumber": "43/A",
+        "addr:postcode": "700017",
+        "addr:street": "Bright Street",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Bright Street",
+        "opening_hours": "Mo-Su 10:00-23:00",
+        "operator": "Neesa Medical"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3693489,
+          22.5377363
+        ]
+      },
+      "id": "node/6545669000"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6574090434",
+        "amenity": "pharmacy",
+        "brand": "Apollo Pharmacy",
+        "brand:wikidata": "Q62562612",
+        "dispensing": "yes",
+        "healthcare": "pharmacy",
+        "name": "Apollo Pharmacy",
+        "opening_hours": "24/7",
+        "operator": "Apollo Hospitals",
+        "operator:wikidata": "Q4780321",
+        "operator:wikipedia": "en:Apollo Hospitals"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3588855,
+          22.4756858
+        ]
+      },
+      "id": "node/6574090434"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7049370406",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Lifeline",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3509186,
+          22.5543144
+        ]
+      },
+      "id": "node/7049370406"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7051268541",
+        "addr:housenumber": "27-B",
+        "addr:postcode": "700016",
+        "addr:street": "Park Street",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Park Medico"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3529259,
+          22.55382
+        ]
+      },
+      "id": "node/7051268541"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7052489793",
+        "addr:housenumber": "16B",
+        "addr:postcode": "700071",
+        "addr:street": "Shakespeare Sarani",
+        "amenity": "pharmacy",
+        "contact:phone": "+91 33 2865 1107;+91 33 4602 0729",
+        "healthcare": "pharmacy",
+        "level": "0",
+        "name": "Plaza Medico",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3514472,
+          22.5450797
+        ]
+      },
+      "id": "node/7052489793"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7053793927",
+        "addr:district": "Kolkata",
+        "addr:housenumber": "5/1",
+        "addr:postcode": "700016",
+        "addr:state": "West Bengal",
+        "addr:street": "Muzaffar Ahmed Street",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "level": "0",
+        "name": "Ross Healthcare",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3560195,
+          22.5534236
+        ]
+      },
+      "id": "node/7053793927"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7059347935",
+        "addr:housenumber": "39",
+        "addr:postcode": "700016",
+        "addr:street": "Mirza Ghalib Street",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "JP Medico Private Limited",
+        "opening_hours": "Mo-Su 09:00-22:00",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3543323,
+          22.5555081
+        ]
+      },
+      "id": "node/7059347935"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7059347950",
+        "addr:housenumber": "10",
+        "addr:postcode": "700016",
+        "addr:street": "Kyd Street",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Modern Pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3543476,
+          22.5558938
+        ]
+      },
+      "id": "node/7059347950"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7991658985",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Vivekananda pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3051319,
+          22.51043
+        ]
+      },
+      "id": "node/7991658985"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8212677965",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3870458,
+          22.5936221
+        ]
+      },
+      "id": "node/8212677965"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9118441470",
+        "addr:city": "KOLKATA",
+        "addr:district": "Kolkata",
+        "addr:housenumber": "P-14, CIT Rd, Manicktala,",
+        "addr:postcode": "700054",
+        "addr:street": "Bagmari Road",
+        "air_conditioning": "yes",
+        "amenity": "pharmacy",
+        "brand": "Frank Ross Pharmacy",
+        "brand:wikidata": "Q134608440",
+        "check_date": "2023-10-04",
+        "healthcare": "pharmacy",
+        "name": "Frank Ross Pharmacy",
+        "opening_hours": "Mo-Su 08:00-22:00",
+        "operator": "Frank Ross",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+919073190245",
+        "website": "https://www.frankrosspharmacy.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3907563,
+          22.5817383
+        ]
+      },
+      "id": "node/9118441470"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9462335317",
+        "addr:city": "Kolkata",
+        "addr:housenumber": "P-169",
+        "addr:postcode": "700054",
+        "addr:street": "Bidhannagar Rd, CIT Scheme VII M",
+        "amenity": "pharmacy",
+        "check_date:opening_hours": "2024-09-23",
+        "dispensing": "no",
+        "drive_through": "no",
+        "healthcare": "pharmacy",
+        "name": "Dr Majumder Homoeo World",
+        "opening_hours": "Mo-Su 09:00-22:00",
+        "website": "https://www.majumderhomoeo.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3883411,
+          22.5935131
+        ]
+      },
+      "id": "node/9462335317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9462816420",
+        "addr:housenumber": "p170",
+        "addr:postcode": "700054",
+        "addr:street": "CIT Rd Scheme 4M",
+        "amenity": "pharmacy",
+        "brand": "MedPlus",
+        "brand:wikidata": "Q65684234",
+        "check_date:opening_hours": "2023-07-03",
+        "healthcare": "pharmacy",
+        "name": "MedPlus",
+        "name:en": "MedPlus Ultadanga",
+        "opening_hours": "Mo-Su 08:00-22:30",
+        "phone": "033 2355 1197",
+        "website": "https://pharmacy.medplusmart.com/INWBCCU00012"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3914676,
+          22.5917061
+        ]
+      },
+      "id": "node/9462816420"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9561685617",
+        "addr:housenumber": "p-53",
+        "addr:postcode": "700054",
+        "addr:street": "CIT Road",
+        "amenity": "pharmacy",
+        "check_date": "2023-10-04",
+        "healthcare": "pharmacy",
+        "name": "Goodwill Pharmacy",
+        "opening_hours": "Mo-Su 08:00-22:00",
+        "phone": "03323551389"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3905089,
+          22.5817744
+        ]
+      },
+      "id": "node/9561685617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9568902617",
+        "addr:postcode": "700054",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Patanjali Mega Store, Kankurgachi",
+        "name:en": "choudhury medical shop"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3906637,
+          22.5813309
+        ]
+      },
+      "id": "node/9568902617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9596727117",
+        "addr:housenumber": "p280",
+        "addr:postcode": "700054",
+        "addr:street": "CIT ROAD SCHEME VI",
+        "amenity": "pharmacy",
+        "email": "sikaria.gopal@gmail.com",
+        "healthcare": "pharmacy",
+        "name": "Prime minister bhartiya jan aushadhi kendra",
+        "name:en": "Prime minister jan Aushadhi Kendra (pmbi)",
+        "opening_hours": "Mo-Sa 09:00-20:00; Su 09:00-01:30",
+        "phone": "8334064027;7596805247;8240884921"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3887187,
+          22.5783099
+        ]
+      },
+      "id": "node/9596727117"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9602553317",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Maa Durga pharmacy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3919014,
+          22.5860229
+        ]
+      },
+      "id": "node/9602553317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9630750117",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Fair price medicine shop"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3875,
+          22.5729375
+        ]
+      },
+      "id": "node/9630750117"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10186164772",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Blue Print"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3209848,
+          22.5015568
+        ]
+      },
+      "id": "node/10186164772"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11300050308",
+        "amenity": "pharmacy",
+        "check_date": "2023-10-30",
+        "drive_through": "yes",
+        "healthcare": "pharmacy",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "name": "Rama Medical",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "source": "local knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3811699,
+          22.4767065
+        ]
+      },
+      "id": "node/11300050308"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11300129161",
+        "amenity": "pharmacy",
+        "brand": "Apollo Pharmacy",
+        "brand:wikidata": "Q62562612",
+        "check_date": "2023-10-30",
+        "healthcare": "pharmacy",
+        "name": "Apollo Pharmacy",
+        "payment:cash": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "source": "local knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3764346,
+          22.4773009
+        ]
+      },
+      "id": "node/11300129161"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11300131663",
+        "amenity": "pharmacy",
+        "check_date": "2023-10-30",
+        "healthcare": "pharmacy",
+        "name": "Ramkrishna Pharmacy",
+        "source": "local knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3762902,
+          22.4754331
+        ]
+      },
+      "id": "node/11300131663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11300205100",
+        "amenity": "pharmacy",
+        "check_date": "2023-10-30",
+        "drive_through": "yes",
+        "healthcare": "pharmacy",
+        "name": "Sonali Pharmacy",
+        "source": "local knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3780682,
+          22.4694399
+        ]
+      },
+      "id": "node/11300205100"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11300237975",
+        "amenity": "pharmacy",
+        "check_date": "2023-10-30",
+        "healthcare": "pharmacy",
+        "name": "Spondan",
+        "source": "local knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3770023,
+          22.4638698
+        ]
+      },
+      "id": "node/11300237975"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11422231893",
+        "addr:housenumber": "8",
+        "addr:street": "Mandeville Gardens",
+        "amenity": "pharmacy",
+        "check_date": "2023-12-16",
+        "description": "All type of generic medicines available here at lowest price.",
+        "dispensing": "yes",
+        "healthcare": "pharmacy",
+        "name": "Bhartiya Jan Oushadhi Kendra",
+        "opening_hours": "24/7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.366309,
+          22.5248911
+        ]
+      },
+      "id": "node/11422231893"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11446905770",
+        "addr:postcode": "700037",
+        "addr:street": "Radha Gobinda Kar Road",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Arham Pharmacy",
+        "opening_hours": "Mo-Su 09:00-11:00",
+        "operator": "Mr. Ishtiaque"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3829021,
+          22.6038599
+        ]
+      },
+      "id": "node/11446905770"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11945904569",
+        "addr:housenumber": "P187",
+        "addr:postcode": "700054",
+        "addr:street": "CIT Road",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Prime minister jan Aushadhi Kendra (pmbi)",
+        "opening_hours": "Mo-Sa 08:30-21:00",
+        "operator": "pmbi",
+        "phone": "+919830501144;+917003242588"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3925616,
+          22.5898185
+        ]
+      },
+      "id": "node/11945904569"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12107738601",
+        "addr:housenumber": "7",
+        "addr:postcode": "700054",
+        "addr:street": "Yogodyan Lane",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Charitable Dispensary Ramakrishna Yogodyan mission",
+        "opening_hours": "Mo-Su 06:00-11:30, 16:30-19:30",
+        "phone": "+91 75950 46920",
+        "website": "https://www.rkmyogodyan.org/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3963311,
+          22.5761141
+        ]
+      },
+      "id": "node/12107738601"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12424809385",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Medicine World"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.4071045,
+          22.5617776
+        ]
+      },
+      "id": "node/12424809385"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12776302317",
+        "amenity": "pharmacy",
+        "brand": "MedPlus",
+        "brand:wikidata": "Q65684234",
+        "healthcare": "pharmacy",
+        "name": "MedPlus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3820482,
+          22.4779259
+        ]
+      },
+      "id": "node/12776302317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13290265898",
+        "addr:full": "19/2, Doctor SCB Road, Kolkata - 10",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "level": "0",
+        "name": "Utshab Medical",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3907657,
+          22.5640411
+        ]
+      },
+      "id": "node/13290265898"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13410254094",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "APT Parmacy",
+        "phone": "9230982707"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3705571,
+          22.5470896
+        ]
+      },
+      "id": "node/13410254094"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13748582201",
+        "amenity": "pharmacy",
+        "name": "MEDCORE Pharmacy",
+        "opening_hours": "Mo-Su 08:00-00:00",
+        "phone": "8100302099"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3616318,
+          22.4870627
+        ]
+      },
+      "id": "node/13748582201"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13895391553",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Calcutta Homeopathic Medical Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3791634,
+          22.6308005
+        ]
+      },
+      "id": "node/13895391553"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13914738937",
+        "amenity": "pharmacy",
+        "healthcare": "pharmacy",
+        "name": "Abhijit Medico"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.3796497,
+          22.6307083
+        ]
+      },
+      "id": "node/13914738937"
+    }
+  ]
+}

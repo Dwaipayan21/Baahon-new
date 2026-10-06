@@ -13,6 +13,8 @@ const MapProvider = ({
   routeData = null,
   onSelectPandal,
   metroActive = true,
+  toiletsActive = false,
+  medicinesActive = false,
   activeLayer = "roadmap",
   userLocation,
   foodPlaces = [],
@@ -196,6 +198,7 @@ const MapProvider = ({
   if (provider === "google" && googleReady) {
     return (
       <GoogleMapCanvas
+        ref={mapRef}
         key={`google-${googleAttempt}`}
         pandals={pandals}
         selectedPandal={selectedPandal}
@@ -204,6 +207,8 @@ const MapProvider = ({
         routeData={routeData}
         onSelectPandal={onSelectPandal}
         metroActive={metroActive}
+        toiletsActive={toiletsActive}
+        medicinesActive={medicinesActive}
         activeLayer={activeLayer}
         userLocation={userLocation}
         foodPlaces={foodPlaces}
@@ -228,6 +233,8 @@ const MapProvider = ({
       routeData={routeData}
       onSelectPandal={onSelectPandal}
       metroActive={metroActive}
+      toiletsActive={toiletsActive}
+      medicinesActive={medicinesActive}
       userLocation={userLocation}
       foodPlaces={foodPlaces}
       selectedFoodPlace={selectedFoodPlace}

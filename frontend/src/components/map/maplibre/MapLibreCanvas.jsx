@@ -10,6 +10,8 @@ import MapLibreFoodMarkers from "./MapLibreFoodMarker";
 import MapLibreUserLocation from "./MapLibreUserLocation";
 import MapLibreMetroLayer from "./MapLibreMetroLayer";
 import MapLibreRouteLayer from "./MapLibreRouteLayer";
+import MapLibreToilet from "./MapLibreToilet";
+import MapLibreMedicine from "./MapLibreMedicine";
 
 /**
  * MapLibreCanvas
@@ -26,6 +28,8 @@ const MapLibreCanvas = forwardRef(function MapLibreCanvas(
     routeData = null,
     onSelectPandal,
     metroActive = true,
+    toiletsActive = false,
+    medicinesActive = false,
     userLocation,
     foodPlaces = [],
     selectedFoodPlace = null,
@@ -97,6 +101,16 @@ const MapLibreCanvas = forwardRef(function MapLibreCanvas(
           <MapLibreMetroLayer
             map={mapInstance}
             metroActive={metroActive}
+          />
+
+          <MapLibreToilet
+            map={mapInstance}
+            toiletsActive={toiletsActive}
+          />
+
+          <MapLibreMedicine
+            map={mapInstance}
+            medicinesActive={medicinesActive}
           />
 
           <MapLibreRouteLayer
