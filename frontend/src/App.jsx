@@ -41,11 +41,11 @@ const App = () => {
   const [modalPandal, setModalPandal] = useState(null);
 
   const [metroActive, setMetroActive] = useState(true);
+  const [toiletsActive, setToiletsActive] = useState(false);
+  const [medicinesActive, setMedicinesActive] = useState(false);
 
   // Kept for compatibility with the existing MapControls UI.
   const [activeLayer, setActiveLayer] = useState("roadmap");
-
-  const [routeModeActive, setRouteModeActive] = useState(false);
 
   const [activeNavTab, setActiveNavTab] = useState("explore");
 
@@ -107,7 +107,7 @@ const App = () => {
     showToast,
   });
 
-  const { pandals, appReady } = usePandalData(setSelectedPandal);
+  const { pandals, appReady } = usePandalData();
 
   const { handleRecenter } = useUserLocation({
     mapRef,
@@ -236,6 +236,10 @@ const App = () => {
       routeData={routeData}
       metroActive={metroActive}
       setMetroActive={setMetroActive}
+      toiletsActive={toiletsActive}
+      setToiletsActive={setToiletsActive}
+      medicinesActive={medicinesActive}
+      setMedicinesActive={setMedicinesActive}
       activeLayer={activeLayer}
       userLocation={userLocation}
       foodPlaces={foodPlaces}
@@ -253,10 +257,7 @@ const App = () => {
       activeCategory={activeCategory}
       setActiveCategory={setActiveCategory}
       isDesktop={isDesktop}
-      routeModeActive={routeModeActive}
-      setRouteModeActive={setRouteModeActive}
       toastMessage={toastMessage}
-      showToast={showToast}
       handleToggleLayer={handleToggleLayer}
       handleRecenter={handleRecenter}
       handleZoom={handleZoom}

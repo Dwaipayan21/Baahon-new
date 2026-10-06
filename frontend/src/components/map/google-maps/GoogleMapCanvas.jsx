@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   KOLKATA_CENTER,
   DEFAULT_ZOOM,
@@ -8,25 +14,32 @@ import UserLocationMarker from "./UserLocationMarker";
 import GoogleMapMetroLayer from "./GoogleMapMetroLayer";
 import GoogleMapRouteLayer from "./GoogleMapRouteLayer";
 import GoogleMapPandalMarkers from "./GoogleMapPandalMarkers";
+import GoogleMapToilet from "./GoogleMapToilet";
+import GoogleMapMedicine from "./GoogleMapMedicine";
 import FoodMarkers from "../../Food/FoodMarker";
 
-const GoogleMapCanvas = ({
-  pandals = [],
-  selectedPandal,
-  selectedPandals = [],
-  routeSegments = [],
-  routeData = null,
-  onSelectPandal,
-  metroActive = true,
-  activeLayer = "roadmap",
-  userLocation,
-  foodPlaces = [],
-  selectedFoodPlace = null,
-  onSelectFoodPlace,
-  onMapReady,
-  onMapError,
-  zoom = 1,
-}) => {
+const GoogleMapCanvas = forwardRef(function GoogleMapCanvas(
+  {
+    pandals = [],
+    selectedPandal,
+    selectedPandals = [],
+    routeSegments = [],
+    routeData = null,
+    onSelectPandal,
+    metroActive = true,
+    toiletsActive = false,
+    medicinesActive = false,
+    activeLayer = "roadmap",
+    userLocation,
+    foodPlaces = [],
+    selectedFoodPlace = null,
+    onSelectFoodPlace,
+    onMapReady,
+    onMapError,
+    zoom = 1,
+  },
+  ref
+) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -37,6 +50,37 @@ const GoogleMapCanvas = ({
   const [error, setError] = useState(false);
   const [mapInstance, setMapInstance] = useState(null);
   void zoom;
+
+  useImperativeHandle(ref, () => ({
+    getMap: () => mapInstance,
+    flyTo: ({ center, zoom: targetZoom }) => {
+      if (!mapInstance || !Array.isArray(center)) return;
+
+      const [lng, lat] = center;
+
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        mapInstance.panTo({ lat, lng });
+      }
+
+      if (Number.isFinite(targetZoom)) {
+        mapInstance.setZoom(targetZoom);
+      }
+    },
+    zoomIn: () => {
+      const currentZoom = mapInstance?.getZoom();
+
+      if (typeof currentZoom === "number") {
+        mapInstance.setZoom(currentZoom + 1);
+      }
+    },
+    zoomOut: () => {
+      const currentZoom = mapInstance?.getZoom();
+
+      if (typeof currentZoom === "number") {
+        mapInstance.setZoom(currentZoom - 1);
+      }
+    },
+  }), [mapInstance]);
 
   // ---------------------------------------------------------
   // Google Maps authentication failure
@@ -196,6 +240,16 @@ const GoogleMapCanvas = ({
         metroActive={metroActive}
       />
 
+      <GoogleMapToilet
+        map={mapInstance}
+        toiletsActive={toiletsActive}
+      />
+
+      <GoogleMapMedicine
+        map={mapInstance}
+        medicinesActive={medicinesActive}
+      />
+
       <GoogleMapRouteLayer
         map={mapInstance}
         routeData={routeData}
@@ -223,6 +277,6 @@ const GoogleMapCanvas = ({
       />
     </>
   );
-};
+});
 
 export default GoogleMapCanvas;

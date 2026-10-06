@@ -24,6 +24,10 @@ const AppLayout = ({
   routeData,
   metroActive,
   setMetroActive,
+  toiletsActive,
+  setToiletsActive,
+  medicinesActive,
+  setMedicinesActive,
   activeLayer,
   userLocation,
   foodPlaces,
@@ -41,10 +45,7 @@ const AppLayout = ({
   activeCategory,
   setActiveCategory,
   isDesktop,
-  routeModeActive,
-  setRouteModeActive,
   toastMessage,
-  showToast,
   handleToggleLayer,
   handleRecenter,
   handleZoom,
@@ -90,6 +91,8 @@ const AppLayout = ({
               routeData={routeData}
               onSelectPandal={setSelectedPandal}
               metroActive={metroActive}
+              toiletsActive={toiletsActive}
+              medicinesActive={medicinesActive}
               activeLayer={activeLayer}
               userLocation={userLocation}
               foodPlaces={foodPlaces}
@@ -208,16 +211,10 @@ const AppLayout = ({
             <MapControls
               metroActive={metroActive}
               onToggleMetro={() => setMetroActive((prev) => !prev)}
-              routeModeActive={routeModeActive}
-              onToggleRouteMode={() => {
-                setRouteModeActive((prev) => !prev);
-
-                showToast(
-                  routeModeActive
-                    ? "Route mode disabled"
-                    : "Route mode enabled"
-                );
-              }}
+              toiletsActive={toiletsActive}
+              onToggleToilets={() => setToiletsActive((prev) => !prev)}
+              medicinesActive={medicinesActive}
+              onToggleMedicines={() => setMedicinesActive((prev) => !prev)}
               activeLayer={activeLayer}
               onToggleLayer={handleToggleLayer}
               onRecenter={handleRecenter}
