@@ -1,0 +1,256 @@
+{
+  "generatedAt": "2026-10-07T18:38:28.815Z",
+  "executionDurationSeconds": 78,
+  "discoveryRadiusMeters": 1000,
+  "discoveryLimitRequested": 100,
+  "totalPandalsAttempted": 98,
+  "successfulWithResults": 89,
+  "successfulWithZeroResults": 9,
+  "failedPandals": 0,
+  "totalFoodPlacesDiscovered": 898,
+  "averageFoodPlacesPerPandal": 9.16,
+  "minFoodPlacesForSuccessfulPandal": 1,
+  "maxFoodPlacesForPandal": 39,
+  "distanceBandBreakdown": {
+    "very_nearby": 100,
+    "nearby": 446,
+    "further": 352,
+    "beyond_1000m": 0
+  },
+  "categoryBreakdown": {
+    "restaurant": 437,
+    "cafe": 252,
+    "fast_food": 142,
+    "bakery": 28,
+    "ice_cream": 24,
+    "confectionery": 15
+  },
+  "top20Pandals": [
+    {
+      "rank": 1,
+      "pandalIndex": 18,
+      "pandalName": "Tridhara Sammilani",
+      "latitude": 22.518,
+      "longitude": 88.357,
+      "foodCount": 39
+    },
+    {
+      "rank": 2,
+      "pandalIndex": 26,
+      "pandalName": "Ballygunge Cultural Association",
+      "latitude": 22.516,
+      "longitude": 88.3556,
+      "foodCount": 39
+    },
+    {
+      "rank": 3,
+      "pandalIndex": 24,
+      "pandalName": "Singhi Park Sarbojanin",
+      "latitude": 22.5206,
+      "longitude": 88.3629,
+      "foodCount": 38
+    },
+    {
+      "rank": 4,
+      "pandalIndex": 6,
+      "pandalName": "Deshapriya Park",
+      "latitude": 22.5158,
+      "longitude": 88.3524,
+      "foodCount": 37
+    },
+    {
+      "rank": 5,
+      "pandalIndex": 28,
+      "pandalName": "Hindustan Park",
+      "latitude": 22.5178,
+      "longitude": 88.3618,
+      "foodCount": 36
+    },
+    {
+      "rank": 6,
+      "pandalIndex": 37,
+      "pandalName": "Gariahat Hindustan Club",
+      "latitude": 22.5186,
+      "longitude": 88.3672,
+      "foodCount": 35
+    },
+    {
+      "rank": 7,
+      "pandalIndex": 63,
+      "pandalName": "Phalguni Sangha",
+      "latitude": 22.52255,
+      "longitude": 88.36601,
+      "foodCount": 34
+    },
+    {
+      "rank": 8,
+      "pandalIndex": 16,
+      "pandalName": "Ekdalia Evergreen Club",
+      "latitude": 22.518,
+      "longitude": 88.365,
+      "foodCount": 33
+    },
+    {
+      "rank": 9,
+      "pandalIndex": 5,
+      "pandalName": "66 Pally",
+      "latitude": 22.5151,
+      "longitude": 88.3469,
+      "foodCount": 23
+    },
+    {
+      "rank": 10,
+      "pandalIndex": 25,
+      "pandalName": "Mudiali Club",
+      "latitude": 22.5102,
+      "longitude": 88.3463,
+      "foodCount": 23
+    },
+    {
+      "rank": 11,
+      "pandalIndex": 55,
+      "pandalName": "Chakraberia Sarbojanin",
+      "latitude": 22.5337,
+      "longitude": 88.352,
+      "foodCount": 21
+    },
+    {
+      "rank": 12,
+      "pandalIndex": 17,
+      "pandalName": "Badamtala Ashar Sangha",
+      "latitude": 22.516,
+      "longitude": 88.342,
+      "foodCount": 19
+    },
+    {
+      "rank": 13,
+      "pandalIndex": 60,
+      "pandalName": "Shree Sangha",
+      "latitude": 22.52076,
+      "longitude": 88.34491,
+      "foodCount": 19
+    },
+    {
+      "rank": 14,
+      "pandalIndex": 95,
+      "pandalName": "EC Block Durga Puja",
+      "latitude": 22.5832,
+      "longitude": 88.4158,
+      "foodCount": 18
+    },
+    {
+      "rank": 15,
+      "pandalIndex": 27,
+      "pandalName": "Jodhpur Park Puja Pandal",
+      "latitude": 22.5058,
+      "longitude": 88.3625,
+      "foodCount": 17
+    },
+    {
+      "rank": 16,
+      "pandalIndex": 61,
+      "pandalName": "Sangha Sree",
+      "latitude": 22.5228,
+      "longitude": 88.3475,
+      "foodCount": 17
+    },
+    {
+      "rank": 17,
+      "pandalIndex": 62,
+      "pandalName": "95 Pally",
+      "latitude": 22.5033,
+      "longitude": 88.3664,
+      "foodCount": 15
+    },
+    {
+      "rank": 18,
+      "pandalIndex": 86,
+      "pandalName": "Badan Chandra Roy Bari",
+      "latitude": 22.5746,
+      "longitude": 88.3609,
+      "foodCount": 15
+    },
+    {
+      "rank": 19,
+      "pandalIndex": 87,
+      "pandalName": "Purna Chandra Dhar Family Puja",
+      "latitude": 22.5742,
+      "longitude": 88.3614,
+      "foodCount": 15
+    },
+    {
+      "rank": 20,
+      "pandalIndex": 9,
+      "pandalName": "Uddipani Park Circus Sarbojanin",
+      "latitude": 22.5446,
+      "longitude": 88.3698,
+      "foodCount": 14
+    }
+  ],
+  "zeroResultCount": 9,
+  "zeroResultPandals": [
+    {
+      "pandalIndex": 1,
+      "pandalName": "Ahiritola Jubak Brinda",
+      "latitude": 22.5995,
+      "longitude": 88.3558,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 10,
+      "pandalName": "Kumartuli Park",
+      "latitude": 22.59898,
+      "longitude": 88.36147,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 40,
+      "pandalName": "Ahiritola Sarbojanin Durgotsav",
+      "latitude": 22.5898,
+      "longitude": 88.3533,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 41,
+      "pandalName": "Beniatola Sarbojanin Durgotsav",
+      "latitude": 22.5912,
+      "longitude": 88.3561,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 43,
+      "pandalName": "Udayan Sangha Club ",
+      "latitude": 22.6971,
+      "longitude": 88.3979,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 52,
+      "pandalName": "Haridevpur 41 Pally Club",
+      "latitude": 22.4842,
+      "longitude": 88.3392,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 65,
+      "pandalName": "Ajeya Sanghati",
+      "latitude": 22.481,
+      "longitude": 88.3376,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 74,
+      "pandalName": "Hatkhola Dutta Bari",
+      "latitude": 22.59385,
+      "longitude": 88.35402,
+      "status": "ZERO_RESULTS"
+    },
+    {
+      "pandalIndex": 89,
+      "pandalName": "Madan Mohan Dutta Family Puja",
+      "latitude": 22.5932,
+      "longitude": 88.3585,
+      "status": "ZERO_RESULTS"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import FoodPlace from "../../models/foodPlace.model.js";
 
-const DEFAULT_SEARCH_RADIUS_METERS = 500;
+const DEFAULT_SEARCH_RADIUS_METERS = 1000;
 const MAX_SEARCH_RADIUS_METERS = 1000;
 const DEFAULT_LIMIT = 25;
 const MAX_LIMIT = 50;
@@ -51,6 +51,11 @@ function sanitizeDatabaseError(err) {
 }
 
 async function getFoodPlacesForPandal(pandal, options = {}) {
+  // If MongoDB is not connected, return empty list gracefully
+  if (mongoose.connection.readyState !== 1 && !options.Model) {
+    return [];
+  }
+
   const Model = options.Model || FoodPlace;
 
   const radius =

@@ -1,4 +1,4 @@
-const FOOD_SEARCH_RADIUS_METERS = 500;
+const FOOD_SEARCH_RADIUS_METERS = 1000;
 const GEOAPIFY_PLACES_API_URL = "https://api.geoapify.com/v2/places";
 
 const DEFAULT_FOOD_CATEGORIES = Object.freeze([

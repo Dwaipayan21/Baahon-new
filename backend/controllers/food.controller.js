@@ -1,6 +1,25 @@
 import mongoose from "mongoose";
 import Pandal from "../models/pandal.model.js";
-import rawPandals from "../data/pandals.json" with { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const FINAL_SHEET_PATH = path.join(__dirname, "../data/Baahon_final_sheet.json");
+const LEGACY_PANDALS_PATH = path.join(__dirname, "../data/pandals.json");
+
+let rawPandals = [];
+try {
+  if (fs.existsSync(FINAL_SHEET_PATH)) {
+    rawPandals = JSON.parse(fs.readFileSync(FINAL_SHEET_PATH, "utf-8"));
+  } else if (fs.existsSync(LEGACY_PANDALS_PATH)) {
+    rawPandals = JSON.parse(fs.readFileSync(LEGACY_PANDALS_PATH, "utf-8"));
+  }
+} catch {
+  rawPandals = [];
+}
 import { sendSuccess, sendError } from "../utils/apiResponse.js";
 
 import {
