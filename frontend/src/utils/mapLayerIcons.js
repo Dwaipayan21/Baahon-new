@@ -4,8 +4,8 @@ const encodeSvg = (svg) =>
 export const TOILET_MARKER_SVG = `
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width="44"
-  height="44"
+  width="30"
+  height="30"
   viewBox="0 0 44 44"
 >
   <circle
@@ -71,8 +71,8 @@ export const TOILET_MARKER_SVG = `
 export const MEDICINE_MARKER_SVG = `
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width="44"
-  height="44"
+  width="30"
+  height="30"
   viewBox="0 0 44 44"
 >
   <circle
@@ -112,8 +112,9 @@ export const createMarkerElement = (svg) => {
   const element = document.createElement("div");
 
   element.innerHTML = svg;
-  element.style.width = "44px";
-  element.style.height = "44px";
+
+  element.style.width = "30px";
+  element.style.height = "30px";
   element.style.display = "flex";
   element.style.alignItems = "center";
   element.style.justifyContent = "center";
@@ -123,8 +124,8 @@ export const createMarkerElement = (svg) => {
   const svgElement = element.querySelector("svg");
 
   if (svgElement) {
-    svgElement.style.width = "44px";
-    svgElement.style.height = "44px";
+    svgElement.style.width = "30px";
+    svgElement.style.height = "30px";
     svgElement.style.display = "block";
   }
 

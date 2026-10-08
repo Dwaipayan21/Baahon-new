@@ -174,7 +174,7 @@ async function persistFoodPlace(place, options = {}) {
       { $set: sanitized },
       {
         upsert: true,
-        new: true,
+        returnDocument: "after",
         runValidators: true,
         includeResultMetadata: true,
       }

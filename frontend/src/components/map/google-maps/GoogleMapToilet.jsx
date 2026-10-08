@@ -79,8 +79,8 @@ const GoogleMapToilet = ({
             title: properties.name || "Public Toilet",
             icon: {
               url: toiletMarkerIcon(),
-              scaledSize: new window.google.maps.Size(44, 44),
-              anchor: new window.google.maps.Point(22, 22),
+              scaledSize: new window.google.maps.Size(30, 30),
+              anchor: new window.google.maps.Point(15, 15),
             },
             zIndex: 20,
           });

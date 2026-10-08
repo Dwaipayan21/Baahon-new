@@ -83,8 +83,8 @@ const GoogleMapMedicine = ({
               "Medicine Store",
             icon: {
               url: medicineMarkerIcon(),
-              scaledSize: new window.google.maps.Size(44, 44),
-              anchor: new window.google.maps.Point(22, 22),
+              scaledSize: new window.google.maps.Size(30, 30),
+              anchor: new window.google.maps.Point(15, 15),
             },
             zIndex: 20,
           });
