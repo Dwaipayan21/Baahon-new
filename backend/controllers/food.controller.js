@@ -195,20 +195,25 @@ async function getFoodForPandal(req, res, next) {
       category,
     });
 
-    // Discover and persist places when none exist
-    if (places.length === 0) {
-      try {
-        await discoverAndPersistFoodForPandal(pandal, {
-          radiusMeters,
-          limit,
-        });
+    // Always ensure food data is discovered for the requested radius.
+    // Older records may have been discovered using a smaller radius.
+    try {
+      await discoverAndPersistFoodForPandal(pandal, {
+        radiusMeters,
+        limit,
+      });
 
-        places = await getFoodPlacesForPandal(pandal, {
-          radiusMeters,
-          limit,
-          category,
-        });
-      } catch {}
+      places = await getFoodPlacesForPandal(pandal, {
+        radiusMeters,
+        limit,
+        category,
+      });
+    } catch (error) {
+      // Keep stored places available if the discovery service is unavailable.
+      console.error(
+        `Food discovery refresh failed for pandal "${pandal.name}":`,
+        sanitizeError(error?.message || "Unknown discovery error")
+      );
     }
 
     const resolvedId = pandal._id

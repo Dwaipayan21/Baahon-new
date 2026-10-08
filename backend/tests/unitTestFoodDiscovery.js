@@ -9,7 +9,7 @@
  * 5. Coordinate extraction across all schemas (GeoJSON, flat, nested, direct)
  * 6. Common data model normalization for Geoapify places (11 fields)
  * 7. Deduplication (same sourceId, conservative geographic + name similarity)
- * 8. Verification across all 30 pandals in backend/data/pandals.json
+ * 8. Verification across all 30 seed pandals in backend/data/pandals.json
  * 9. Error handling for missing or malformed pandals
  */
 
@@ -61,7 +61,7 @@ async function runAllTests() {
 
   // 1. Constants
   test('Configuration constants match expected defaults', () => {
-    assert.equal(FOOD_SEARCH_RADIUS_METERS, 500);
+    assert.equal(FOOD_SEARCH_RADIUS_METERS, 1000);
     assert.ok(DEFAULT_FOOD_CATEGORIES.includes('catering.restaurant'));
     assert.ok(DEFAULT_FOOD_CATEGORIES.includes('catering.cafe'));
     assert.ok(DEFAULT_FOOD_CATEGORIES.includes('catering.fast_food'));

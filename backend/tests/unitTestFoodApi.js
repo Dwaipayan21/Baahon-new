@@ -166,9 +166,9 @@ async function runAllTests() {
         }
       };
 
-      // Default radius (500m)
+      // Default radius (1000m)
       await foodReadService.getFoodPlacesForPandal(testPandalId, { Model: mockModel });
-      assert.deepEqual(capturedFilter.distanceFromPandal, { $lte: 500 });
+      assert.deepEqual(capturedFilter.distanceFromPandal, { $lte: 1000 });
       assert.deepEqual(capturedSort, { distanceFromPandal: 1 });
       assert.equal(capturedLimit, 25);
 
