@@ -1,5 +1,4 @@
 import { useState } from "react";
-import MetroStatusChip from "./MetroStatusChip";
 import ZoomControlPill from "./ZoomControlPill";
 import MapLayerToggleButton from "./MapLayerToggleButton";
 
@@ -16,7 +15,6 @@ const MapControls = ({
   onZoomIn,
   onZoomOut,
 }) => {
-  const [showLegend, setShowLegend] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
 
   return (
@@ -24,13 +22,6 @@ const MapControls = ({
       {/* All Map Controls */}
       {controlsOpen && (
         <div className="flex flex-col items-end gap-2.5 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          {/* Metro Active Status */}
-          <MetroStatusChip
-            metroActive={metroActive}
-            showLegend={showLegend}
-            onToggleLegend={() => setShowLegend(!showLegend)}
-          />
-
           {/* Metro Lines Layer Toggle */}
           <button
             type="button"

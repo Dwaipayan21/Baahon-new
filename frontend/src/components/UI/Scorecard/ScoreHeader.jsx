@@ -4,7 +4,7 @@ const ScoreHeader = ({
   onBack,
 }) => {
   return (
-    <section className="overflow-hidden rounded-2xl border border-[var(--color-primary)] bg-[var(--color-primary)] shadow-sm">
+    <section className="overflow-hidden border border-[var(--color-primary)] bg-[var(--color-primary)] shadow-sm">
       <div className="flex h-[68px] items-center gap-3 border-b border-white/10 px-4 sm:px-5">
         <button
           type="button"
