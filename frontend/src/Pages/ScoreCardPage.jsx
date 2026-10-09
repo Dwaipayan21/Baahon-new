@@ -222,48 +222,43 @@ const ScorecardPage = ({
   };
 
   return (
-    <main className="min-h-screen bg-[var(--color-background)] px-3 py-4 pb-24 sm:px-6 sm:py-6 sm:pb-8">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 sm:gap-6">
+    
+    <main className="min-h-screen bg-[var(--color-background)] pb-24 sm:pb-8">
+      {/* Full-width navbar */}
+      <header className="w-full border-b border-slate-200/70 bg-[var(--color-background)] shadow-sm">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-4 sm:px-6">
+          <div className="flex min-w-fit items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+              <img
+                src="/Baahon.jpeg"
+                alt="Baahon"
+                className="h-10 w-10 object-contain"
+              />
+            </div>
 
-        {/* =====================================================
-            NAVBAR
-        ====================================================== */}
-        <header className="border-b border-slate-200/70 bg-[var(--color-background)] shadow-sm">
-          <div className="h-16 px-4 sm:px-6 max-w-7xl mx-auto flex items-center">
-            <div className="flex items-center gap-3 min-w-fit">
-              {/* Same logo sizing and position as Explore */}
-              <div className="w-10 h-10 flex items-center justify-center flex-shrink-0">
-                <img
-                  src="/Baahon.jpeg"
-                  alt="Baahon"
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-
-              <div className="flex flex-col leading-none">
-                {/* Brand */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[13px] font-medium tracking-tight text-[var(--color-heading)]">
-                    BAAHON
-                  </span>
-
-                  <span className="text-[13px] font-medium text-[var(--color-muted)]">
-                    ·
-                  </span>
-
-                  <span className="text-[11px] font-medium text-[var(--color-primary)]">
-                    মা আসছেন
-                  </span>
-                </div>
-
-                {/* Page */}
-                <span className="mt-1 text-[11px] font-extrabold tracking-[0.08em] text-[var(--color-heading)]">
-                  SCORE BOARD
+            <div className="flex flex-col leading-none">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[13px] font-medium tracking-tight text-[var(--color-heading)]">
+                  BAAHON
+                </span>
+                <span className="text-[13px] font-medium text-[var(--color-muted)]">
+                  ·
+                </span>
+                <span className="text-[11px] font-medium text-[var(--color-primary)]">
+                  মা আসছেন
                 </span>
               </div>
+
+              <span className="mt-1 text-[11px] font-extrabold tracking-[0.08em] text-[var(--color-heading)]">
+                SCORE BOARD
+              </span>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
+
+      {/* Keep the rest of the page content centered */}
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-3 pt-4 sm:gap-6 sm:px-6 sm:pt-6">
 
         {/* =====================================================
             SCORECARD

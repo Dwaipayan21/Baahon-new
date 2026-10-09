@@ -1,5 +1,4 @@
 import SearchBar from "./SearchBar";
-import MetroLegend from "../../map/MetroLegend";
 
 const SearchFilterOverlay = ({
   searchQuery,
@@ -7,10 +6,6 @@ const SearchFilterOverlay = ({
   activeCategory,
   onSelectCategory,
   onClearSearch,
-  metroActive,
-  onToggleMetro,
-  visibleCount,
-  totalCount,
 }) => {
   return (
     <div
@@ -28,12 +23,6 @@ const SearchFilterOverlay = ({
           onClearSearch={onClearSearch}
         />
 
-        <MetroLegend
-          metroActive={metroActive}
-          onToggleMetro={onToggleMetro}
-          visibleCount={visibleCount}
-          totalCount={totalCount}
-        />
       </div>
     </div>
   );

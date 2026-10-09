@@ -290,9 +290,15 @@ const ProfilePage = ({
                 </span>
               </div>
 
-              <p className="mt-4 text-2xl font-extrabold text-[var(--color-heading)]">
-                {visitedCount}
-              </p>
+              <div className="flex items-baseline gap-1.5 mt-4">
+                <span className="text-2xl font-extrabold text-[var(--color-heading)]">
+                  {visitedCount}
+                </span>
+
+                <span className="text-sm font-normal text-slate-400">
+                  / {totalPandals}
+                </span>
+              </div>
 
               <p className="mt-1 text-xs font-medium text-[var(--color-muted)]">
                 Pandals Visited
