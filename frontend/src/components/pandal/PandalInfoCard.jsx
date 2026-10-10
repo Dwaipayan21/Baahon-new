@@ -1,29 +1,26 @@
+
 import CrowdBadge from "./CrowdBadge";
+
 const PandalInfoCard = ({
   pandal,
-  crowd,
   routeDistance,
   routeDuration,
   routeLoading = false,
 }) => {
   return (
-    <div className="flex items-center gap-3 bg-slate-50/80 rounded-2xl p-2.5 border border-slate-100">
-      <div className="w-22 h-20 rounded-xl overflow-hidden flex-shrink-0 relative bg-slate-200">
+    <div className="flex min-w-0 items-center gap-2.5 rounded-2xl border border-slate-100 bg-slate-50/80 p-2">
+      {/* Pandal image — no star rating */}
+      <div className="relative h-[68px] w-[76px] shrink-0 overflow-hidden rounded-xl bg-slate-200 sm:h-20 sm:w-22">
         <img
           alt={pandal.name}
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
           src={pandal.image}
           loading="lazy"
         />
-
-        <span className="absolute bottom-1 left-1 text-[9px] px-1.5 py-0.5 rounded bg-black/65 text-white font-bold backdrop-blur-xs">
-          {pandal.rating} ★
-        </span>
       </div>
 
-      <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5 gap-1.5">
-        
-        {/* Real Crowd Data */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-1.5 py-0.5">
+        {/* Crowd status — no category tags */}
         <div className="flex items-center">
           <CrowdBadge
             status={pandal.crowdStatus}
@@ -32,41 +29,37 @@ const PandalInfoCard = ({
         </div>
 
         {/* Address */}
-        <div className="flex items-center gap-1 text-slate-600 truncate text-xs">
-          <span className="material-symbols-outlined text-[14px] text-slate-400 flex-shrink-0">
+        <div className="flex min-w-0 items-center gap-1 truncate text-xs text-slate-600">
+          <span className="material-symbols-outlined shrink-0 text-[14px] text-slate-400">
             pin_drop
           </span>
 
-          <span className="truncate">
-            {pandal.address}
-          </span>
+          <span className="truncate">{pandal.address}</span>
         </div>
 
-        {/* Distance + Metro */}
-        <div className="flex items-center gap-2.5 text-[11px] font-semibold text-[var(--color-heading)]">
-          <span className="flex items-center gap-1 text-[var(--color-primary)]">
+        {/* Distance, time and metro station */}
+        <div className="flex min-w-0 items-center gap-2.5 text-[11px] font-semibold text-[var(--color-heading)]">
+          <span className="flex min-w-0 shrink-0 items-center gap-1 text-[var(--color-primary)]">
             <span className="material-symbols-outlined text-[13px]">
               directions_walk
             </span>
 
-            <span>
-              {routeLoading
-                ? "Calculating..."
-                : routeDistance && routeDuration
-                  ? `${routeDistance} • ${routeDuration}`
+            <span className="whitespace-nowrap">
+              {routeDistance && routeDuration
+                ? `${routeDistance} • ${routeDuration}`
+                : routeLoading
+                  ? "Calculating..."
                   : "Location unavailable"}
             </span>
           </span>
 
           {pandal.metroStation && (
-            <span className="flex items-center gap-1 text-slate-500 truncate">
-              <span className="material-symbols-outlined text-[13px] text-blue-700">
+            <span className="flex min-w-0 items-center gap-1 text-slate-500">
+              <span className="material-symbols-outlined shrink-0 text-[13px] text-blue-700">
                 subway
               </span>
 
-              <span className="truncate">
-                {pandal.metroStation}
-              </span>
+              <span className="truncate">{pandal.metroStation}</span>
             </span>
           )}
         </div>

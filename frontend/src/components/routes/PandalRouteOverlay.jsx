@@ -130,9 +130,10 @@ const PandalRouteOverlay = ({
     <div
       className="absolute inset-x-0 px-2 z-30 pointer-events-none"
       style={{
-        zIndex: 250,
-        bottom: "calc(76px + env(safe-area-inset-bottom, 0px))",
-        maxHeight: "calc(100% - 160px - env(safe-area-inset-bottom, 0px))",
+        zIndex: 30,
+        bottom: "calc(88px + env(safe-area-inset-bottom, 0px))",
+        maxHeight: "calc(100dvh - 180px - env(safe-area-inset-bottom, 0px))",
+        overflow: "hidden",
       }}
     >
       <div className="flex flex-col gap-2 pointer-events-auto">

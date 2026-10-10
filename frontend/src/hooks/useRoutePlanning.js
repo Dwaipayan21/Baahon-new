@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getRoute, getWalkingRoute } from "../services/api";
 import { findNearestPandal } from "../utils/routeUtils";
 
@@ -19,52 +19,136 @@ export const useRoutePlanning = ({
   const [selectedPandalRouteLoading, setSelectedPandalRouteLoading] =
     useState(false);
 
+  const selectedRouteRequestIdRef = useRef(0);
+  const lastRouteRequestRef = useRef(null);
+  const previousSelectedPandalIdRef = useRef(null);
+
   useEffect(() => {
-    if (!selectedPandal || !userLocation) {
+    const pandalId = selectedPandal?.id;
+
+    if (!pandalId) {
+      selectedRouteRequestIdRef.current += 1;
+      previousSelectedPandalIdRef.current = null;
+      lastRouteRequestRef.current = null;
+
       setSelectedPandalRoute(null);
       setSelectedPandalRouteLoading(false);
       return;
     }
 
-    let cancelled = false;
+    const isNewPandal =
+      previousSelectedPandalIdRef.current !== pandalId;
 
-    const loadSelectedPandalWalkingRoute = async () => {
+    if (isNewPandal) {
+      selectedRouteRequestIdRef.current += 1;
+      previousSelectedPandalIdRef.current = pandalId;
+      lastRouteRequestRef.current = null;
+
+      setSelectedPandalRoute(null);
+      setSelectedPandalRouteLoading(false);
+    }
+
+    if (
+      !userLocation ||
+      !Number.isFinite(userLocation.lat) ||
+      !Number.isFinite(userLocation.lng)
+    ) {
+      return;
+    }
+
+    const { lat, lng } = userLocation;
+    const lastRequest = lastRouteRequestRef.current;
+
+    if (
+      lastRequest &&
+      lastRequest.pandalId === pandalId
+    ) {
+      const toRadians = (degrees) => (degrees * Math.PI) / 180;
+      const earthRadius = 6371000;
+
+      const latitudeDifference = toRadians(
+        lat - lastRequest.lat
+      );
+      const longitudeDifference = toRadians(
+        lng - lastRequest.lng
+      );
+
+      const a =
+        Math.sin(latitudeDifference / 2) ** 2 +
+        Math.cos(toRadians(lastRequest.lat)) *
+          Math.cos(toRadians(lat)) *
+          Math.sin(longitudeDifference / 2) ** 2;
+
+      const distanceMoved =
+        2 *
+        earthRadius *
+        Math.atan2(
+          Math.sqrt(a),
+          Math.sqrt(Math.max(0, 1 - a))
+        );
+
+      if (distanceMoved < 150) {
+        return;
+      }
+    }
+
+    const requestId = ++selectedRouteRequestIdRef.current;
+
+    lastRouteRequestRef.current = {
+      pandalId,
+      lat,
+      lng,
+    };
+
+    const loadRoute = async () => {
+      setSelectedPandalRouteLoading(true);
+
       try {
-        setSelectedPandalRouteLoading(true);
-        setSelectedPandalRoute(null);
-
         const route = await getRoute({
-          latitude: userLocation.lat,
-          longitude: userLocation.lng,
-          pandalId: selectedPandal.id,
+          latitude: lat,
+          longitude: lng,
+          pandalId,
           mode: "walking",
         });
 
-        if (!cancelled) {
+        if (
+          requestId !== selectedRouteRequestIdRef.current ||
+          previousSelectedPandalIdRef.current !== pandalId
+        ) {
+          return;
+        }
+
+        if (
+          route?.distance?.value != null &&
+          route?.estimatedTime?.value != null
+        ) {
           setSelectedPandalRoute(route);
+        } else {
+          console.warn(
+            "Walking route response was incomplete:",
+            route
+          );
         }
       } catch (error) {
         console.error(
           "Failed to fetch walking route for selected pandal:",
           error
         );
-
-        if (!cancelled) {
-          setSelectedPandalRoute(null);
-        }
       } finally {
-        if (!cancelled) {
+        if (
+          requestId === selectedRouteRequestIdRef.current
+        ) {
           setSelectedPandalRouteLoading(false);
         }
       }
     };
 
-    loadSelectedPandalWalkingRoute();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedPandal, userLocation]);
+    loadRoute();
+  }, [
+    selectedPandal?.id,
+    userLocation?.lat,
+    userLocation?.lng,
+  ]);
 
   const handleMetroRoute = async () => {
     setRouteError("");
