@@ -22,6 +22,7 @@ export const useRoutePlanning = ({
   const selectedRouteRequestIdRef = useRef(0);
   const lastRouteRequestRef = useRef(null);
   const previousSelectedPandalIdRef = useRef(null);
+  const isRequestInProgressRef = useRef(false);
 
   useEffect(() => {
     const pandalId = selectedPandal?.id;
@@ -30,6 +31,7 @@ export const useRoutePlanning = ({
       selectedRouteRequestIdRef.current += 1;
       previousSelectedPandalIdRef.current = null;
       lastRouteRequestRef.current = null;
+      isRequestInProgressRef.current = false;
 
       setSelectedPandalRoute(null);
       setSelectedPandalRouteLoading(false);
@@ -43,6 +45,7 @@ export const useRoutePlanning = ({
       selectedRouteRequestIdRef.current += 1;
       previousSelectedPandalIdRef.current = pandalId;
       lastRouteRequestRef.current = null;
+      isRequestInProgressRef.current = false;
 
       setSelectedPandalRoute(null);
       setSelectedPandalRouteLoading(false);
@@ -76,8 +79,8 @@ export const useRoutePlanning = ({
       const a =
         Math.sin(latitudeDifference / 2) ** 2 +
         Math.cos(toRadians(lastRequest.lat)) *
-          Math.cos(toRadians(lat)) *
-          Math.sin(longitudeDifference / 2) ** 2;
+        Math.cos(toRadians(lat)) *
+        Math.sin(longitudeDifference / 2) ** 2;
 
       const distanceMoved =
         2 *
@@ -92,13 +95,13 @@ export const useRoutePlanning = ({
       }
     }
 
-    const requestId = ++selectedRouteRequestIdRef.current;
+    // Do not start another route request while one is already in progress.
+    if (isRequestInProgressRef.current) {
+      return;
+    }
 
-    lastRouteRequestRef.current = {
-      pandalId,
-      lat,
-      lng,
-    };
+    const requestId = ++selectedRouteRequestIdRef.current;
+    isRequestInProgressRef.current = true;
 
     const loadRoute = async () => {
       setSelectedPandalRouteLoading(true);
@@ -123,6 +126,11 @@ export const useRoutePlanning = ({
           route?.estimatedTime?.value != null
         ) {
           setSelectedPandalRoute(route);
+          lastRouteRequestRef.current = {
+            pandalId,
+            lat,
+            lng,
+          };
         } else {
           console.warn(
             "Walking route response was incomplete:",
@@ -139,6 +147,7 @@ export const useRoutePlanning = ({
           requestId === selectedRouteRequestIdRef.current
         ) {
           setSelectedPandalRouteLoading(false);
+          isRequestInProgressRef.current = false;
         }
       }
     };

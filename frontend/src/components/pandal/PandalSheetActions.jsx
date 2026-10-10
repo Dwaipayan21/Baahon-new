@@ -5,12 +5,12 @@ const PandalSheetActions = ({
   onTogglePandalSelection,
 }) => {
   return (
-    <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+    <div className="grid grid-cols-2 gap-2 pt-0.5">
       {/* VIEW DETAILS */}
       <button
         type="button"
         onClick={() => onViewDetails(pandal)}
-        className="h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+        className="h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
       >
         <span className="material-symbols-outlined text-[17px]">
           info
@@ -23,7 +23,7 @@ const PandalSheetActions = ({
       <button
         type="button"
         onClick={() => onTogglePandalSelection?.(pandal)}
-        className={`h-11 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+        className={`h-10 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
           isSelected
             ? "bg-[var(--color-success-container)] text-[var(--color-heading-secondary)] shadow-sm"
             : "bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-sm"

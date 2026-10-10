@@ -5,6 +5,7 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
   const locationWatchRef = useRef(null);
+  const lastCoordsRef = useRef(null);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -22,11 +23,37 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
 
       if (
         !Number.isFinite(coords.lat) ||
-        !Number.isFinite(coords.lng)
+        !Number.isFinite(coords.lng) ||
+        coords.lat < -90 ||
+        coords.lat > 90 ||
+        coords.lng < -180 ||
+        coords.lng > 180
       ) {
         return;
       }
 
+      const last = lastCoordsRef.current;
+      if (last) {
+        const toRadians = (deg) => (deg * Math.PI) / 180;
+        const earthRadius = 6371000;
+        const dLat = toRadians(coords.lat - last.lat);
+        const dLng = toRadians(coords.lng - last.lng);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRadians(last.lat)) *
+            Math.cos(toRadians(coords.lat)) *
+            Math.sin(dLng / 2) ** 2;
+        const distanceMoved =
+          2 *
+          earthRadius *
+          Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
+
+        if (distanceMoved < 5) {
+          return;
+        }
+      }
+
+      lastCoordsRef.current = coords;
       setUserLocation(coords);
     };
 
@@ -98,6 +125,7 @@ export const useUserLocation = ({ mapRef, setUserLocation, showToast }) => {
           return;
         }
 
+        lastCoordsRef.current = coords;
         setUserLocation(coords);
 
         if (mapRef.current) {

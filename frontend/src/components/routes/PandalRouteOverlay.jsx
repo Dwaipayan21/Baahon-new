@@ -26,7 +26,7 @@ const PandalRouteOverlay = ({
 
   const selectionCard =
     selectedPandals.length > 0 && (
-      <div className="bg-white border border-slate-100 px-4 py-3 shadow-sm">
+      <div className="bg-white border border-slate-100 px-4 py-3 shadow-sm rounded-2xl">
         {/* Selection count */}
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
@@ -128,15 +128,13 @@ const PandalRouteOverlay = ({
 
   return (
     <div
-      className="absolute inset-x-0 px-2 z-30 pointer-events-none"
+      className="absolute inset-x-0 px-2.5 sm:px-4 z-30 pointer-events-none"
       style={{
         zIndex: 30,
-        bottom: "calc(88px + env(safe-area-inset-bottom, 0px))",
-        maxHeight: "calc(100dvh - 180px - env(safe-area-inset-bottom, 0px))",
-        overflow: "hidden",
+        bottom: "calc(64px + env(safe-area-inset-bottom, 0px))",
       }}
     >
-      <div className="flex flex-col gap-2 pointer-events-auto">
+      <div className="flex flex-col gap-2 pointer-events-auto max-w-md mx-auto">
         {selectionCard}
         {pandalCard}
       </div>

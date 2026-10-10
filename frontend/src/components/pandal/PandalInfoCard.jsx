@@ -10,7 +10,7 @@ const PandalInfoCard = ({
   return (
     <div className="flex min-w-0 items-center gap-2.5 rounded-2xl border border-slate-100 bg-slate-50/80 p-2">
       {/* Pandal image — no star rating */}
-      <div className="relative h-[68px] w-[76px] shrink-0 overflow-hidden rounded-xl bg-slate-200 sm:h-20 sm:w-22">
+      <div className="relative h-16 w-[72px] shrink-0 overflow-hidden rounded-xl bg-slate-200 sm:h-20 sm:w-22">
         <img
           alt={pandal.name}
           className="h-full w-full object-cover"
@@ -19,7 +19,7 @@ const PandalInfoCard = ({
         />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-between gap-1.5 py-0.5">
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-1 py-0.5">
         {/* Crowd status — no category tags */}
         <div className="flex items-center">
           <CrowdBadge
@@ -38,7 +38,7 @@ const PandalInfoCard = ({
         </div>
 
         {/* Distance, time and metro station */}
-        <div className="flex min-w-0 items-center gap-2.5 text-[11px] font-semibold text-[var(--color-heading)]">
+        <div className="flex min-w-0 items-center gap-2 text-[11px] font-semibold text-[var(--color-heading)]">
           <span className="flex min-w-0 shrink-0 items-center gap-1 text-[var(--color-primary)]">
             <span className="material-symbols-outlined text-[13px]">
               directions_walk
@@ -54,7 +54,7 @@ const PandalInfoCard = ({
           </span>
 
           {pandal.metroStation && (
-            <span className="flex min-w-0 items-center gap-1 text-slate-500">
+            <span className="flex min-w-0 items-center gap-1 text-slate-500 truncate">
               <span className="material-symbols-outlined shrink-0 text-[13px] text-blue-700">
                 subway
               </span>

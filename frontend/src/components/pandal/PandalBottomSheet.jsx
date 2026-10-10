@@ -10,6 +10,7 @@ const PandalBottomSheet = ({
   onTogglePandalSelection,
   routeDistance,
   routeDuration,
+  selectedPandalRouteLoading = false,
   routeLoading = false,
 }) => {
   if (!pandal) return null;
@@ -23,7 +24,7 @@ const PandalBottomSheet = ({
       className={`animate-slide-up relative z-30 w-full shrink-0 overflow-hidden border border-slate-100 bg-white select-none ${
         isDesktop
           ? "max-w-sm rounded-2xl shadow-[0_12px_36px_rgba(15,23,42,0.12)]"
-          : "rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)]"
+          : "rounded-2xl shadow-[0_-8px_28px_rgba(15,23,42,0.1)]"
       }`}
     >
       {!isDesktop && (
@@ -35,7 +36,7 @@ const PandalBottomSheet = ({
         <div className="flex items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col">
             <div className="flex min-w-0 items-center gap-1.5">
-              <h2 className="truncate text-[17px] font-extrabold leading-tight text-[var(--color-heading)]">
+              <h2 className="truncate text-[16px] sm:text-[17px] font-extrabold leading-tight text-[var(--color-heading)]">
                 {pandal.name}
               </h2>
 
@@ -60,7 +61,7 @@ const PandalBottomSheet = ({
             type="button"
             aria-label="Close pandal card"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600"
+            className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
             <span className="material-symbols-outlined text-[17px]">
               close
@@ -69,17 +70,17 @@ const PandalBottomSheet = ({
         </div>
 
         {/* Pandal information */}
-        <div className="mt-2.5">
+        <div className="mt-2 sm:mt-2.5">
           <PandalInfoCard
             pandal={pandal}
             routeDistance={routeDistance}
             routeDuration={routeDuration}
-            routeLoading={routeLoading}
+            routeLoading={selectedPandalRouteLoading || routeLoading}
           />
         </div>
 
         {/* Actions */}
-        <div className="mt-2.5">
+        <div className="mt-2 sm:mt-2.5">
           <PandalSheetActions
             pandal={pandal}
             isSelected={isSelected}

@@ -65,9 +65,10 @@ const AppLayout = ({
       <LoadingScreen ready={appReady} />
 
       <div
-        className="relative w-full h-screen overflow-hidden bg-[var(--color-background)] text-[var(--color-heading)]"
+        className="fixed inset-0 w-full h-full overflow-hidden bg-[var(--color-background)] text-[var(--color-heading)]"
         style={{
-          minHeight: "100dvh",
+          height: "100dvh",
+          maxHeight: "100dvh",
           isolation: "isolate",
         }}
       >
