@@ -61,6 +61,15 @@ app.use("/api/checkins", checkInRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/scoreboard", scoreboardRoutes);
 
+// Health-check endpoint for backend monitoring
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "PujoPath backend is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Frontend deployment
 if (process.env.NODE_ENV === "production") {
   const frontendDistPath = path.resolve(
