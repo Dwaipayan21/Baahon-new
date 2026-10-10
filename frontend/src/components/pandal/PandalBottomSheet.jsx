@@ -44,7 +44,7 @@ const PandalBottomSheet = ({
       className={`animate-slide-up bg-white border border-slate-100 relative z-30 overflow-hidden select-none ${
         isDesktop
           ? "rounded-2xl max-w-sm shadow-[0_12px_36px_rgba(15,23,42,0.12)]"
-          : "w-full rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)]"
+          : "w-full max-h-[calc(100dvh-180px-env(safe-area-inset-bottom,0px))] overflow-y-auto overscroll-contain rounded-t-3xl shadow-[0_-12px_36px_rgba(15,23,42,0.12)]"
       }`}
     >
       {!isDesktop && (
