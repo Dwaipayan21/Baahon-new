@@ -23,7 +23,8 @@
     "test:food:persistence": "node scripts/testFoodDiscoveryPersistence.js",
     "test:live": "node scripts/liveGeoapifyTest.js",
     "test:osm-food": "node scripts/testOsmFoodDiscovery.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
