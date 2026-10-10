@@ -1,5 +1,6 @@
 ﻿import {
   useEffect,
+  useRef,
   useState,
   forwardRef,
   useImperativeHandle,
@@ -38,6 +39,7 @@ const MapLibreCanvas = forwardRef(function MapLibreCanvas(
   ref
 ) {
   const [mapInstance, setMapInstance] = useState(null);
+  const hasCenteredOnUserRef = useRef(false);
 
   useEffect(() => {
     if (!mapInstance || !selectedPandal) {
@@ -61,7 +63,7 @@ const MapLibreCanvas = forwardRef(function MapLibreCanvas(
   }, [mapInstance, selectedPandal]);
 
   useEffect(() => {
-    if (!mapInstance || !userLocation) {
+    if (!mapInstance || !userLocation || hasCenteredOnUserRef.current) {
       return;
     }
 
@@ -71,6 +73,8 @@ const MapLibreCanvas = forwardRef(function MapLibreCanvas(
     ) {
       return;
     }
+
+    hasCenteredOnUserRef.current = true;
 
     mapInstance.flyTo({
       center: [

@@ -42,6 +42,7 @@ const GoogleMapCanvas = forwardRef(function GoogleMapCanvas(
 ) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
+  const hasCenteredOnUserRef = useRef(false);
 
   const [loaded, setLoaded] = useState(
     () => typeof window !== "undefined" && !!window.google?.maps
@@ -212,11 +213,15 @@ const GoogleMapCanvas = forwardRef(function GoogleMapCanvas(
   // Pan to user location
   // ---------------------------------------------------------
   useEffect(() => {
-    if (userLocation && mapRef.current) {
-      mapRef.current.panTo(userLocation);
-      mapRef.current.setZoom(14);
+    if (!mapInstance || !userLocation || hasCenteredOnUserRef.current) {
+      return;
     }
-  }, [userLocation]);
+
+    hasCenteredOnUserRef.current = true;
+
+    mapInstance.panTo(userLocation);
+    mapInstance.setZoom(14);
+  }, [mapInstance, userLocation]);
 
   // ---------------------------------------------------------
   // Google Maps fallback
