@@ -201,10 +201,12 @@ const AppLayout = ({
         {activeNavTab !== "scorecard" &&
           activeNavTab !== "profile" && (
           <div
-            className="absolute right-3 sm:right-6"
+            className="fixed right-3 sm:right-6"
             style={{
-              zIndex: 350,
-              bottom: isDesktop ? "100px" : "110px",
+              zIndex: 500,
+              bottom: isDesktop
+                ? "100px"
+                : "calc(88px + env(safe-area-inset-bottom, 0px))",
               pointerEvents: "auto",
             }}
           >
