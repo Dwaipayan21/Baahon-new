@@ -203,8 +203,8 @@ const AppLayout = ({
           <div
             className="absolute right-3 sm:right-6"
             style={{
-              zIndex: 200,
-              bottom: isDesktop ? "100px" : "90px",
+              zIndex: 350,
+              bottom: isDesktop ? "100px" : "110px",
               pointerEvents: "auto",
             }}
           >
