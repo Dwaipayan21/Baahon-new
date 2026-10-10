@@ -16,7 +16,7 @@ import GoogleMapRouteLayer from "./GoogleMapRouteLayer";
 import GoogleMapPandalMarkers from "./GoogleMapPandalMarkers";
 import GoogleMapToilet from "./GoogleMapToilet";
 import GoogleMapMedicine from "./GoogleMapMedicine";
-import FoodMarkers from "../../Food/FoodMarker";
+import FoodMarkers from "../../food/FoodMarker";
 
 const GoogleMapCanvas = forwardRef(function GoogleMapCanvas(
   {
